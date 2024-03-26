@@ -86,9 +86,9 @@ export default {
 .container {
   height: 100%;
   /*background: url("../assets/992390.jpg") no-repeat center;;*/
-  background: #01020b url('../assets/login/bj.jpg') no-repeat center/cover;
-  background-size: cover;
-  /*background-color: #282c34;*/
+  /* background: #01020b url('../assets/login/bj.jpg') no-repeat center/cover; */
+  /* background-size: cover; */
+  background-color: #282c34;
   /* 假设用flex布局的话*/
   /*display: flex;*/
   /*justify-content: center;*/
