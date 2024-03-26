@@ -1,5 +1,10 @@
 package ioc
 
+import (
+	"github.com/spf13/viper"
+	"log"
+)
+
 type Config struct {
 	ServiceName    string         `mapstructure:"service_name"`
 	ServiceVersion string         `mapstructure:"service_version"`
@@ -24,15 +29,19 @@ type RedisConfig struct {
 	DSN string `mapstructure:"dsn"`
 }
 
-//func InitConfig(path string) {
-//	viper.SetConfigFile(path)
-//	err := viper.ReadInConfig()
-//	if err != nil {
-//		log.Fatalf("Failed to read config file: %v", err)
-//	}
-//
-//	err = viper.Unmarshal(&AppConfig)
-//	if err != nil {
-//		log.Fatalf("Failed to unmarshal config file: %v", err)
-//	}
-//}
+func InitConfig(path string) *Config {
+	var appCfg Config
+	viper.SetConfigFile(path)
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalf("Failed to read config file: %v", err)
+		panic(err)
+	}
+
+	err = viper.Unmarshal(&appCfg)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal config file: %v", err)
+		panic(err)
+	}
+	return &appCfg
+}

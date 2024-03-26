@@ -1,11 +1,16 @@
 package main
 
-import "fmt"
+import "flag"
 
 /*
 对标网站 https://mlog.club/
 github https://github.com/mlogclub/bbs-go
 */
+
+var configFile = flag.String("config", "etc/dev.yaml", "配置文件路径")
+
 func main() {
-	fmt.Println("damn")
+	engine := InitWebServer(*configFile)
+
+	engine.Run(":8181")
 }
