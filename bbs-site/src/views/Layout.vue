@@ -3,14 +3,9 @@
     <el-header>
       <Header></Header>
     </el-header>
-    <el-container>
-      <el-aside width="300px">
-        <Aside></Aside>
-      </el-aside>
-      <el-main>
-        <router-view></router-view>
-      </el-main>
-    </el-container>
+    <el-main>
+      <router-view></router-view>
+    </el-main>
   </el-container>
 </template>
 

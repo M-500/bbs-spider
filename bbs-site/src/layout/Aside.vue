@@ -6,12 +6,7 @@ export default {
 
 <template>
   <div class="nav">
-    <div class="tag-list">
-      <div class="tag-box">
-        <img :src="require('@/assets/icon/a-shijianzuijin.svg')" alt="">
-        <div class="title">最新</div>
-      </div>
-    </div>
+
   </div>
 </template>
 
