@@ -1,10 +1,26 @@
 package domain
 
+import "time"
+
 // @Description
 // @Author 代码小学生王木木
 // @Date 2024-03-26 16:00
 
+// Author 在帖子这个领域内，是一个值对象
+type Author struct {
+	Id   int64
+	Name string
+}
 type Article struct {
+	Id      int64
+	Title   string
+	Content string
+	// Author 要从用户来
+	Author  Author
+	Status  ArticleStatus
+	Summary string
+	Ctime   time.Time
+	Utime   time.Time
 }
 
 type ArticleStatus uint8

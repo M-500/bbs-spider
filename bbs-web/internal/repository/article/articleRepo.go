@@ -3,6 +3,7 @@ package article
 import (
 	"bbs-web/internal/repository/dao"
 	"context"
+	"gorm.io/gorm"
 	"time"
 
 	"bbs-web/internal/domain"
@@ -36,12 +37,31 @@ func NewArticleRepo(artDao dao.ArticleDAO) ArticleRepository {
 
 func (repo *articleRepo) Create(ctx context.Context, art domain.Article) (int64, error) {
 	//TODO implement me
-	panic("implement me")
+	return repo.artDao.Insert(ctx, dao.ArticleModel{
+		AuthorId:    0,
+		Title:       art.Title,
+		Summary:     art.Summary,
+		Content:     art.Content,
+		ContentType: art.Content,
+		Cover:       art.Content,
+		Status:      int(art.Status),
+	})
 }
 
 func (repo *articleRepo) Update(ctx context.Context, art domain.Article) error {
-	//TODO implement me
-	panic("implement me")
+
+	return repo.artDao.UpdateById(ctx, dao.ArticleModel{
+		Model: gorm.Model{
+			ID: uint(art.Id),
+		},
+		AuthorId:    0,
+		Title:       art.Title,
+		Summary:     art.Summary,
+		Content:     art.Content,
+		ContentType: art.Content,
+		Cover:       art.Content,
+		Status:      int(art.Status),
+	})
 }
 
 func (repo *articleRepo) Sync(ctx context.Context, art domain.Article) (int64, error) {

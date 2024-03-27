@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bbs-web/internal/service"
+	"bbs-web/internal/web/vo"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,8 +26,23 @@ func NewArticleHandler(svc service.IArticleService) *ArticleHandler {
 //	@receiver h
 //	@param ctx
 func (h *ArticleHandler) Edit(ctx *gin.Context) {
+	var req vo.ArticleReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(401, gin.H{
+			"msg": "用户输入的数据有问题",
+		})
+		return
+	}
+	// 获取用户
+	//get := ctx.MustGet(constant.JWT_USET_Key)
+	//claims, ok := c.(ijwt.UserClaims) 做类型断言
+	id, err := h.svc.Save(ctx.Request.Context(), req.ToDomain(1))
+	if err != nil {
+		return
+	}
 	ctx.JSON(200, gin.H{
-		"msg": "好好好",
+		"msg":  "好好好",
+		"data": id,
 	})
 	return
 }

@@ -24,8 +24,6 @@ func InitDatabase(cfg *Config) *gorm.DB {
 		sqlDB.SetMaxIdleConns(cfg.Database.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(cfg.Database.MaxOpenConns)
 	}
-	// TODO Prometheus监控
-
 	err = db.Use(prometheus.New(prometheus.Config{
 		DBName:          cfg.ServiceName,
 		RefreshInterval: 15,    // 插件采集数据的频率
@@ -42,28 +40,13 @@ func InitDatabase(cfg *Config) *gorm.DB {
 		panic(err)
 	}
 
-	err = db.Use(prometheus.New(prometheus.Config{
-		DBName:          "",
-		RefreshInterval: 15,    // 插件采集数据的评率
-		StartServer:     false, // 因为已经启动过了。所以要设置为false
-		MetricsCollector: []prometheus.MetricsCollector{
-			&prometheus.MySQL{
-				VariableNames: []string{"thread_runing"},
-			},
-		},
-	}))
-
-	if err != nil {
-		panic(err)
-	}
-
 	vector := promsdk.NewSummaryVec(promsdk.SummaryOpts{
-		Namespace: "test_gin_web",
+		Namespace: "bbs_gin_spider",
 		Name:      "gorm_query_time",
-		Subsystem: "damn1",
+		Subsystem: "bbs",
 		Help:      "统计Gorm的查询时间",
 		ConstLabels: map[string]string{
-			"db": "xhs",
+			"db": "bbs_gin",
 		},
 		Objectives: map[float64]float64{
 			0.5:   0.01,

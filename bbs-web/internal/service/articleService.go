@@ -34,8 +34,12 @@ func NewArticleService(repo article.ArticleRepository) IArticleService {
 }
 
 func (svc *articleService) Save(ctx context.Context, art domain.Article) (int64, error) {
-	//TODO implement me
-	panic("implement me")
+	art.Status = domain.ArticleStatusUnpublished
+	if art.Id > 0 {
+		err := svc.repo.Update(ctx, art)
+		return art.Id, err
+	}
+	return svc.repo.Create(ctx, art)
 }
 
 func (svc *articleService) Withdraw(ctx context.Context, art domain.Article) error {
