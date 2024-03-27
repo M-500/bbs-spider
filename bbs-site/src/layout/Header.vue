@@ -20,7 +20,7 @@ export default {
 
 <style scoped>
 .header {
-  height: 64px;
+  height: 44px;
   background: #fff;
   padding-right: 120px;
   padding-left: 120px;

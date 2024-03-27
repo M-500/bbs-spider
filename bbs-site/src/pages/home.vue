@@ -192,11 +192,17 @@ export default {
 </template>
 
 <style scoped>
+
 .pages{
   display: flex;
+  width: 100%;
 }
 .left-main{
   display:flex;
+  width: 60%;
+}
+.right-main{
+  width: 40%;
 }
 .article-list{
   display: flex;

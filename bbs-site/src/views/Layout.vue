@@ -4,7 +4,7 @@
       <Header></Header>
     </el-header>
     <el-container>
-      <el-aside width="200px">
+      <el-aside width="300px">
         <Aside></Aside>
       </el-aside>
       <el-main>
@@ -31,6 +31,11 @@ export default {
 
   //background-color: #ecf5ff;
 }
-
+.el-main{
+  padding: 0;
+}
+.el-header{
+  padding: 0;
+}
 
 </style>
