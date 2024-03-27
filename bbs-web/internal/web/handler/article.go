@@ -38,6 +38,7 @@ func (h *ArticleHandler) Edit(ctx *gin.Context) {
 	// 获取用户
 	//get := ctx.MustGet(constant.JWT_USET_Key)
 	//claims, ok := c.(ijwt.UserClaims) 做类型断言
+	// 超时控制
 	id, err := h.svc.Save(ctx.Request.Context(), req.ToDomain(1))
 	if err != nil {
 		return
