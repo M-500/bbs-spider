@@ -1,6 +1,20 @@
-<script setup>
+<script>
 export default {
   name: 'Header',
+  data () {
+    return {
+
+    }
+  },
+  methods:{
+    toLogin () {
+      this.$router.push('/login')
+    },
+    toHome () {
+      this.$router.push('/home')
+    }
+  },
+
 }
 </script>
 
@@ -8,12 +22,12 @@ export default {
   <div class="header">
     <div class="top-bar">
       <div class="logo">
-        <img src="https://mlog.club/_nuxt/logo.Wwb-CAFS.png">
+        <img :src="require('@/assets/logo.svg')" @click="toHome">
       </div>
     </div>
     <div class="show-login">
       <el-button size="mini" icon="el-icon-edit" type="primary">发表</el-button>
-      <el-button size="mini" plain>登录</el-button>
+      <el-button size="mini" plain @click="toLogin">登录</el-button>
     </div>
   </div>
 </template>

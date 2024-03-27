@@ -7,10 +7,17 @@ export default {
 <template>
   <div class="pages">
     <div class="left-main">
-      <div class="tag-list">
-        <div class="tag-box">
-          <img :src="require('@/assets/icon/a-shijianzuijin.svg')" alt="">
-          <div class="title">最新</div>
+      <div class="left-main-container">
+        <div class="tag-list">
+          <div class="tag-box">
+            <img :src="require('@/assets/icon/a-shijianzuijin.svg')" alt="">
+            <div class="title">最新</div>
+          </div>
+
+          <div class="tag-box">
+            <img :src="require('@/assets/icon/a-shijianzuijin.svg')" alt="">
+            <div class="title">推荐</div>
+          </div>
         </div>
       </div>
     </div>
@@ -20,7 +27,7 @@ export default {
         <div class="article-list">
           <div class="article-item">
             <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
+              <el-avatar :size="50" src="https://mlog.club/images/avatars/80.png"></el-avatar>
             </div>
             <div class="article-main-content">
               <div class="top">
@@ -221,23 +228,33 @@ export default {
     width: 40%;
   }
 }
-
-.tag-list{
+.left-main-container{
+  //width: 30%;
+  .tag-list{
   padding: 10px 20px 10px;
-  //width: 60%;
-  background-color: #f9f9f9;
-}
-.tag-box{
-  display: flex;
-  justify-content: flex-start;
-  img{
-    width: 20px;
-    background-color: white;
+    display: flex;
+    flex-direction: column; /* 纵向排列 */
+    background-color: #f9f9f9;
+    .tag-box{
+      border-radius: 1px;
+      border: aliceblue 1px solid;
+      margin-bottom: 10px;
+      padding: 8px 15px 8px;
+      display: flex;
+      justify-content: flex-start;
+      img{
+        width: 20px;
+        background-color: white;
+      }
+      .title{
+        margin-left: 18px;
+        font-size: 13px;
+      }
+    }
   }
-  .title{
-    margin-left: 8px;
-  }
 }
+
+
 .article-list{
   display: flex;
   flex-direction: column; /* 纵向排列 */
