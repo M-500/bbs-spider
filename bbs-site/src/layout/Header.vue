@@ -40,12 +40,13 @@ export default {
   height: 44px;
   background: #fff;
   padding-right: 120px;
-  padding-left: 120px;
+  padding-left: 150px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .logo {
+  align-items: center;
   img{
     height: 30px;
     //max-width: 100%;

@@ -30,6 +30,7 @@ export default {
 }
 .el-header{
   padding: 0;
+  align-items: center;
 }
 
 </style>
