@@ -26,6 +26,7 @@ func InitWebServer(path string) *gin.Engine {
 	iArticleService := service.NewArticleService(articleRepository)
 	articleHandler := handler.NewArticleHandler(iArticleService)
 	router := web.NewRouter(articleHandler)
-	engine := ioc.InitGin(router)
+	v := ioc.InitMiddleware(config)
+	engine := ioc.InitGin(router, v)
 	return engine
 }

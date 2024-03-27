@@ -3,12 +3,12 @@ package ioc
 import (
 	"context"
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/zipkin"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
-	trace2 "go.opentelemetry.io/otel/trace"
 	"time"
 )
 
@@ -16,16 +16,10 @@ import (
 // @Author 代码小学生王木木
 // @Date 2024-03-26 11:42
 
-func SetUpOTEL() func(ctx context.Context) {
-	// 模块抽象成Resource
-	res, err := newResource("webook", "v0.0.1")
-	if err != nil {
-		panic(err)
-	}
+func SetUpOTEL(cfg *Config) func(ctx context.Context) {
 	prop := newPropagator() // 初始化一个Propagator
 	otel.SetTextMapPropagator(prop)
-
-	tp, err := newTraceProvider(res)
+	tp, err := newTraceProvider(cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -35,17 +29,10 @@ func SetUpOTEL() func(ctx context.Context) {
 	}
 }
 
-func newResource(serviceName, serviceVersion string) (*resource.Resource, error) {
-	return resource.Merge(resource.Default(),
-		resource.NewWithAttributes(semconv.SchemaURL,
-			semconv.ServiceName(serviceName),
-			semconv.ServiceVersion(serviceVersion),
-		))
-}
-
-func newTraceProvider(res *resource.Resource) (*trace.TracerProvider, error) {
-	exporter, err := zipkin.New(
-		"http://192.168.1.52:9411/api/v2/spans")
+func newTraceProvider(cfg *Config) (*trace.TracerProvider, error) {
+	exporter, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(cfg.OTELCfg.Url)))
+	//exporter, err := zipkin.New(
+	//	"http://192.168.1.52:9411/api/v2/spans")
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +41,12 @@ func newTraceProvider(res *resource.Resource) (*trace.TracerProvider, error) {
 		trace.WithBatcher(exporter,
 			// Default is 5s. Set to 1s for demonstrative purposes.
 			trace.WithBatchTimeout(time.Second)),
-		trace.WithResource(res),
+		trace.WithResource(resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceNameKey.String(cfg.ServiceName),
+			attribute.String("environment", cfg.ServiceVersion),
+			attribute.Int64("ID", cfg.ServiceId),
+		)),
 	)
 	return traceProvider, nil
 }

@@ -32,6 +32,7 @@ func InitWebServer(path string) *gin.Engine {
 
 		web.NewRouter,
 
+		ioc.InitMiddleware,
 		ioc.InitGin,
 	)
 	return new(gin.Engine)
