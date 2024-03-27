@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Layout from '@/views/Layout'
 import home from "../pages/home.vue";
 import Login from "../pages/Login.vue";
-
+import Article from "../layout/edit/Article.vue";
 
 Vue.use(Router)
 
@@ -18,6 +18,11 @@ export default new Router({
           path: '/home',
           name: 'home',
           component: home,
+        },
+        {
+          path: '/article/edit',
+          name: 'Article',
+          component: Article,
         },
         {
           path: '/login',

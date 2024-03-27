@@ -12,12 +12,11 @@
 <script>
 
 import Header from "../layout/Header.vue";
-import Aside from "../layout/Aside.vue";
 import Footer from "../layout/Footer.vue";
 import Container from "../layout/Container.vue";
 export default {
   name: 'Layout',
-  components: {Footer, Aside, Header,Container},
+  components: {Footer, Header,Container},
 }
 </script>
 <style scoped>
