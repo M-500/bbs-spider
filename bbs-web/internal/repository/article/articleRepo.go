@@ -36,14 +36,13 @@ func NewArticleRepo(artDao dao.ArticleDAO) ArticleRepository {
 }
 
 func (repo *articleRepo) Create(ctx context.Context, art domain.Article) (int64, error) {
-	//TODO implement me
 	return repo.artDao.Insert(ctx, dao.ArticleModel{
 		AuthorId:    0,
 		Title:       art.Title,
 		Summary:     art.Summary,
 		Content:     art.Content,
-		ContentType: art.Content,
-		Cover:       art.Content,
+		ContentType: art.ContentType,
+		Cover:       art.Cover,
 		Status:      int(art.Status),
 	})
 }
@@ -58,8 +57,8 @@ func (repo *articleRepo) Update(ctx context.Context, art domain.Article) error {
 		Title:       art.Title,
 		Summary:     art.Summary,
 		Content:     art.Content,
-		ContentType: art.Content,
-		Cover:       art.Content,
+		ContentType: art.ContentType,
+		Cover:       art.Cover,
 		Status:      int(art.Status),
 	})
 }

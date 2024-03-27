@@ -3,6 +3,7 @@ package handler
 import (
 	"bbs-web/internal/service"
 	"bbs-web/internal/web/vo"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,6 +29,7 @@ func NewArticleHandler(svc service.IArticleService) *ArticleHandler {
 func (h *ArticleHandler) Edit(ctx *gin.Context) {
 	var req vo.ArticleReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
+		fmt.Println(err)
 		ctx.JSON(401, gin.H{
 			"msg": "用户输入的数据有问题",
 		})

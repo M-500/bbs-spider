@@ -16,11 +16,13 @@ type Article struct {
 	Title   string
 	Content string
 	// Author 要从用户来
-	Author  Author
-	Status  ArticleStatus
-	Summary string
-	Ctime   time.Time
-	Utime   time.Time
+	Author      Author
+	Status      ArticleStatus
+	Summary     string
+	ContentType string
+	Cover       string
+	Ctime       time.Time
+	Utime       time.Time
 }
 
 type ArticleStatus uint8
