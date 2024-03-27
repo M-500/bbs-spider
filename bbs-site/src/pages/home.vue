@@ -231,7 +231,7 @@ export default {
 .left-main-container{
   //width: 30%;
   .tag-list{
-  padding: 10px 20px 10px;
+  padding: 10px 0 10px;
     display: flex;
     flex-direction: column; /* 纵向排列 */
     background-color: #f9f9f9;
@@ -239,6 +239,7 @@ export default {
       border-radius: 1px;
       border: aliceblue 1px solid;
       margin-bottom: 10px;
+      margin-right:20px;
       padding: 8px 15px 8px;
       display: flex;
       justify-content: flex-start;

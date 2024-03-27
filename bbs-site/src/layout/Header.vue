@@ -12,6 +12,9 @@ export default {
     },
     toHome () {
       this.$router.push('/home')
+    },
+    toEdit () {
+      this.$router.push('/article/edit')
     }
   },
 
@@ -26,7 +29,7 @@ export default {
       </div>
     </div>
     <div class="show-login">
-      <el-button size="mini" icon="el-icon-edit" type="primary">发表</el-button>
+      <el-button size="mini" icon="el-icon-edit" type="primary" @click="toEdit">发表</el-button>
       <el-button size="mini" plain @click="toLogin">登录</el-button>
     </div>
   </div>
