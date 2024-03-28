@@ -406,6 +406,22 @@ export default {
         </div>
       </div>
       <div class="right-item">
+        <div class="rightBox">
+          <div class="notice">
+            <div class="cardTitle">公告</div>
+            <div class="cardContent">欢迎访问 码农俱乐部 点击这里设置您的邮箱 可以接收站内跟帖、回复邮件提醒，不错过任何一条消息。</div>
+          </div>
+          <div class="ranking">
+            <div class="rankingTitle">积分排行</div>
+            <div class="rankingContent">
+              <div class="rankingCard">
+                <div class="left">
+                  <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
       </div>
     </div>
@@ -424,15 +440,17 @@ export default {
 }
 .right-main {
   width: 80%;
-  .left-item {
-    width: 60%;
-  }
-  .right-item {
-    width: 40%;
-  }
+  display: flex;
+  justify-content: flex-start;
+}
+.left-item {
+  width: 60%;
+}
+.right-item {
+  width: 25%;
+  margin-left: 10px;
 }
 .left-main-container {
-  //width: 30%;
   .tag-list {
     padding: 10px 0 10px;
     display: flex;
@@ -523,5 +541,40 @@ export default {
       }
     }
   }
+}
+
+.rightBox {
+  display: flex;
+  margin-bottom: 10px;
+  flex-direction: column; /* 纵向排列 */
+}
+.notice {
+  background-color: #f9f9f9;
+  padding: 10px 24px 25px;
+  border-radius: 5px;
+  display: flex;
+
+  flex-direction: column; /* 纵向排列 */
+}
+.cardTitle {
+  padding-bottom: 12px;
+  border-bottom: #70727c 1px solid;
+}
+.cardContent {
+  padding-top: 8px;
+  font-weight: 400;
+  font-size: small;
+}
+.ranking {
+  margin-top: 12px;
+  background-color: #f9f9f9;
+  padding: 10px 24px 25px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column; /* 纵向排列 */
+}
+.rankingTitle {
+  padding-bottom: 12px;
+  border-bottom: #70727c 1px solid;
 }
 </style>
