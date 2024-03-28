@@ -3,7 +3,7 @@ package handler
 import (
 	"bbs-web/internal/service"
 	"bbs-web/internal/web/vo"
-	"fmt"
+	"bbs-web/pkg/ginplus"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,28 +26,19 @@ func NewArticleHandler(svc service.IArticleService) *ArticleHandler {
 //	@Description: 编辑文章
 //	@receiver h
 //	@param ctx
-func (h *ArticleHandler) Edit(ctx *gin.Context) {
-	var req vo.ArticleReq
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		fmt.Println(err)
-		ctx.JSON(401, gin.H{
-			"msg": "用户输入的数据有问题",
-		})
-		return
-	}
+func (h *ArticleHandler) Edit(ctx *gin.Context, req vo.ArticleReq) (ginplus.Result, error) {
+
 	// 获取用户
 	//get := ctx.MustGet(constant.JWT_USET_Key)
 	//claims, ok := c.(ijwt.UserClaims) 做类型断言
 	// 超时控制
 	id, err := h.svc.Save(ctx.Request.Context(), req.ToDomain(1))
 	if err != nil {
-		return
+		return ginplus.Result{}, err
 	}
-	ctx.JSON(200, gin.H{
-		"msg":  "好好好",
-		"data": id,
-	})
-	return
+	return ginplus.Result{
+		Data: id,
+	}, nil
 }
 
 // Withdraw

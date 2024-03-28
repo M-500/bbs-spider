@@ -13,6 +13,7 @@ type Config struct {
 	ServiceId      int64          `mapstructure:"service_id"`
 	ServiceVersion string         `mapstructure:"service_version"`
 	ServicePort    string         `mapstructure:"service_port"`
+	Language       string         `mapstructure:"language"`
 	PrometheusPort string         `mapstructure:"prometheus_port"`
 	Database       DatabaseConfig `mapstructure:"database"`
 	Redis          RedisConfig    `mapstructure:"redis"`

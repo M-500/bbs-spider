@@ -7,12 +7,12 @@ import "bbs-web/internal/domain"
 // @Date 2024-03-27 11:55
 
 type ArticleReq struct {
-	Id          int64  `json:"id"`
-	Title       string `json:"title"`
-	Content     string `json:"content"`
-	Summary     string `json:"summary"`
-	ContentType string `json:"content_type"`
-	Cover       string `json:"cover"`
+	Id          int64  `json:"id" binding:"-"`
+	Title       string `json:"title" binding:"required"`
+	Content     string `json:"content" binding:"required"`
+	Summary     string `json:"summary" binding:"-"`
+	ContentType string `json:"content_type" binding:"required"`
+	Cover       string `json:"cover" binding:"-"`
 }
 
 func (req ArticleReq) ToDomain(uid int64) domain.Article {

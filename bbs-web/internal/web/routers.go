@@ -2,6 +2,8 @@ package web
 
 import (
 	"bbs-web/internal/web/handler"
+	"bbs-web/internal/web/vo"
+	"bbs-web/pkg/ginplus"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,7 +28,7 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 
 	articleGroup := engine.Group("/articles")
 	{
-		articleGroup.POST("/edit", r.artHdl.Edit)
+		articleGroup.POST("/edit", ginplus.WrapJson[vo.ArticleReq](r.artHdl.Edit))
 		articleGroup.POST("/withdraw", r.artHdl.Withdraw)
 		articleGroup.POST("/publish", r.artHdl.Publish)
 		articleGroup.POST("/list", r.artHdl.List)

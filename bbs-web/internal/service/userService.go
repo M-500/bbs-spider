@@ -42,6 +42,8 @@ func (u *userService) CreateUser(ctx context.Context, username, pwd string) (dom
 	return insert, nil
 }
 
-func NewUserService() IUserService {
-	return &userService{}
+func NewUserService(dao1 dao.IUserDao) IUserService {
+	return &userService{
+		dao: dao1,
+	}
 }

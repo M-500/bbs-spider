@@ -5,6 +5,7 @@ service_id: 1
 service_port: ":8002"
 service_version: "v0.0.1"
 prometheus_port: ":8001"
+language: "zh"
 
 database:
   dsn: "admin:123456@tcp(192.168.1.52:3306)/bbs-gin?charset=utf8mb4&parseTime=True&loc=Local"
