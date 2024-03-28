@@ -6,9 +6,9 @@ import router from './router'
 import './assets/css/style.css'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-
+import mavonEditor from 'mavon-editor'
 Vue.use(ElementUI);
-
+Vue.use(mavonEditor);
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

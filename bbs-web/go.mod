@@ -10,6 +10,7 @@ require (
 	github.com/google/wire v0.6.0
 	github.com/mojocn/base64Captcha v1.3.6
 	github.com/prometheus/client_golang v1.19.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/viper v1.18.2
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.49.0
 	go.opentelemetry.io/otel v1.24.0

@@ -20,6 +20,7 @@ type IArticleService interface {
 	List(ctx context.Context, uid int64, offset int, limit int) ([]domain.Article, error)
 	ListPub(ctx context.Context, start time.Time, offset, limit int) ([]domain.Article, error)
 	GetById(ctx context.Context, id int64) (domain.Article, error)
+	GetByIds(ctx context.Context, biz string, ids []int64) ([]domain.Article, error)
 	GetPublishedById(ctx context.Context, id, uid int64) (domain.Article, error)
 }
 
@@ -73,6 +74,11 @@ func (svc *articleService) GetById(ctx context.Context, id int64) (domain.Articl
 }
 
 func (svc *articleService) GetPublishedById(ctx context.Context, id, uid int64) (domain.Article, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (svc *articleService) GetByIds(ctx context.Context, biz string, ids []int64) ([]domain.Article, error) {
 	//TODO implement me
 	panic("implement me")
 }
