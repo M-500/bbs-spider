@@ -12,21 +12,23 @@ import (
 // @Date 2024-03-26 15:28
 
 type Router struct {
-	//userHdl handler.UserHandler
+	userHdl *handler.UserHandler
 	artHdl  *handler.ArticleHandler
 	codeHdl *handler.CaptchaHandler
 }
 
-func NewRouter(artHdl *handler.ArticleHandler, codeHdl *handler.CaptchaHandler) *Router {
+func NewRouter(artHdl *handler.ArticleHandler, codeHdl *handler.CaptchaHandler, userHdl *handler.UserHandler) *Router {
 	return &Router{
 		//userHdl: userHdl,
 		artHdl:  artHdl,
 		codeHdl: codeHdl,
+		userHdl: userHdl,
 	}
 }
 
 func (r *Router) RegisterURL(engine *gin.Engine) {
-	//engine.POST("", r.userHdl.PwdLogin) // 账号密码登录
+	engine.POST("/sign-up", ginplus.WrapJson[vo.RegisterUserReq](r.userHdl.Register)) // 账号密码登录
+
 	engine.GET("/code", ginplus.Wrap(r.codeHdl.ImageCaptcha))
 
 	articleGroup := engine.Group("/articles")

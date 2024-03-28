@@ -4,6 +4,7 @@ package main
 
 import (
 	"bbs-web/internal/ioc"
+	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/article"
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/service"
@@ -23,14 +24,18 @@ func InitWebServer(path string) *gin.Engine {
 		ioc.InitDatabase,
 
 		dao.NewArticleDao,
+		dao.NewUserDao,
 
 		article.NewArticleRepo,
+		repository.NewUserRepo,
 
 		service.NewArticleService,
 		service.NewCaptchaService,
+		service.NewUserService,
 
 		handler.NewArticleHandler,
 		handler.NewCaptchaHandler,
+		handler.NewUserHandler,
 
 		web.NewRouter,
 

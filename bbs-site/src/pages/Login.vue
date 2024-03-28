@@ -86,7 +86,7 @@ export default {
         <h1>欢迎光临！</h1>
       </div>
       <el-form ref="form" :rules="rules" :model="form" class="loginForm" size="middle">
-        <el-form-item prop="user_name">
+        <el-form-item prop="username">
           <el-input v-model="form.username" prefix-icon="el-icon-mobile-phone" placeholder="请输入用户名/手机号"></el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -113,7 +113,7 @@ export default {
 .container {
   height: 100%;
   /*background: url("../assets/992390.jpg") no-repeat center;;*/
-  background-color: #282c34;
+  /* background-color: #282c34; */
   /* 假设用flex布局的话*/
   /*display: flex;*/
   /*justify-content: center;*/

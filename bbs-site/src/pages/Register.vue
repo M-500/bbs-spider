@@ -6,7 +6,7 @@
       </div>
       <div class="regForm">
         <el-form ref="form" :rules="rules" :model="form" class="loginForm" size="middle">
-          <el-form-item prop="user_name">
+          <el-form-item prop="username">
             <el-input v-model="form.username" prefix-icon="el-icon-mobile-phone" placeholder="请输入用户名"></el-input>
           </el-form-item>
           <el-form-item prop="password">
@@ -21,30 +21,29 @@
               <img @click="getCaptchaImg" class="captcha__img" :src="captchaUri" alt="" />
             </div>
           </el-form-item>
-          <el-form-item>
-            <el-button class="loginBtn" type="primary" @click="submitForm('form')">登录</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-button class="regBtn" type="primary" @click="toRegister('form')">注册</el-button>
-          </el-form-item>
         </el-form>
+      </div>
+      <div class="btn">
+        <el-button class="loginBtn" type="primary" @click="toLogin('form')">登录</el-button>
+        <el-button class="regBtn" type="primary" @click="submitForm('form')">注册</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { imageCaptchaAPI } from "@/api/sign-in/login";
+import { imageCaptchaAPI, registerAPI } from "@/api/sign-in/login";
 export default ({
   name: '',
   data() {
     return {
       captchaUri: "",
       form: {
-        username: '',
-        rpassword: '',
+        username: 'admin',
+        rpassword: 'wulinlin',
+        captcha_id: '',
         captcha_code: '',
-        password: ''
+        password: 'wulinlin'
       },
       rules: {
         username: [
@@ -80,6 +79,22 @@ export default ({
     this.getCaptchaImg();
   },
   methods: {
+    toLogin() {
+      this.$router.push('/login')
+    },
+    submitForm(form) {
+      this.$refs[form].validate(async valid => {
+        if (!valid) return this.$message.error('非法输入数据，请重新输入')
+        registerAPI(this.form).then((res) => {
+          console.log(res)
+        }).catch((e) => {
+          this.$message({
+            message: e.msg,
+            type: "error",
+          });
+        });
+      })
+    },
     getCaptchaImg() {
       imageCaptchaAPI()
         .then((res) => {
@@ -101,7 +116,7 @@ export default ({
 }
 .regBox {
   width: 450px;
-  height: 450px;
+  /* height: 450px; */
   position: absolute;
   top: 45%;
   left: 50%;
@@ -117,6 +132,7 @@ export default ({
 .title {
   display: flex;
   justify-content: center;
+  margin-bottom: 20px;
 }
 
 .captcha {
@@ -130,5 +146,16 @@ export default ({
   width: 150px;
   height: 40px;
   border-bottom: 1px solid #dbdbdb;
+}
+.btn {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+.regBtn {
+  color: #ffffff;
+  background: linear-gradient(to right, #ecf0f1, #3498db);
+  margin-left: 30px;
 }
 </style>

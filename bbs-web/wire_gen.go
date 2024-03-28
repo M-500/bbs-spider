@@ -8,6 +8,7 @@ package main
 
 import (
 	"bbs-web/internal/ioc"
+	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/article"
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/service"
@@ -27,7 +28,11 @@ func InitWebServer(path string) *gin.Engine {
 	articleHandler := handler.NewArticleHandler(iArticleService)
 	iCaptchaSvc := service.NewCaptchaService()
 	captchaHandler := handler.NewCaptchaHandler(iCaptchaSvc)
-	router := web.NewRouter(articleHandler, captchaHandler)
+	iUserDao := dao.NewUserDao(db)
+	iUserRepo := repository.NewUserRepo(iUserDao)
+	iUserService := service.NewUserService(iUserRepo)
+	userHandler := handler.NewUserHandler(iUserService, iCaptchaSvc)
+	router := web.NewRouter(articleHandler, captchaHandler, userHandler)
 	v := ioc.InitMiddleware(config)
 	engine := ioc.InitGin(router, v)
 	return engine
