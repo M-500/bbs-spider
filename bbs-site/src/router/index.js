@@ -5,6 +5,7 @@ import home from "../pages/home.vue";
 import Login from "../pages/Login.vue";
 import Article from "../pages/edit/Article.vue";
 import Register from "../pages/Register.vue"
+import Detail from "../pages/Detail.vue"
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
           path: '/sign-up',
           name: 'Register',
           component: Register
+        },
+        {
+          path: '/detail',
+          name: 'Detail',
+          component: Detail
         }
       ]
     },
