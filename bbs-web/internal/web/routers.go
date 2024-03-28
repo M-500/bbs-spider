@@ -13,18 +13,21 @@ import (
 
 type Router struct {
 	//userHdl handler.UserHandler
-	artHdl *handler.ArticleHandler
+	artHdl  *handler.ArticleHandler
+	codeHdl *handler.CaptchaHandler
 }
 
-func NewRouter(artHdl *handler.ArticleHandler) *Router {
+func NewRouter(artHdl *handler.ArticleHandler, codeHdl *handler.CaptchaHandler) *Router {
 	return &Router{
 		//userHdl: userHdl,
-		artHdl: artHdl,
+		artHdl:  artHdl,
+		codeHdl: codeHdl,
 	}
 }
 
 func (r *Router) RegisterURL(engine *gin.Engine) {
 	//engine.POST("", r.userHdl.PwdLogin) // 账号密码登录
+	engine.GET("/code", ginplus.Wrap(r.codeHdl.ImageCaptcha))
 
 	articleGroup := engine.Group("/articles")
 	{

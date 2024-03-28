@@ -6,14 +6,15 @@ import (
 	"net/http"
 )
 
-func Wrap(targetFunc func(ctx *gin.Context) (any, error)) gin.HandlerFunc {
+func Wrap(targetFunc func(ctx *gin.Context) (Result, error)) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// 请求之前可以做事情
-		a, err := targetFunc(ctx)
+		res, err := targetFunc(ctx) // 真正的业务逻辑
 		if err != nil {
-			// 记录日志，处理Error
+			fmt.Println("执行业务逻辑错误")
+			// TODO 这里要记录日志，或者监控啥的
 		}
-		ctx.JSON(http.StatusOK, a)
+		ctx.JSON(http.StatusOK, res)
+		return
 	}
 }
 

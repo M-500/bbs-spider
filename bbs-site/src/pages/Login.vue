@@ -1,8 +1,11 @@
 <script>
+
+import { imageCaptchaAPI } from "@/api/sign-in/login";
 export default {
-  name:'PwdLogin',
-  data () {
+  name: 'PwdLogin',
+  data() {
     return {
+      captchaUri: "",
       form: {
         username: '',
         password: ''
@@ -37,8 +40,21 @@ export default {
       }
     }
   },
+  created() {
+    this.getCaptchaImg();
+  },
   methods: {
-    submitForm (form) {
+    getCaptchaImg() {
+      imageCaptchaAPI()
+        .then((res) => {
+          this.form.captcha_id = res.captcha_id;
+          this.captchaUri = res.pic_path;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    submitForm(form) {
       this.$refs[form].validate(async valid => {
         if (!valid) return this.$message.error('非法输入数据，请重新输入')
         const { data: res } = await this.$http.post('sj/login', this.form)
@@ -53,7 +69,7 @@ export default {
         await this.$router.push('admin/index')
       })
     },
-    resetForm (form) {
+    resetForm(form) {
       this.$refs[form].resetFields()
     }
   }
@@ -66,14 +82,19 @@ export default {
       <h1 class="title">欢迎光临！</h1>
       <el-form ref="form" :rules="rules" :model="form" class="loginForm" size="middle">
         <el-form-item prop="user_name">
-          <el-input v-model="form.username" prefix-icon="el-icon-mobile-phone" placeholder="请输入用户名/手机号"
-          ></el-input>
+          <el-input v-model="form.username" prefix-icon="el-icon-mobile-phone" placeholder="请输入用户名/手机号"></el-input>
         </el-form-item>
-        <el-form-item prop="password" >
+        <el-form-item prop="password">
           <el-input v-model="form.password" type="password" prefix-icon="el-icon-lock" placeholder="请输入密码"></el-input>
         </el-form-item>
-        <el-form-item >
-          <el-button class="loginBtn" type="primary" @click="submitForm('form')" >登录</el-button>
+        <el-form-item prop="captcha_code">
+          <div class="captcha">
+            <el-input v-model="form.captcha_code" placeholder="图片验证码" prefix-icon="el-icon-document"></el-input>
+            <img @click="getCaptchaImg" class="captcha__img" :src="captchaUri" alt="" />
+          </div>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="loginBtn" type="primary" @click="submitForm('form')">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -90,7 +111,6 @@ export default {
   /*justify-content: center;*/
   /*align-items: center;*/
 }
-
 
 .loginBox {
   width: 450px;
@@ -111,8 +131,7 @@ export default {
 
 .loginForm {
   background-color: rgba($color: #fff, $alpha: 0.1);
-  width: 100%;
-  //position: absolute;
+  position: absolute;
   bottom: 15%;
   padding: 0 25px;
   box-sizing: border-box;
@@ -126,7 +145,21 @@ export default {
   font-stretch: normal;
   letter-spacing: 2px;
   color: #ffffff;
-  background-image: linear-gradient(0deg, #0176e4 0%, #00b8ff 100%), linear-gradient(#00b8ff, #00b8ff);
+  background-image: linear-gradient(0deg, #0176e4 0%, #00b8ff 100%),
+    linear-gradient(#00b8ff, #00b8ff);
   background-blend-mode: normal, normal;
+}
+
+.captcha {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.captcha__img {
+  margin-left: 20px;
+  width: 150px;
+  height: 40px;
+  border-bottom: 1px solid #dbdbdb;
 }
 </style>

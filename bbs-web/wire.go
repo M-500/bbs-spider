@@ -27,8 +27,10 @@ func InitWebServer(path string) *gin.Engine {
 		article.NewArticleRepo,
 
 		service.NewArticleService,
+		service.NewCaptchaService,
 
 		handler.NewArticleHandler,
+		handler.NewCaptchaHandler,
 
 		web.NewRouter,
 

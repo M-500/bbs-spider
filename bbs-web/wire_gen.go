@@ -25,7 +25,9 @@ func InitWebServer(path string) *gin.Engine {
 	articleRepository := article.NewArticleRepo(articleDAO)
 	iArticleService := service.NewArticleService(articleRepository)
 	articleHandler := handler.NewArticleHandler(iArticleService)
-	router := web.NewRouter(articleHandler)
+	iCaptchaSvc := service.NewCaptchaService()
+	captchaHandler := handler.NewCaptchaHandler(iCaptchaSvc)
+	router := web.NewRouter(articleHandler, captchaHandler)
 	v := ioc.InitMiddleware(config)
 	engine := ioc.InitGin(router, v)
 	return engine
