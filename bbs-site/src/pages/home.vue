@@ -1,6 +1,11 @@
-<script setup>
+<script>
 export default {
   name: 'home',
+  methods: {
+    toDetail() {
+      this.$router.push('/detail')
+    },
+  }
 }
 </script>
 
@@ -25,7 +30,7 @@ export default {
     <div class="right-main">
       <div class="left-item">
         <div class="article-list">
-          <div class="article-item">
+          <div class="article-item" @click="toDetail">
             <div class="avatar">
               <el-avatar :size="50" src="https://mlog.club/images/avatars/80.png"></el-avatar>
             </div>

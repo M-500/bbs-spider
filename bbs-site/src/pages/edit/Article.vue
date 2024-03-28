@@ -1,11 +1,14 @@
 <script>
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import { editArticleAPI } from '@/api/article/edit'
 export default {
   name: 'ArticleEdit',
   data() {
     return {
       form: {
+        id: 0,
+        content_type: 'article',
         title: '',
         summary: '',
         cover: '',
@@ -30,7 +33,14 @@ export default {
       return isJPG && isLt2M;
     },
     onSubmit() {
+      editArticleAPI(this.form).then((res) => {
 
+      }).catch((e) => {
+        this.$message({
+          message: e.msg,
+          type: "error",
+        });
+      })
       console.log(this.form)
     },
   }

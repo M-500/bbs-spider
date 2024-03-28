@@ -7,7 +7,25 @@
         </div>
 
         <div class="articleComment">
-          这里是评论区域
+          <div class="commentForm">
+            <div class="commentTitle">3条评论</div>
+            <div class="commentData">
+              <el-input v-model="input" type="textarea" :rows="2" placeholder="请输入内容"></el-input>
+            </div>
+          </div>
+          <div class="comment-list">
+            <el-card v-for="comment in comments" :key="comment.id" class="comment-card">
+              <div slot="header" class="clearfix">
+                <span>评论人：{{ comment.author }}</span>
+                <el-avatar :src="comment.avatar" size="small" shape="circle" class="avatar"></el-avatar>
+              </div>
+              <div class="comment-content">{{ comment.content }}</div>
+              <div class="child-comments">
+                <comment-list :comments="comment.children" v-if="comment.children && comment.children.length > 0"></comment-list>
+              </div>
+            </el-card>
+          </div>
+
         </div>
       </div>
     </div>
@@ -27,6 +45,48 @@ export default ({
         title: "关于我是个大傻逼",
         content: "# 傻子\n\n```\nPython\n```\n\n",
       },
+      comments: [
+        {
+          id: 1,
+          author: 'Alice',
+          avatar: 'https://via.placeholder.com/50',
+          content: '这是一条评论。'
+        },
+        {
+          id: 2,
+          author: 'Bob',
+          avatar: 'https://via.placeholder.com/50',
+          content: '这是另一条评论。',
+          children: [
+            {
+              id: 21,
+              author: 'Charlie',
+              avatar: 'https://via.placeholder.com/50',
+              content: '这是 Bob 的回复。'
+            },
+            {
+              id: 22,
+              author: 'David',
+              avatar: 'https://via.placeholder.com/50',
+              content: '这是另一条回复。',
+              children: [
+                {
+                  id: 221,
+                  author: 'Eva',
+                  avatar: 'https://via.placeholder.com/50',
+                  content: '这是 David 的回复。'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 3,
+          author: 'Eve',
+          avatar: 'https://via.placeholder.com/50',
+          content: '这是另一条评论。'
+        }
+      ]
     }
   },
   methods: {
@@ -71,6 +131,12 @@ export default ({
 .articlePage {
   background-color: #f9f9f9;
   padding: 10px 24px 25px;
-  border-radius: 5px;
+  border-radius: 2px;
+}
+.articleComment {
+  margin-top: 5px;
+  background-color: #f9f9f9;
+  padding: 10px 24px 25px;
+  border-radius: 2px;
 }
 </style>

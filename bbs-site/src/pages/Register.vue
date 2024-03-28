@@ -102,7 +102,10 @@ export default ({
           this.captchaUri = res.pic_path;
         })
         .catch((e) => {
-          console.log(e);
+          this.$message({
+            message: e.msg,
+            type: "error",
+          });
         });
     },
   }
