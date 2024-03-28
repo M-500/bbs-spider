@@ -34,7 +34,9 @@ func (h *ArticleHandler) Edit(ctx *gin.Context, req vo.ArticleReq) (ginplus.Resu
 	// 超时控制
 	id, err := h.svc.Save(ctx.Request.Context(), req.ToDomain(1))
 	if err != nil {
-		return ginplus.Result{}, err
+		return ginplus.Result{
+			Msg: "系统异常",
+		}, err
 	}
 	return ginplus.Result{
 		Data: id,

@@ -31,8 +31,13 @@ func A(ctx *gin.Context) {
 
 }
 
+func D(a, b int) int {
+	return a + b
+}
+
 func B() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		ctx.JSON(200, gin.H{
 			"msg": "不错",
 		})
