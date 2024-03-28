@@ -73,7 +73,6 @@ export default {
   height: 100%;
   display: flex;
   justify-content: center;
-  background-color: #282c34;
 }
 .edit-container {
   width: 80%;

@@ -54,6 +54,9 @@ export default {
           console.log(e);
         });
     },
+    toRegister() {
+      this.$router.push('/sign-up');
+    },
     submitForm(form) {
       this.$refs[form].validate(async valid => {
         if (!valid) return this.$message.error('非法输入数据，请重新输入')
@@ -79,7 +82,9 @@ export default {
 <template>
   <div class="main_container">
     <div class="loginBox">
-      <h1 class="title">欢迎光临！</h1>
+      <div class="title">
+        <h1>欢迎光临！</h1>
+      </div>
       <el-form ref="form" :rules="rules" :model="form" class="loginForm" size="middle">
         <el-form-item prop="user_name">
           <el-input v-model="form.username" prefix-icon="el-icon-mobile-phone" placeholder="请输入用户名/手机号"></el-input>
@@ -95,6 +100,9 @@ export default {
         </el-form-item>
         <el-form-item>
           <el-button class="loginBtn" type="primary" @click="submitForm('form')">登录</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="regBtn" type="primary" @click="toRegister('form')">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -114,7 +122,7 @@ export default {
 
 .loginBox {
   width: 450px;
-  height: 500px;
+  height: 450px;
   /*background-color:  #f9f9f9;*/
   position: absolute;
   top: 45%;
@@ -128,11 +136,15 @@ export default {
   padding: 20px; /* 内边距 */
   margin: 20px; /* 外边距 */
 }
+.title {
+  display: flex;
+  justify-content: center;
+}
 
 .loginForm {
   background-color: rgba($color: #fff, $alpha: 0.1);
   position: absolute;
-  bottom: 15%;
+  bottom: 10%;
   padding: 0 25px;
   box-sizing: border-box;
 }
@@ -145,8 +157,18 @@ export default {
   font-stretch: normal;
   letter-spacing: 2px;
   color: #ffffff;
-  background-image: linear-gradient(0deg, #0176e4 0%, #00b8ff 100%),
-    linear-gradient(#00b8ff, #00b8ff);
+  background: linear-gradient(to right, #193441, #3e606f);
+  background-blend-mode: normal, normal;
+}
+.regBtn {
+  height: 44px;
+  width: 100%;
+  font-size: 20px;
+  font-weight: normal;
+  font-stretch: normal;
+  letter-spacing: 2px;
+  color: #ffffff;
+  background: linear-gradient(to right, #d1dbbd, #ecf0f1);
   background-blend-mode: normal, normal;
 }
 

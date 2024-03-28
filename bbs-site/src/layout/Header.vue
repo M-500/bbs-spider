@@ -1,19 +1,19 @@
 <script>
 export default {
   name: 'Header',
-  data () {
+  data() {
     return {
 
     }
   },
-  methods:{
-    toLogin () {
+  methods: {
+    toLogin() {
       this.$router.push('/login')
     },
-    toHome () {
+    toHome() {
       this.$router.push('/home')
     },
-    toEdit () {
+    toEdit() {
       this.$router.push('/article/edit')
     }
   },
@@ -37,7 +37,8 @@ export default {
 
 <style scoped>
 .header {
-  height: 44px;
+  /* height: 44px; */
+  height: 100%;
   background: #fff;
   padding-right: 120px;
   padding-left: 150px;
@@ -47,7 +48,7 @@ export default {
 }
 .logo {
   align-items: center;
-  img{
+  img {
     height: 30px;
     //max-width: 100%;
   }

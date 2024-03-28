@@ -1,6 +1,6 @@
 <template>
   <el-container class="container">
-    <el-header>
+    <el-header class="container-header">
       <Header></Header>
     </el-header>
     <el-main>
@@ -16,7 +16,7 @@ import Footer from "../layout/Footer.vue";
 import Container from "../layout/Container.vue";
 export default {
   name: 'Layout',
-  components: {Footer, Header,Container},
+  components: { Footer, Header, Container },
 }
 </script>
 <style scoped>
@@ -25,12 +25,13 @@ export default {
 
   //background-color: #ecf5ff;
 }
-.el-main{
-  padding: 0;
+.el-main {
+  padding: 10px;
+  background: linear-gradient(to right, #91aa9d, #d1dbbd);
+  /* background-color: #91aa9d; */
 }
-.el-header{
+.el-header {
   padding: 0;
   align-items: center;
 }
-
 </style>
