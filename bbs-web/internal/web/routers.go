@@ -27,7 +27,8 @@ func NewRouter(artHdl *handler.ArticleHandler, codeHdl *handler.CaptchaHandler, 
 }
 
 func (r *Router) RegisterURL(engine *gin.Engine) {
-	engine.POST("/sign-up", ginplus.WrapJson[vo.RegisterUserReq](r.userHdl.Register)) // 账号密码登录
+	engine.POST("/sign-up", ginplus.WrapJson[vo.RegisterUserReq](r.userHdl.Register)) // 注册用户
+	engine.POST("/pwd-login", ginplus.WrapJson[vo.PwdLoginReq](r.userHdl.PwdLogin))   // 账号密码登录
 
 	engine.GET("/code", ginplus.Wrap(r.codeHdl.ImageCaptcha))
 

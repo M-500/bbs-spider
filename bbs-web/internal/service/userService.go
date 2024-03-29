@@ -4,6 +4,7 @@ import (
 	"bbs-web/internal/domain"
 	"bbs-web/internal/repository"
 	"context"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // @Description
@@ -19,6 +20,14 @@ type userService struct {
 }
 
 func (u *userService) SignUp(ctx context.Context, user domain.UserInfo) error {
+	// 加密在这里做
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Password = string(hash)
+	//user.B
+	// 随机昵称也在这里做
 	return u.repo.CreateUser(ctx, user)
 }
 

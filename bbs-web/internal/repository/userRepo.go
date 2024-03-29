@@ -19,8 +19,12 @@ type userRepo struct {
 }
 
 func (repo *userRepo) CreateUser(ctx context.Context, u domain.UserInfo) error {
-	//TODO implement me
-	panic("implement me")
+	return repo.dao.Insert(ctx, dao.UserMode{
+		Username: u.UserName,
+		Password: u.Password,
+		Nickname: u.UserName,
+		IsAdmin:  0,
+	})
 }
 
 func NewUserRepo(dao dao.IUserDao) IUserRepo {

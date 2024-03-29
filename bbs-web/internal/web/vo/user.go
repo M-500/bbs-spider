@@ -10,3 +10,10 @@ type RegisterUserReq struct {
 	CaptchaCode string `json:"captcha_code"`
 	CaptchaId   string `json:"captcha_id"`
 }
+
+type PwdLoginReq struct {
+	UserName    string `json:"user_name"`
+	Password    string `json:"password"`
+	CaptchaCode string `json:"captcha_code"`
+	CaptchaId   string `json:"captcha_id"`
+}

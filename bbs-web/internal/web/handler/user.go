@@ -6,6 +6,7 @@ package handler
 
 import (
 	"bbs-web/internal/domain"
+	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/service"
 	"bbs-web/internal/web/vo"
 	"bbs-web/pkg/ginplus"
@@ -23,13 +24,9 @@ func NewUserHandler(svc service.IUserService, acpSvc service.ICaptchaSvc) *UserH
 	return &UserHandler{svc: svc, capSvc: acpSvc}
 }
 
-func (h *UserHandler) PwdLogin(ctx *gin.Context) {
-	type Req struct {
-		UserName    string `json:"user_name"`
-		Password    string `json:"password"`
-		CaptchaCode string `json:"captcha_code"`
-		CaptchaId   string `json:"captcha_id"`
-	}
+func (h *UserHandler) PwdLogin(ctx *gin.Context, req vo.PwdLoginReq) (ginplus.Result, error) {
+
+	return ginplus.Result{}, nil
 }
 
 func (h *UserHandler) Register(ctx *gin.Context, req vo.RegisterUserReq) (ginplus.Result, error) {
@@ -50,13 +47,21 @@ func (h *UserHandler) Register(ctx *gin.Context, req vo.RegisterUserReq) (ginplu
 	err := h.svc.SignUp(ctx, domain.UserInfo{
 		Id:       0,
 		UserName: req.UserName,
-		NickName: "",
 		Password: req.Password,
 	})
+
+	if err == dao.ErrUserDuplicate {
+		return ginplus.Result{
+			Code: 501000,
+			Msg:  "注册失败，系统异常",
+		}, err
+	}
+
 	// 校验两次密码
 	if err != nil {
 		return ginplus.Result{
-			Msg: "注册失败，系统异常",
+			Code: 501005,
+			Msg:  "注册失败，系统异常",
 		}, err
 	}
 	return ginplus.Result{

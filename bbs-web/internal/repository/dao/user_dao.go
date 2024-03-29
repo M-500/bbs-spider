@@ -1,8 +1,9 @@
 package dao
 
 import (
-	"bbs-web/internal/domain"
 	"context"
+	"errors"
+	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -10,10 +11,12 @@ import (
 // @Author 代码小学生王木木
 // @Date 2024-03-26 15:13
 
+var ErrUserDuplicate = errors.New("用户名冲突")
+
 type IUserDao interface {
 	FindById(ctx context.Context, uid int64) (UserMode, error)
 	FindByUserName(ctx context.Context, username string) (bool, error)
-	Insert(ctx context.Context, mode UserMode) (domain.UserInfo, error)
+	Insert(ctx context.Context, mode UserMode) error
 }
 
 type userDao struct {
@@ -36,16 +39,20 @@ func (dao *userDao) FindByUserName(ctx context.Context, username string) (bool, 
 	return false, nil
 }
 
-func (dao *userDao) Insert(ctx context.Context, mode UserMode) (domain.UserInfo, error) {
+func (dao *userDao) Insert(ctx context.Context, mode UserMode) error {
 	err := dao.db.WithContext(ctx).Create(&mode).Error
-	if err != nil {
-		return domain.UserInfo{}, err
+	// 一定会唯一索引冲突，这里要记录一下
+	if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+		const uniqueConflictsErrNo uint16 = 1062
+		if mysqlErr.Number == uniqueConflictsErrNo {
+			// 邮箱冲突 or 手机号码冲突
+			return ErrUserDuplicate
+		}
 	}
-	return domain.UserInfo{
-		Id:       int64(mode.ID),
-		UserName: mode.Username,
-		NickName: mode.Nickname,
-	}, nil
+	if err != nil {
+		return err
+	}
+	return nil
 }
 func NewUserDao(db *gorm.DB) IUserDao {
 	return &userDao{
