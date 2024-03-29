@@ -67,7 +67,6 @@ func InitDatabase(cfg *Config) *gorm.DB {
 		tracing.WithQueryFormatter(func(query string) string {
 			//l.Debug("", logger.String("query", query))
 			return query
-
 		}),
 		// 不要记录 metrics
 		tracing.WithoutMetrics(),

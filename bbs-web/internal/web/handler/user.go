@@ -29,7 +29,16 @@ func (h *UserHandler) PwdLogin(ctx *gin.Context, req vo.PwdLoginReq) (ginplus.Re
 	return ginplus.Result{}, nil
 }
 
-func (h *UserHandler) Register(ctx *gin.Context, req vo.RegisterUserReq) (ginplus.Result, error) {
+// Register
+//
+//	@Description: 用户注册
+func (h *UserHandler) Register(ctx *gin.Context, req vo.RegisterUserReq) (ginplus.Result, error) { // Register
+	//  @Description:
+	//  @receiver h
+	//  @param ctx
+	//  @param req
+	//  @return ginplus.Result
+	//  @return error
 	// 调用server方法
 	fmt.Println(req.RPassword, req.Password, req.UserName)
 	if req.Password != req.RPassword {
@@ -42,7 +51,7 @@ func (h *UserHandler) Register(ctx *gin.Context, req vo.RegisterUserReq) (ginplu
 		return ginplus.Result{
 			Code: 501001,
 			Msg:  "验证码不正确",
-		}, errors.New("用户两次密码不相同")
+		}, errors.New("验证码不正确")
 	}
 	err := h.svc.SignUp(ctx, domain.UserInfo{
 		Id:       0,
