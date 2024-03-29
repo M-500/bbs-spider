@@ -29,7 +29,7 @@ export default {
       </div>
     </div>
     <div class="show-login">
-      <el-button size="mini" icon="el-icon-edit" type="primary" @click="toEdit">发表</el-button>
+      <el-button class="editBtn" size="mini" icon="el-icon-edit" type="primary" @click="toEdit">写文章</el-button>
       <el-button size="mini" plain @click="toLogin">登录</el-button>
     </div>
   </div>
@@ -52,5 +52,9 @@ export default {
     height: 30px;
     //max-width: 100%;
   }
+}
+.editBtn{
+  background-color: #00bbc9;
+  border: #00bbc9 1px solid;
 }
 </style>
