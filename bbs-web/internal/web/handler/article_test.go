@@ -9,6 +9,7 @@ import (
 	"bbs-web/internal/service/svcmocks"
 	"bbs-web/internal/web/vo"
 	"bbs-web/pkg/ginplus"
+	"bbs-web/pkg/logger"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -112,7 +113,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			h := NewArticleHandler(tt.mock(ctrl))
+			h := NewArticleHandler(tt.mock(ctrl), logger.NewNoOpLogger())
 			serverTest.POST("/articles/publish", ginplus.WrapJson[vo.ArticleReq](h.Publish))
 
 			req, err := http.NewRequest(http.MethodPost, "/articles/publish", bytes.NewBuffer([]byte(tt.reqBody)))

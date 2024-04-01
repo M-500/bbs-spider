@@ -49,8 +49,13 @@ func (svc *articleService) Withdraw(ctx context.Context, art domain.Article) err
 }
 
 func (svc *articleService) Publish(ctx context.Context, art domain.Article) (int64, error) {
-	//TODO implement me
-	panic("implement me")
+	// 制作库新增数据
+	id, err := svc.repo.Create(ctx, art)
+	if err != nil {
+
+	}
+	// 线上库同步数据
+
 }
 
 func (svc *articleService) PublishV1(ctx context.Context, art domain.Article) (int64, error) {
