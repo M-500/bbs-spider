@@ -4,6 +4,7 @@ import (
 	"bbs-web/internal/service"
 	"bbs-web/internal/web/vo"
 	"bbs-web/pkg/ginplus"
+	"bbs-web/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,11 +14,13 @@ import (
 
 type ArticleHandler struct {
 	svc service.IArticleService
+	log logger.Logger
 }
 
-func NewArticleHandler(svc service.IArticleService) *ArticleHandler {
+func NewArticleHandler(svc service.IArticleService, l logger.Logger) *ArticleHandler {
 	return &ArticleHandler{
 		svc: svc,
+		log: l,
 	}
 }
 
@@ -34,6 +37,7 @@ func (h *ArticleHandler) Edit(ctx *gin.Context, req vo.ArticleReq) (ginplus.Resu
 	// 超时控制
 	id, err := h.svc.Save(ctx.Request.Context(), req.ToDomain(1))
 	if err != nil {
+		h.log.Error("编辑文章出错", logger.Error(err))
 		return ginplus.Result{
 			Code: 510002,
 			Msg:  "系统异常",

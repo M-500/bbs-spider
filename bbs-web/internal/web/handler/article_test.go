@@ -11,6 +11,7 @@ import (
 	"bbs-web/pkg/ginplus"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/magiconair/properties/assert"
@@ -38,6 +39,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 
 		wantBody ginplus.Result
 	}{
+		// 还有一些，1. 修改已有文章，并且发表成功  2. Bind返回错误  3. 找不到User 4.publish返回错误
 		{
 			name: "新建并发表",
 			mock: func(ctrl *gomock.Controller) service.IArticleService {
@@ -59,16 +61,49 @@ func TestArticleHandler_Publish(t *testing.T) {
 				return svc
 			},
 			reqBody: `{
-"id":0,
-"content_type":"article",
-"title":"我的标题",
-"summary":"搞事情饿",
-"cover":"",
-"content":"##小别致听东西的啊不然呢"}`,
+				"id":0,
+				"content_type":"article",
+				"title":"我的标题",
+				"summary":"搞事情饿",
+				"cover":"",
+				"content":"##小别致听东西的啊不然呢"}`,
 			wantCode: 200,
 			wantBody: ginplus.Result{
 				Data: float64(1), // 因为JSON会默认将整数转换为float64
 				Msg:  "OK",
+			},
+		},
+		{
+			name: "发布失败",
+			mock: func(ctrl *gomock.Controller) service.IArticleService {
+				svc := svcmocks.NewMockIArticleService(ctrl)
+				svc.EXPECT().Publish(gomock.Any(), domain.Article{
+					Id:      0,
+					Title:   "我的标题",
+					Content: "##小别致听东西的啊不然呢",
+					Author: domain.Author{
+						Id: 1,
+					},
+					Status:      0,
+					Summary:     "搞事情饿",
+					ContentType: "article",
+					Cover:       "",
+					Ctime:       time.Time{},
+					Utime:       time.Time{},
+				}).Return(int64(0), errors.New("publish 失败"))
+				return svc
+			},
+			reqBody: `{
+				"id":0,
+				"content_type":"article",
+				"title":"我的标题",
+				"summary":"搞事情饿",
+				"cover":"",
+				"content":"##小别致听东西的啊不然呢"}`,
+			wantCode: 200,
+			wantBody: ginplus.Result{
+				Code: 510003, // 因为JSON会默认将整数转换为float64
+				Msg:  "保存帖子失败",
 			},
 		},
 	}

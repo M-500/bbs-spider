@@ -21,6 +21,7 @@ import (
 func InitWebServer(path string) *gin.Engine {
 	wire.Build(
 		ioc.InitConfig,
+		ioc.InitLogger,
 		ioc.InitDatabase,
 
 		dao.NewArticleDao,
