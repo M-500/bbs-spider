@@ -35,7 +35,8 @@ func (h *ArticleHandler) Edit(ctx *gin.Context, req vo.ArticleReq) (ginplus.Resu
 	id, err := h.svc.Save(ctx.Request.Context(), req.ToDomain(1))
 	if err != nil {
 		return ginplus.Result{
-			Msg: "系统异常",
+			Code: 510002,
+			Msg:  "系统异常",
 		}, err
 	}
 	return ginplus.Result{

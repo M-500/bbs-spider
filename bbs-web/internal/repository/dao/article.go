@@ -41,8 +41,8 @@ func (dao *articleDao) UpdateById(ctx context.Context, art ArticleModel) error {
 	res := dao.db.WithContext(ctx).Model(&ArticleModel{}).
 		Where("id = ? AND author_id = ?", art.ID, art.AuthorId).
 		Updates(map[string]any{
-			"title":        art.Title,
-			"author_id":    art.AuthorId,
+			"title": art.Title,
+			//"author_id":    art.AuthorId, // 创作者不能修改
 			"summary":      art.Summary,
 			"content":      art.Content,
 			"content_type": art.ContentType,
