@@ -36,8 +36,13 @@ func (s *ArticleTestSuite) SetupSuite() {
 	var configFile = flag.String("config", "../../etc/dev.yaml", "配置文件路径")
 	s.server = startup.InitArticleWebServer(*configFile)
 	config := ioc.InitConfig(*configFile)
-	s.db = startup.InitDatabaseTest(config)
+	s.db = startup.InitTestDB(config)
 
+}
+
+func (s *ArticleTestSuite) TearDownTest() {
+	// 清空所有的数据
+	s.db.Exec("TRUNCATE TABLE articles")
 }
 
 func (s *ArticleTestSuite) TestABC() {
@@ -46,6 +51,7 @@ func (s *ArticleTestSuite) TestABC() {
 
 func (s *ArticleTestSuite) TestEdit() {
 	t := s.T()
+	now := time.Now()
 	testcase := []struct {
 		name string
 
@@ -105,12 +111,72 @@ func (s *ArticleTestSuite) TestEdit() {
 				Data: int64(1),
 			},
 		},
+		{
+			name: "修改已有的文章",
+			before: func(t *testing.T) {
+				// 修改之前先插入一条数据
+				s.db.Create(dao.ArticleModel{
+					Model: gorm.Model{
+						ID:        1,
+						CreatedAt: now,
+						UpdatedAt: now,
+					},
+					AuthorId:    0,
+					Title:       "我的标题",
+					Summary:     "搞事情",
+					Content:     "阿首都基哦亲闻风丧胆钱啊咯就卡我",
+					ContentType: "blog",
+					Cover:       "",
+					Status:      0,
+				})
+
+			},
+			after: func(t *testing.T) {
+				// 验证数据库
+				var art dao.ArticleModel
+				err := s.db.Where("id =?", 1).First(&art).Error
+				assert.NoError(t, err)
+				// 验证更新时间是否成功 这里插入时间也不测试了 妈的 难测
+				assert.True(t, art.UpdatedAt.After(now))
+				art.UpdatedAt = time.Time{}
+				art.CreatedAt = time.Time{}
+				assert.Equal(t, dao.ArticleModel{
+					Model: gorm.Model{
+						ID:        1,
+						CreatedAt: time.Time{},
+						UpdatedAt: time.Time{},
+					},
+					AuthorId:    0,
+					Title:       "我的标题",
+					Summary:     "陈冠希求救",
+					Content:     "搞事情 搞事情 搞大事情 微信转账300块",
+					ContentType: "blog",
+					Cover:       "",
+					Status:      1,
+				}, art)
+			},
+			art: ArticleReq{
+				Id:          1,
+				Title:       "我的标题",
+				Content:     "搞事情 搞事情 搞大事情 微信转账300块",
+				Summary:     "陈冠希求救",
+				ContentType: "blog",
+				Cover:       "",
+			},
+			wantCode: 200,
+			wantErr:  nil,
+			wantRes: Result[int64]{
+				Code: 0,
+				Msg:  "",
+				Data: int64(1),
+			},
+		},
 	}
 
 	for _, tc := range testcase {
 		t.Run(tc.name, func(t *testing.T) {
 			// 分成3个部分  1. 构造请求  2.执行逻辑  3.验证结果
-
+			tc.before(t)
 			reqBody, err := json.Marshal(tc.art)
 			assert.NoError(t, err)
 			req, err := http.NewRequest(http.MethodPost, "/articles/edit", bytes.NewBuffer(reqBody))

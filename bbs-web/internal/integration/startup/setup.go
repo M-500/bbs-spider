@@ -36,7 +36,7 @@ func InitArticleWebServer(path string) *gin.Engine {
 	return engine
 }
 
-func InitDatabaseTest(cfg *ioc.Config) *gorm.DB {
+func InitTestDB(cfg *ioc.Config) *gorm.DB {
 	config := &gorm.Config{}
 	db, err := gorm.Open(mysql.Open(cfg.Database.DSN), config)
 	if err != nil {

@@ -38,10 +38,16 @@ func (dao *articleDao) Insert(ctx context.Context, art ArticleModel) (int64, err
 }
 
 func (dao *articleDao) UpdateById(ctx context.Context, art ArticleModel) error {
-	res := dao.db.WithContext(ctx).
+	res := dao.db.WithContext(ctx).Model(&ArticleModel{}).
 		Where("id = ? AND author_id = ?", art.ID, art.AuthorId).
 		Updates(map[string]any{
-			"title": art.Title,
+			"title":        art.Title,
+			"author_id":    art.AuthorId,
+			"summary":      art.Summary,
+			"content":      art.Content,
+			"content_type": art.ContentType,
+			"cover":        art.Cover,
+			"status":       art.Status,
 		})
 
 	err := res.Error
