@@ -8,8 +8,9 @@ import "time"
 
 // Author 在帖子这个领域内，是一个值对象
 type Author struct {
-	Id   int64
-	Name string
+	Id       int64
+	UserName string
+	NickName string
 }
 type Article struct {
 	Id      int64

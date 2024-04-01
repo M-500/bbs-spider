@@ -1,5 +1,35 @@
 package startup
 
+import (
+	"bbs-web/internal/ioc"
+	"bbs-web/internal/repository"
+	"bbs-web/internal/repository/article"
+	"bbs-web/internal/repository/dao"
+	"bbs-web/internal/service"
+	"bbs-web/internal/web"
+	"bbs-web/internal/web/handler"
+	"github.com/gin-gonic/gin"
+)
+
 // @Description
 // @Author 代码小学生王木木
 // @Date 2024-03-29 16:25
+
+func InitArticleWebServer(path string) *gin.Engine {
+	config := ioc.InitConfig(path)
+	db := ioc.InitDatabase(config)
+	articleDAO := dao.NewArticleDao(db)
+	articleRepository := article.NewArticleRepo(articleDAO)
+	iArticleService := service.NewArticleService(articleRepository)
+	articleHandler := handler.NewArticleHandler(iArticleService)
+	iCaptchaSvc := service.NewCaptchaService()
+	captchaHandler := handler.NewCaptchaHandler(iCaptchaSvc)
+	iUserDao := dao.NewUserDao(db)
+	iUserRepo := repository.NewUserRepo(iUserDao)
+	iUserService := service.NewUserService(iUserRepo)
+	userHandler := handler.NewUserHandler(iUserService, iCaptchaSvc)
+	router := web.NewRouter(articleHandler, captchaHandler, userHandler)
+	v := ioc.InitMiddleware(config)
+	engine := ioc.InitGin(router, v)
+	return engine
+}
