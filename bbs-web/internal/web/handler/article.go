@@ -58,8 +58,17 @@ func (h *ArticleHandler) Withdraw(ctx *gin.Context) {
 //	@Description: 发布
 //	@receiver h
 //	@param ctx
-func (h *ArticleHandler) Publish(ctx *gin.Context) {
-
+func (h *ArticleHandler) Publish(ctx *gin.Context, req vo.ArticleReq) (ginplus.Result, error) {
+	publish, err := h.svc.Publish(ctx, req.ToDomain(1))
+	if err != nil {
+		return ginplus.Result{
+			Code: 510003,
+			Msg:  "保存帖子失败",
+		}, err
+	}
+	return ginplus.Result{
+		Data: publish,
+	}, nil
 }
 
 // List

@@ -7,6 +7,7 @@ require (
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.14.0
+	github.com/go-sql-driver/mysql v1.7.0
 	github.com/golang/mock v1.4.4
 	github.com/google/wire v0.6.0
 	github.com/magiconair/properties v1.8.7
@@ -19,6 +20,7 @@ require (
 	go.opentelemetry.io/otel v1.24.0
 	go.opentelemetry.io/otel/exporters/jaeger v1.17.0
 	go.opentelemetry.io/otel/sdk v1.24.0
+	golang.org/x/crypto v0.19.0
 	gorm.io/driver/mysql v1.5.6
 	gorm.io/gorm v1.25.8
 	gorm.io/plugin/opentelemetry v0.1.4
@@ -36,7 +38,6 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -67,7 +68,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.19.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/image v0.13.0 // indirect
 	golang.org/x/net v0.21.0 // indirect

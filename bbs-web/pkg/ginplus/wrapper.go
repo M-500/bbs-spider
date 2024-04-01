@@ -41,7 +41,10 @@ func WrapJson[T any](tagFn func(ctx *gin.Context, req T) (Result, error)) gin.Ha
 		if err != nil {
 			fmt.Println("执行业务逻辑错误")
 			// TODO 这里要记录日志，或者监控啥的
+			ctx.JSON(http.StatusOK, res)
+			return
 		}
+		res.Msg = "OK"
 		ctx.JSON(http.StatusOK, res)
 		return
 	}
