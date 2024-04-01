@@ -9,6 +9,8 @@ import (
 	"bbs-web/internal/web"
 	"bbs-web/internal/web/handler"
 	"github.com/gin-gonic/gin"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 // @Description
@@ -32,4 +34,13 @@ func InitArticleWebServer(path string) *gin.Engine {
 	v := ioc.InitMiddleware(config)
 	engine := ioc.InitGin(router, v)
 	return engine
+}
+
+func InitDatabaseTest(cfg *ioc.Config) *gorm.DB {
+	config := &gorm.Config{}
+	db, err := gorm.Open(mysql.Open(cfg.Database.DSN), config)
+	if err != nil {
+		panic(err)
+	}
+	return db
 }

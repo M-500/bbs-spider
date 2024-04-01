@@ -2,6 +2,8 @@ package integration
 
 import (
 	"bbs-web/internal/integration/startup"
+	"bbs-web/internal/ioc"
+	"bbs-web/internal/repository/dao"
 	"bytes"
 	"encoding/json"
 	"flag"
@@ -9,9 +11,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/gorm"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 // @Description
@@ -23,6 +27,7 @@ import (
 type ArticleTestSuite struct {
 	suite.Suite
 	server *gin.Engine
+	db     *gorm.DB
 }
 
 // 实现 SetupAllSuite 接口
@@ -30,6 +35,9 @@ func (s *ArticleTestSuite) SetupSuite() {
 	// 在所有测试开始之前，做一些事情
 	var configFile = flag.String("config", "../../etc/dev.yaml", "配置文件路径")
 	s.server = startup.InitArticleWebServer(*configFile)
+	config := ioc.InitConfig(*configFile)
+	s.db = startup.InitDatabaseTest(config)
+
 }
 
 func (s *ArticleTestSuite) TestABC() {
@@ -61,6 +69,25 @@ func (s *ArticleTestSuite) TestEdit() {
 			},
 			after: func(t *testing.T) {
 				// 验证数据库
+				var art dao.ArticleModel
+				err := s.db.Where("title =?", "我的标题").First(&art).Error
+				assert.NoError(t, err)
+				assert.True(t, !art.CreatedAt.IsZero())
+				assert.True(t, !art.UpdatedAt.IsZero())
+				art.CreatedAt = time.Time{}
+				art.UpdatedAt = time.Time{}
+				assert.Equal(t, dao.ArticleModel{
+					Model: gorm.Model{
+						ID: 1,
+					},
+					AuthorId:    0,
+					Title:       "我的标题",
+					Summary:     "夏测",
+					Content:     "搞事情 搞事情 搞大事情",
+					ContentType: "blog",
+					Cover:       "",
+					Status:      1,
+				}, art)
 			},
 			art: ArticleReq{
 				Id:          0,
