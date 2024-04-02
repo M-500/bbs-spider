@@ -6,6 +6,7 @@ import (
 	"bbs-web/internal/repository/article/svcmocks"
 	"bbs-web/pkg/logger"
 	"context"
+	"errors"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -309,6 +310,219 @@ func Test_articleService_PublishV1(t *testing.T) {
 			},
 			wantErr: nil,
 			wantId:  1,
+		},
+		{
+			name: "修改并发表成功",
+			mock: func(ctl *gomock.Controller) (article.ArticleWriterRepo, article.ArticleReaderRepository) {
+				writerRepo := svcmocks.NewMockArticleWriterRepo(ctl)
+
+				writerRepo.EXPECT().Update(gomock.Any(), domain.Article{
+					Id:      2,
+					Title:   "赋能",
+					Content: "请求赋能，请求赋能！",
+					Author: domain.Author{
+						Id: 123,
+					},
+					Status:      0,
+					Summary:     "分割线",
+					ContentType: "blog",
+				}).Return(nil)
+
+				readerRepo := svcmocks.NewMockArticleReaderRepository(ctl)
+				readerRepo.EXPECT().Save(gomock.Any(), domain.Article{
+					// 确保使用了制作库 ID
+					Id:      2,
+					Title:   "赋能",
+					Content: "请求赋能，请求赋能！",
+					Author: domain.Author{
+						Id: 123,
+					},
+					Status:      0,
+					Summary:     "分割线",
+					ContentType: "blog",
+				}).Return(int64(2), nil)
+				return writerRepo, readerRepo
+			},
+			article: domain.Article{
+				Id:      2,
+				Title:   "赋能",
+				Content: "请求赋能，请求赋能！",
+				Author: domain.Author{
+					Id: 123,
+				},
+				Status:      0,
+				Summary:     "分割线",
+				ContentType: "blog",
+			},
+			wantErr: nil,
+			wantId:  2,
+		},
+		{
+			// 修改-保存到制作库失败
+			name: "新建-保存到制作库失败",
+			mock: func(ctl *gomock.Controller) (article.ArticleWriterRepo, article.ArticleReaderRepository) {
+				writerRepo := svcmocks.NewMockArticleWriterRepo(ctl)
+
+				writerRepo.EXPECT().Create(gomock.Any(), domain.Article{
+					Title:   "赋能",
+					Content: "请求赋能，请求赋能！",
+					Author: domain.Author{
+						Id: 123,
+					},
+					Status:      0,
+					Summary:     "分割线",
+					ContentType: "blog",
+				}).Return(int64(0), errors.New("mock db error"))
+				readerRepo := svcmocks.NewMockArticleReaderRepository(ctl)
+				return writerRepo, readerRepo
+			},
+			article: domain.Article{
+				Title:   "赋能",
+				Content: "请求赋能，请求赋能！",
+				Author: domain.Author{
+					Id: 123,
+				},
+				Status:      0,
+				Summary:     "分割线",
+				ContentType: "blog",
+			},
+			wantErr: errors.New("mock db error"),
+			wantId:  0,
+		},
+		{
+			name: "修改-保存到制作库失败",
+			mock: func(ctl *gomock.Controller) (article.ArticleWriterRepo, article.ArticleReaderRepository) {
+				writerRepo := svcmocks.NewMockArticleWriterRepo(ctl)
+
+				writerRepo.EXPECT().Update(gomock.Any(), domain.Article{
+					Id:      3,
+					Title:   "赋能",
+					Content: "请求赋能，请求赋能！",
+					Author: domain.Author{
+						Id: 123,
+					},
+					Status:      0,
+					Summary:     "分割线",
+					ContentType: "blog",
+				}).Return(errors.New("mock db error"))
+				readerRepo := svcmocks.NewMockArticleReaderRepository(ctl)
+				return writerRepo, readerRepo
+			},
+			article: domain.Article{
+				Id:      3,
+				Title:   "赋能",
+				Content: "请求赋能，请求赋能！",
+				Author: domain.Author{
+					Id: 123,
+				},
+				Status:      0,
+				Summary:     "分割线",
+				ContentType: "blog",
+			},
+			wantErr: errors.New("mock db error"),
+			wantId:  0,
+		},
+		{
+			name: "保存到制作库成功，重试到线上库成功",
+			mock: func(ctl *gomock.Controller) (article.ArticleWriterRepo, article.ArticleReaderRepository) {
+				writerRepo := svcmocks.NewMockArticleWriterRepo(ctl)
+				writerRepo.EXPECT().Update(gomock.Any(), domain.Article{
+					Id:      5,
+					Title:   "赋能",
+					Content: "请求赋能，请求赋能！",
+					Author: domain.Author{
+						Id: 123,
+					},
+					Status:      0,
+					Summary:     "分割线",
+					ContentType: "blog",
+				}).Return(nil)
+
+				readerRepo := svcmocks.NewMockArticleReaderRepository(ctl)
+				readerRepo.EXPECT().Save(gomock.Any(), domain.Article{
+					// 确保使用了制作库 ID
+					Id:      5,
+					Title:   "赋能",
+					Content: "请求赋能，请求赋能！",
+					Author: domain.Author{
+						Id: 123,
+					},
+					Status:      0,
+					Summary:     "分割线",
+					ContentType: "blog",
+				}).Return(int64(0), errors.New("mock db error"))
+				readerRepo.EXPECT().Save(gomock.Any(), domain.Article{
+					// 确保使用了制作库 ID
+					Id:      5,
+					Title:   "赋能",
+					Content: "请求赋能，请求赋能！",
+					Author: domain.Author{
+						Id: 123,
+					},
+					Status:      0,
+					Summary:     "分割线",
+					ContentType: "blog",
+				}).Return(int64(5), nil)
+				return writerRepo, readerRepo
+			},
+			article: domain.Article{
+				Id:      5,
+				Title:   "赋能",
+				Content: "请求赋能，请求赋能！",
+				Author: domain.Author{
+					Id: 123,
+				},
+				Status:      0,
+				Summary:     "分割线",
+				ContentType: "blog",
+			},
+			wantErr: nil,
+			wantId:  5,
+		},
+		{
+			name: "保存到制作库成功，且重试N次全部失败",
+			mock: func(ctl *gomock.Controller) (article.ArticleWriterRepo, article.ArticleReaderRepository) {
+				writerRepo := svcmocks.NewMockArticleWriterRepo(ctl)
+				writerRepo.EXPECT().Update(gomock.Any(), domain.Article{
+					Id:      5,
+					Title:   "赋能",
+					Content: "请求赋能，请求赋能！",
+					Author: domain.Author{
+						Id: 123,
+					},
+					Status:      0,
+					Summary:     "分割线",
+					ContentType: "blog",
+				}).Return(nil)
+
+				readerRepo := svcmocks.NewMockArticleReaderRepository(ctl)
+				readerRepo.EXPECT().Save(gomock.Any(), domain.Article{
+					// 确保使用了制作库 ID
+					Id:      5,
+					Title:   "赋能",
+					Content: "请求赋能，请求赋能！",
+					Author: domain.Author{
+						Id: 123,
+					},
+					Status:      0,
+					Summary:     "分割线",
+					ContentType: "blog",
+				}).Times(5).Return(int64(0), errors.New("mock db error"))
+				return writerRepo, readerRepo
+			},
+			article: domain.Article{
+				Id:      5,
+				Title:   "赋能",
+				Content: "请求赋能，请求赋能！",
+				Author: domain.Author{
+					Id: 123,
+				},
+				Status:      0,
+				Summary:     "分割线",
+				ContentType: "blog",
+			},
+			wantErr: errors.New("mock db error"),
+			wantId:  0,
 		},
 	}
 	for _, tc := range testCast {
