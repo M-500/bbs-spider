@@ -31,6 +31,9 @@
     </div>
     <div class="pageRight">
       你有毒
+      <div class="userCard">
+
+      </div>
     </div>
   </div>
 </template>

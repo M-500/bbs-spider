@@ -71,7 +71,7 @@ export default {
         <el-form-item>
           <el-button class="pubBtn" size="small" @click="onSubmit">直接发布</el-button>
           <el-button class="storeBtn" size="small" @click="onSubmit">暂存草稿箱</el-button>
-          <el-button size="small" >取消</el-button>
+          <el-button size="small">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -124,12 +124,12 @@ export default {
 .el-icon-plus {
   border: #d9d9d9 1px solid;
 }
-.pubBtn{
+.pubBtn {
   background-color: #00bbc9;
   border: #00bbc9 1px solid;
   color: #f9f9f9;
 }
-.storeBtn{
+.storeBtn {
   background-color: #00747c;
   border: #00747c 1px solid;
   color: #f9f9f9;

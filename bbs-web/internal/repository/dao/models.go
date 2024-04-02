@@ -36,5 +36,13 @@ type ArticleModel struct {
 }
 
 func (ArticleModel) TableName() string {
-	return "articles"
+	return "articles_edit"
+}
+
+type PublishArticleModels struct {
+	ArticleModel
+}
+
+func (PublishArticleModels) TableName() string {
+	return "articles_pub"
 }

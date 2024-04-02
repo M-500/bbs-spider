@@ -7,6 +7,7 @@ import (
 	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/article"
 	"bbs-web/internal/repository/dao"
+	"bbs-web/internal/repository/dao/article_dao"
 	"bbs-web/internal/service"
 	article2 "bbs-web/internal/service/article"
 	"bbs-web/internal/web"
@@ -25,7 +26,7 @@ func InitWebServer(path string) *gin.Engine {
 		ioc.InitLogger,
 		ioc.InitDatabase,
 
-		dao.NewArticleDao,
+		article_dao.NewArticleDao,
 		dao.NewUserDao,
 
 		article.NewArticleRepo,
