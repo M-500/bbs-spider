@@ -267,6 +267,7 @@ func Test_articleService_PublishV1(t *testing.T) {
 		wantErr error
 		wantId  int64
 	}{
+		// 这里测试用例还不够完善，应该是所有条件的笛卡尔积(测试覆盖率要达标)
 		{
 			name: "新建发表成功",
 			mock: func(ctl *gomock.Controller) (article.ArticleWriterRepo, article.ArticleReaderRepository) {
