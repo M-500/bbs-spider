@@ -19,6 +19,7 @@ type ArticleDAO interface {
 	GetByAuthor(ctx context.Context, author int64, offset, limit int) ([]dao.ArticleModel, error)
 	GetById(ctx context.Context, id int64) (dao.ArticleModel, error)
 	GetPubById(ctx context.Context, id int64) (dao.ArticleModel, error)
+	Transaction(ctx context.Context, bizFunc func(txDao ArticleDAO) error) error
 	Sync(ctx context.Context, art dao.ArticleModel) (int64, error)
 	Upsert(ctx context.Context, art dao.PublishArticleModels) error
 	SyncStatus(ctx context.Context, author, id int64, status uint8) error
@@ -80,6 +81,16 @@ func (a *articleDao) GetPubById(ctx context.Context, id int64) (dao.ArticleModel
 	panic("implement me")
 }
 
+// Transaction
+//
+//	@Description:
+func (a *articleDao) Transaction(ctx context.Context, bizFunc func(txDao ArticleDAO) error) error {
+	return a.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		txDao := NewArticleDao(tx)
+		return bizFunc(txDao)
+	})
+}
+
 // Upsert
 //
 //	@Description: GORM实现Upsert的语义 Insert Or Update
@@ -87,6 +98,12 @@ func (a *articleDao) Upsert(ctx context.Context, art dao.PublishArticleModels) e
 	now := time.Now()
 	// OnConflict的意思是数据冲突了  用MySQL就只需要关注一个地方 DoUpdates
 	var err = a.db.Clauses(clause.OnConflict{
+		// 哪些列冲突了
+		//Columns: []clause.Column{clause.Column{Name: "id"}},
+		// 如果数据冲突了 就啥也不干
+		//DoNothing: true,
+		// 如果数据冲突了，并且符合Where条件，就会执行更新
+		//Where:
 		// MySQL只需要关心这个 其他SQL标准的就不一样啦！
 		DoUpdates: clause.Assignments(map[string]interface{}{
 			"title": art.Title,

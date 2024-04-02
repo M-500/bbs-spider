@@ -27,6 +27,8 @@ func InitWebServer(path string) *gin.Engine {
 		ioc.InitDatabase,
 
 		article_dao.NewArticleDao,
+		article_dao.NewReadDAO,
+		article_dao.NewWriteDAO,
 		dao.NewUserDao,
 
 		article.NewArticleRepo,

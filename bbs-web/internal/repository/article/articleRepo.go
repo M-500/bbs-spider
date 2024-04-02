@@ -77,6 +77,13 @@ func (repo *articleRepo) Sync(ctx context.Context, art domain.Article) (int64, e
 	return repo.artDao.Sync(ctx, repo.toEntity(art))
 }
 
+//func (repo *articleRepo) SyncV3(ctx context.Context, art domain.Article) (int64, error) {
+//	// 这么写的话 是谁在控制事务()
+//	repo.artDao.Transaction(ctx, func(txDao article_dao.ArticleDAO) error {
+//		txDao.Sync(ctx,art)
+//	})
+//}
+
 // SyncV2
 //
 //	@Description: 尝试在Repo层解决事务 缺陷就是耦合了DAO层的东西  不太推荐
@@ -94,7 +101,7 @@ func (repo *articleRepo) SyncV2(ctx context.Context, art domain.Article) (int64,
 		id  = art.Id
 		err error
 	)
-	// 制作库
+	// 制作库`
 	articleTmp := repo.toEntity(art)
 	if art.Id <= 0 {
 		id, err = writeDAO.Insert(ctx, articleTmp)
