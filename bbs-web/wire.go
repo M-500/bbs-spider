@@ -8,6 +8,7 @@ import (
 	"bbs-web/internal/repository/article"
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/service"
+	article2 "bbs-web/internal/service/article"
 	"bbs-web/internal/web"
 	"bbs-web/internal/web/handler"
 	"github.com/gin-gonic/gin"
@@ -30,7 +31,7 @@ func InitWebServer(path string) *gin.Engine {
 		article.NewArticleRepo,
 		repository.NewUserRepo,
 
-		service.NewArticleService,
+		article2.NewArticleService,
 		service.NewCaptchaService,
 		service.NewUserService,
 

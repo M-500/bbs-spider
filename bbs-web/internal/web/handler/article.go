@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"bbs-web/internal/service"
+	"bbs-web/internal/service/article"
 	"bbs-web/internal/web/vo"
 	"bbs-web/pkg/ginplus"
 	"bbs-web/pkg/logger"
@@ -13,11 +13,11 @@ import (
 // @Date 2024-03-26 15:47
 
 type ArticleHandler struct {
-	svc service.IArticleService
+	svc article.IArticleService
 	log logger.Logger
 }
 
-func NewArticleHandler(svc service.IArticleService, l logger.Logger) *ArticleHandler {
+func NewArticleHandler(svc article.IArticleService, l logger.Logger) *ArticleHandler {
 	return &ArticleHandler{
 		svc: svc,
 		log: l,

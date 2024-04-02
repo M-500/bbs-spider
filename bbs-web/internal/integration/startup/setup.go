@@ -6,6 +6,7 @@ import (
 	"bbs-web/internal/repository/article"
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/service"
+	article2 "bbs-web/internal/service/article"
 	"bbs-web/internal/web"
 	"bbs-web/internal/web/handler"
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,7 @@ func InitArticleWebServer(path string) *gin.Engine {
 	db := ioc.InitDatabase(config)
 	articleDAO := dao.NewArticleDao(db)
 	articleRepository := article.NewArticleRepo(articleDAO)
-	iArticleService := service.NewArticleService(articleRepository)
+	iArticleService := article2.NewArticleService(articleRepository)
 	articleHandler := handler.NewArticleHandler(iArticleService)
 	iCaptchaSvc := service.NewCaptchaService()
 	captchaHandler := handler.NewCaptchaHandler(iCaptchaSvc)

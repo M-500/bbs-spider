@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bbs-web/internal/service/article"
 	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/magiconair/properties/assert"
@@ -14,7 +15,7 @@ import (
 func TestBatchRankingService_TopN(t *testing.T) {
 	tests := []struct {
 		name string
-		mock func(ctrl *gomock.Controller) articleService
+		mock func(ctrl *gomock.Controller) article.articleService
 
 		wantErr error
 	}{

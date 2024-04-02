@@ -5,7 +5,7 @@ package handler
 */
 import (
 	"bbs-web/internal/domain"
-	"bbs-web/internal/service"
+	"bbs-web/internal/service/article"
 	"bbs-web/internal/service/svcmocks"
 	"bbs-web/internal/web/vo"
 	"bbs-web/pkg/ginplus"
@@ -32,7 +32,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 	tests := []struct {
 		name string
 
-		mock func(ctrl *gomock.Controller) service.IArticleService
+		mock func(ctrl *gomock.Controller) article.IArticleService
 
 		reqBody string
 
@@ -43,7 +43,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 		// 还有一些，1. 修改已有文章，并且发表成功  2. Bind返回错误  3. 找不到User 4.publish返回错误
 		{
 			name: "新建并发表",
-			mock: func(ctrl *gomock.Controller) service.IArticleService {
+			mock: func(ctrl *gomock.Controller) article.IArticleService {
 				svc := svcmocks.NewMockIArticleService(ctrl)
 				svc.EXPECT().Publish(gomock.Any(), domain.Article{
 					Id:      0,
@@ -76,7 +76,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 		},
 		{
 			name: "发布失败",
-			mock: func(ctrl *gomock.Controller) service.IArticleService {
+			mock: func(ctrl *gomock.Controller) article.IArticleService {
 				svc := svcmocks.NewMockIArticleService(ctrl)
 				svc.EXPECT().Publish(gomock.Any(), domain.Article{
 					Id:      0,
