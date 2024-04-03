@@ -26,14 +26,15 @@ type Article struct {
 	Utime       time.Time
 }
 
+// 使用衍生类型 方便在上面加方法
 type ArticleStatus uint8
 
 const (
 	// ArticleStatusUnknown 为了避免零值之类的问题
-	ArticleStatusUnknown ArticleStatus = iota
-	ArticleStatusUnpublished
-	ArticleStatusPublished
-	ArticleStatusPrivate
+	ArticleStatusUnknown     ArticleStatus = iota
+	ArticleStatusUnpublished               // 未发表
+	ArticleStatusPublished                 // 已发表
+	ArticleStatusPrivate                   // 私有
 )
 
 func (s ArticleStatus) ToUint8() uint8 {
@@ -56,3 +57,18 @@ func (s ArticleStatus) String() string {
 		return "unknown"
 	}
 }
+
+// 状态的另一种方式
+
+type ArticleStatusV1 struct {
+	Val  uint8
+	Name string
+}
+
+var (
+	ArticleStatusV1Unknown = ArticleStatusV1{
+		Val:  0,
+		Name: "unknown",
+	}
+	//
+)

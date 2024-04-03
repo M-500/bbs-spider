@@ -15,6 +15,22 @@ type WriteDAO interface {
 	UpdateById(ctx context.Context, art dao.ArticleModel) error
 }
 
-func NewWriteDAO(db *gorm.DB) WriteDAO {
+type writerDAO struct {
+	db *gorm.DB
+}
+
+func (w *writerDAO) Insert(ctx context.Context, art dao.ArticleModel) (int64, error) {
+	//TODO implement me
 	panic("implement me")
+}
+
+func (w *writerDAO) UpdateById(ctx context.Context, art dao.ArticleModel) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func NewWriteDAO(db *gorm.DB) WriteDAO {
+	return &writerDAO{
+		db: db,
+	}
 }

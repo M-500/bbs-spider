@@ -14,6 +14,15 @@ type ReadDAO interface {
 	Upsert(ctx context.Context, art dao.ArticleModel) error
 }
 
-func NewReadDAO(db *gorm.DB) ReadDAO {
+type readDAO struct {
+	db *gorm.DB
+}
+
+func (r *readDAO) Upsert(ctx context.Context, art dao.ArticleModel) error {
+	//TODO implement me
 	panic("implement me")
+}
+
+func NewReadDAO(db *gorm.DB) ReadDAO {
+	return &readDAO{db: db}
 }

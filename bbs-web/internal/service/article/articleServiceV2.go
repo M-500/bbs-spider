@@ -15,7 +15,7 @@ import (
 type articleServiceV2 struct {
 	articleService
 	l         logger.Logger
-	writeRepo article.ArticleWriterRepo
+	writeRepo article.ArtWriterRepo
 	readRepo  article.ArticleReaderRepository
 }
 

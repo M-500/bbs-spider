@@ -32,6 +32,8 @@ func InitWebServer(path string) *gin.Engine {
 		dao.NewUserDao,
 
 		article.NewArticleRepo,
+		article.NewArticleReaderRepo,
+		article.NewArtWriterRepo,
 		repository.NewUserRepo,
 
 		article2.NewArticleService,

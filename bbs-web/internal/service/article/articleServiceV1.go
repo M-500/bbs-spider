@@ -16,21 +16,21 @@ import (
 type articleService struct {
 	repo      article.ArticleRepository
 	l         logger.Logger
-	writeRepo article.ArticleWriterRepo
+	writeRepo article.ArtWriterRepo
 	readRepo  article.ArticleReaderRepository
 }
 
-func NewArticleService(repo article.ArticleRepository, l logger.Logger, writeRepo article.ArticleWriterRepo, readRepo article.ArticleReaderRepository) IArticleService {
+func NewArticleService(repo article.ArticleRepository, l logger.Logger, writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository) IArticleService {
 	return &articleService{repo: repo, l: l, writeRepo: writeRepo, readRepo: readRepo}
 }
 
-func NewArticleServiceV1(writeRepo article.ArticleWriterRepo, readRepo article.ArticleReaderRepository, l logger.Logger) IArticleService {
+func NewArticleServiceV1(writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository, l logger.Logger) IArticleService {
 	return &articleService{
 		l: l, writeRepo: writeRepo, readRepo: readRepo}
 }
 
 func (svc *articleService) Save(ctx context.Context, art domain.Article) (int64, error) {
-	art.Status = domain.ArticleStatusUnpublished
+	art.Status = domain.ArticleStatusUnpublished // service层控制状态
 	if art.Id > 0 {
 		err := svc.repo.Update(ctx, art)
 		return art.Id, err
@@ -47,6 +47,7 @@ func (svc *articleService) Withdraw(ctx context.Context, art domain.Article) err
 //
 //	@Description: Service层不处理如何同步数据，交给Repo层去处理
 func (svc *articleService) Publish(ctx context.Context, art domain.Article) (int64, error) {
+	art.Status = domain.ArticleStatusPublished // service层控制状态
 	return svc.repo.Sync(ctx, art)
 }
 
