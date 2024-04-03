@@ -16,6 +16,7 @@ import (
 	article2 "bbs-web/internal/service/article"
 	"bbs-web/internal/web"
 	"bbs-web/internal/web/handler"
+	"bbs-web/internal/web/jwtx"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,9 +39,11 @@ func InitWebServer(path string) *gin.Engine {
 	iUserDao := dao.NewUserDao(db)
 	iUserRepo := repository.NewUserRepo(iUserDao)
 	iUserService := service.NewUserService(iUserRepo)
-	userHandler := handler.NewUserHandler(iUserService, iCaptchaSvc)
+	cmdable := ioc.InitRedis(config)
+	jwtHandler := jwtx.NewRedisJWTHandler(cmdable)
+	userHandler := handler.NewUserHandler(iUserService, iCaptchaSvc, jwtHandler)
 	router := web.NewRouter(articleHandler, captchaHandler, userHandler)
-	v := ioc.InitMiddleware(config)
+	v := ioc.InitMiddleware(config, jwtHandler)
 	engine := ioc.InitGin(router, v)
 	return engine
 }

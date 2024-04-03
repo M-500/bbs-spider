@@ -15,7 +15,7 @@ var ErrUserDuplicate = errors.New("用户名冲突")
 
 type IUserDao interface {
 	FindById(ctx context.Context, uid int64) (UserMode, error)
-	FindByUserName(ctx context.Context, username string) (bool, error)
+	FindByUserName(ctx context.Context, username string) (UserMode, error)
 	Insert(ctx context.Context, mode UserMode) error
 }
 
@@ -28,15 +28,10 @@ func (dao *userDao) FindById(ctx context.Context, uid int64) (UserMode, error) {
 	err := dao.db.WithContext(ctx).Where("id = ?", uid).First(&user).Error
 	return user, err
 }
-func (dao *userDao) FindByUserName(ctx context.Context, username string) (bool, error) {
-	tx := dao.db.WithContext(ctx).Where("username = ?", username)
-	if tx.Error != nil {
-		return false, tx.Error
-	}
-	if tx.RowsAffected >= 1 {
-		return true, nil
-	}
-	return false, nil
+func (dao *userDao) FindByUserName(ctx context.Context, username string) (UserMode, error) {
+	var user UserMode
+	err := dao.db.WithContext(ctx).Where("username = ?", username).First(&user).Error
+	return user, err
 }
 
 func (dao *userDao) Insert(ctx context.Context, mode UserMode) error {

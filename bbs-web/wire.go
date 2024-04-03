@@ -12,6 +12,7 @@ import (
 	article2 "bbs-web/internal/service/article"
 	"bbs-web/internal/web"
 	"bbs-web/internal/web/handler"
+	"bbs-web/internal/web/jwtx"
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 )
@@ -24,7 +25,9 @@ func InitWebServer(path string) *gin.Engine {
 	wire.Build(
 		ioc.InitConfig,
 		ioc.InitLogger,
+		ioc.InitRedis,
 		ioc.InitDatabase,
+		jwtx.NewRedisJWTHandler,
 
 		article_dao.NewArticleDao,
 		article_dao.NewReadDAO,

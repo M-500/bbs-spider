@@ -6,6 +6,7 @@ package jwtx
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/redis/go-redis/v9"
@@ -45,6 +46,10 @@ func (r *RedisJwtHandler) queryFromFormData(ctx *gin.Context) string {
 	return ctx.PostForm("token")
 }
 
+func (r *RedisJwtHandler) getKey(uid int64) string {
+	return fmt.Sprintf("login_hold:%d", uid)
+}
+
 func (r *RedisJwtHandler) ExtractToken(ctx *gin.Context) string {
 	var tkStr string
 	// 从header中获取
@@ -67,12 +72,13 @@ func (r *RedisJwtHandler) GetJWTToken(ctx *gin.Context, uid int64) (string, erro
 		},
 		Id: uid,
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES512, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
 	tokenStr, err := token.SignedString(AtKey)
 	if err != nil {
 		return "", err
 	}
 	// TODO 是否需要将当前用户的token塞进redis中？
+	r.cmd.Set(ctx, r.getKey(uid), tokenStr, time.Hour*24)
 	return tokenStr, nil
 }
 

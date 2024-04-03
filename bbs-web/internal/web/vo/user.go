@@ -12,7 +12,7 @@ type RegisterUserReq struct {
 }
 
 type PwdLoginReq struct {
-	UserName    string `json:"user_name"`
+	UserName    string `json:"username"`
 	Password    string `json:"password"`
 	CaptchaCode string `json:"captcha_code"`
 	CaptchaId   string `json:"captcha_id"`

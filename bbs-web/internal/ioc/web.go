@@ -2,7 +2,9 @@ package ioc
 
 import (
 	"bbs-web/internal/web"
+	"bbs-web/internal/web/jwtx"
 	"bbs-web/pkg/ginplus/middlewares/cors"
+	"bbs-web/pkg/ginplus/middlewares/jwt"
 	"bbs-web/pkg/ginplus/middlewares/metric"
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
@@ -19,9 +21,14 @@ func InitGin(r *web.Router, mdls []gin.HandlerFunc) *gin.Engine {
 	return server
 }
 
-func InitMiddleware(cfg *Config) []gin.HandlerFunc {
+func InitMiddleware(cfg *Config, j jwtx.JwtHandler) []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		cors.CorsMiddleWare(),
+		jwt.NewLoginJWTMiddlewareBuilder(j).
+			IgnorePaths("/sign-up").
+			IgnorePaths("/pwd-login").
+			IgnorePaths("/code").
+			Build(),
 		(&metric.MiddlewareBuilder{
 			Namespace:  "wll",
 			Subsystem:  "bbs_spider",

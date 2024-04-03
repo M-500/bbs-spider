@@ -8,25 +8,48 @@ import (
 	"bbs-web/internal/domain"
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/service"
+	"bbs-web/internal/web/jwtx"
 	"bbs-web/internal/web/vo"
 	"bbs-web/pkg/ginplus"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 type UserHandler struct {
 	svc    service.IUserService
 	capSvc service.ICaptchaSvc
+	jwtx.JwtHandler
 }
 
-func NewUserHandler(svc service.IUserService, acpSvc service.ICaptchaSvc) *UserHandler {
-	return &UserHandler{svc: svc, capSvc: acpSvc}
+func NewUserHandler(svc service.IUserService, acpSvc service.ICaptchaSvc, j jwtx.JwtHandler) *UserHandler {
+	return &UserHandler{svc: svc, capSvc: acpSvc, JwtHandler: j}
 }
 
 func (h *UserHandler) PwdLogin(ctx *gin.Context, req vo.PwdLoginReq) (ginplus.Result, error) {
-
-	return ginplus.Result{}, nil
+	check := h.capSvc.CheckCaptcha(req.CaptchaId, req.CaptchaCode, true)
+	if !check {
+		return ginplus.Result{
+			Code: 501001,
+			Msg:  "验证码不正确",
+		}, errors.New("验证码不正确")
+	}
+	user, err := h.svc.Login(ctx, req.UserName, req.Password)
+	if err != nil {
+		return ginplus.Result{
+			Code: 501002,
+			Msg:  err.Error(),
+		}, err
+	}
+	token, err := h.GetJWTToken(ctx, user.Id)
+	if err != nil {
+		return ginplus.Result{
+			Code: 501003,
+			Msg:  err.Error(),
+		}, err
+	}
+	return ginplus.Result{
+		Data: "Bearer " + token,
+	}, nil
 }
 
 // Register
@@ -40,7 +63,6 @@ func (h *UserHandler) Register(ctx *gin.Context, req vo.RegisterUserReq) (ginplu
 	//  @return ginplus.Result
 	//  @return error
 	// 调用server方法
-	fmt.Println(req.RPassword, req.Password, req.UserName)
 	if req.Password != req.RPassword {
 		return ginplus.Result{
 			Msg: "两次输入密码不一致",
@@ -62,7 +84,7 @@ func (h *UserHandler) Register(ctx *gin.Context, req vo.RegisterUserReq) (ginplu
 	if err == dao.ErrUserDuplicate {
 		return ginplus.Result{
 			Code: 501000,
-			Msg:  "注册失败，系统异常",
+			Msg:  err.Error(),
 		}, err
 	}
 
