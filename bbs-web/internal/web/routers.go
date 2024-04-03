@@ -35,7 +35,7 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 	articleGroup := engine.Group("/articles")
 	{
 		articleGroup.POST("/edit", ginplus.WrapJson[vo.ArticleReq](r.artHdl.Edit))
-		articleGroup.POST("/withdraw", r.artHdl.Withdraw)
+		articleGroup.POST("/:id/withdraw", r.artHdl.Withdraw)
 		articleGroup.POST("/publish", ginplus.WrapJson[vo.ArticleReq](r.artHdl.Publish))
 		articleGroup.POST("/list", r.artHdl.List)
 		articleGroup.GET("/detail/:id", r.artHdl.Detail)

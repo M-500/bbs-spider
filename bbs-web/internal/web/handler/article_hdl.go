@@ -50,7 +50,7 @@ func (h *ArticleHandler) Edit(ctx *gin.Context, req vo.ArticleReq) (ginplus.Resu
 
 // Withdraw
 //
-//	@Description: 下架
+//	@Description: 下架 撤回文章
 //	@receiver h
 //	@param ctx
 func (h *ArticleHandler) Withdraw(ctx *gin.Context) {
