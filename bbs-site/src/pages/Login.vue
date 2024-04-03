@@ -1,6 +1,6 @@
 <script>
 
-import { imageCaptchaAPI } from "@/api/sign-in/login";
+import { imageCaptchaAPI, pwdLoginAPI } from "@/api/sign-in/login";
 export default {
   name: 'PwdLogin',
   data() {
@@ -8,6 +8,8 @@ export default {
       captchaUri: "",
       form: {
         username: '',
+        captcha_id: '',
+        captcha_code: '',
         password: ''
       },
       rules: {
@@ -60,16 +62,26 @@ export default {
     submitForm(form) {
       this.$refs[form].validate(async valid => {
         if (!valid) return this.$message.error('非法输入数据，请重新输入')
-        const { data: res } = await this.$http.post('sj/login', this.form)
-        if (!res.success) return this.$message.error(res.msg)
-        window.localStorage.setItem('token', res.data.token)
-        // 将权限数据存到store中
-        this.$store.commit('setRightList', res.data.menu_list)
-        this.$store.commit('setUsername', res.data.username)
-        this.$store.commit('setPhoto', res.data.cover_image_link)
-        // 将用户所具备的权限动态添加到路由规则
-        initDynamicRouter()
-        await this.$router.push('admin/index')
+        pwdLoginAPI(this.form).then((res) => {
+          console.log(res)
+          window.localStorage.setItem('token', res.data)
+          this.$router.push('/home')
+        }).catch((e) => {
+          this.$message({
+            message: e.msg,
+            type: "error",
+          });
+        });
+        // const { data: res } = await this.$http.post('sj/login', this.form)
+        // if (!res.success) return this.$message.error(res.msg)
+        // window.localStorage.setItem('token', res.data.token)
+        // // 将权限数据存到store中
+        // this.$store.commit('setRightList', res.data.menu_list)
+        // this.$store.commit('setUsername', res.data.username)
+        // this.$store.commit('setPhoto', res.data.cover_image_link)
+        // // 将用户所具备的权限动态添加到路由规则
+        // initDynamicRouter()
+        // await this.$router.push('admin/index')
       })
     },
     resetForm(form) {
