@@ -27,22 +27,22 @@ type ArticleDAO interface {
 	ListPub(ctx context.Context, start time.Time, offset int, limit int) ([]dao.ArticleModel, error)
 }
 
-type articleDao struct {
+type gormArticleDao struct {
 	db *gorm.DB
 }
 
 func NewArticleDao(db *gorm.DB) ArticleDAO {
-	return &articleDao{
+	return &gormArticleDao{
 		db: db,
 	}
 }
 
-func (a *articleDao) Insert(ctx context.Context, art dao.ArticleModel) (int64, error) {
+func (a *gormArticleDao) Insert(ctx context.Context, art dao.ArticleModel) (int64, error) {
 	err := a.db.WithContext(ctx).Create(&art).Error
 	return int64(art.ID), err
 }
 
-func (a *articleDao) UpdateById(ctx context.Context, art dao.ArticleModel) error {
+func (a *gormArticleDao) UpdateById(ctx context.Context, art dao.ArticleModel) error {
 	now := time.Now()
 	res := a.db.WithContext(ctx).Model(&dao.ArticleModel{}).
 		Where("id = ? AND author_id = ?", art.ID, art.AuthorId).
@@ -67,17 +67,17 @@ func (a *articleDao) UpdateById(ctx context.Context, art dao.ArticleModel) error
 	return err
 }
 
-func (a *articleDao) GetByAuthor(ctx context.Context, author int64, offset, limit int) ([]dao.ArticleModel, error) {
+func (a *gormArticleDao) GetByAuthor(ctx context.Context, author int64, offset, limit int) ([]dao.ArticleModel, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (a *articleDao) GetById(ctx context.Context, id int64) (dao.ArticleModel, error) {
+func (a *gormArticleDao) GetById(ctx context.Context, id int64) (dao.ArticleModel, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (a *articleDao) GetPubById(ctx context.Context, id int64) (dao.ArticleModel, error) {
+func (a *gormArticleDao) GetPubById(ctx context.Context, id int64) (dao.ArticleModel, error) {
 	//TODO implement me
 	panic("implement me")
 }
@@ -85,7 +85,7 @@ func (a *articleDao) GetPubById(ctx context.Context, id int64) (dao.ArticleModel
 // Transaction
 //
 //	@Description:
-func (a *articleDao) Transaction(ctx context.Context, bizFunc func(txDao ArticleDAO) error) error {
+func (a *gormArticleDao) Transaction(ctx context.Context, bizFunc func(txDao ArticleDAO) error) error {
 	return a.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		txDao := NewArticleDao(tx)
 		return bizFunc(txDao)
@@ -95,7 +95,7 @@ func (a *articleDao) Transaction(ctx context.Context, bizFunc func(txDao Article
 // Upsert
 //
 //	@Description: GORM实现Upsert的语义 Insert Or Update
-func (a *articleDao) Upsert(ctx context.Context, art dao.PublishArticleModels) error {
+func (a *gormArticleDao) Upsert(ctx context.Context, art dao.PublishArticleModels) error {
 	now := time.Now()
 	// OnConflict的意思是数据冲突了  用MySQL就只需要关注一个地方 DoUpdates
 	var err = a.db.Clauses(clause.OnConflict{
@@ -120,7 +120,7 @@ func (a *articleDao) Upsert(ctx context.Context, art dao.PublishArticleModels) e
 	return err
 }
 
-func (a *articleDao) Sync(ctx context.Context, art dao.ArticleModel) (int64, error) {
+func (a *gormArticleDao) Sync(ctx context.Context, art dao.ArticleModel) (int64, error) {
 	// 这里采用闭包形态操作事务 GORM帮我们管理了事务的生命周期
 	var id = int64(art.ID)
 	err := a.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
@@ -140,7 +140,7 @@ func (a *articleDao) Sync(ctx context.Context, art dao.ArticleModel) (int64, err
 	return id, err
 }
 
-func (a *articleDao) SyncStatus(ctx context.Context, author, id int64, status uint8) error {
+func (a *gormArticleDao) SyncStatus(ctx context.Context, author, id int64, status uint8) error {
 	// 也要开启事务
 	now := time.Now()
 	err := a.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
@@ -154,7 +154,7 @@ func (a *articleDao) SyncStatus(ctx context.Context, author, id int64, status ui
 			// 数据库有问题
 			return res.Error
 		}
-		if res.RowsAffected == 0 {
+		if res.RowsAffected != 1 {
 			// 要么Id不存在，要么作者不对
 			return fmt.Errorf("文章不存在 Id: %d 作者: %d", id, author)
 		}
@@ -169,7 +169,7 @@ func (a *articleDao) SyncStatus(ctx context.Context, author, id int64, status ui
 	return err
 }
 
-func (a *articleDao) ListPub(ctx context.Context, start time.Time, offset int, limit int) ([]dao.ArticleModel, error) {
+func (a *gormArticleDao) ListPub(ctx context.Context, start time.Time, offset int, limit int) ([]dao.ArticleModel, error) {
 	//TODO implement me
 	panic("implement me")
 }

@@ -17,6 +17,7 @@ type Config struct {
 	PrometheusPort string         `mapstructure:"prometheus_port"`
 	Database       DatabaseConfig `mapstructure:"database"`
 	Redis          RedisConfig    `mapstructure:"redis"`
+	MongoCfg       MongoDBConfig  `mapstructure:"mongodb"`
 	OTELCfg        OtelConfig     `mapstructure:"otel"`
 }
 
@@ -35,6 +36,9 @@ type RedisConfig struct {
 	DSN string `mapstructure:"dsn"`
 }
 
+type MongoDBConfig struct {
+	DSN string `mapstructure:"dsn"`
+}
 type OtelConfig struct {
 	Url string `mapstructure:"url"`
 }

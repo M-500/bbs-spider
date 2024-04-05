@@ -25,7 +25,7 @@ import (
 func InitWebServer(path string) *gin.Engine {
 	config := ioc.InitConfig(path)
 	db := ioc.InitDatabase(config)
-	articleDAO := article_dao.NewArticleDao(db)
+	articleDAO := article_dao.NewGormArticleDao(db)
 	articleRepository := article.NewArticleRepo(articleDAO)
 	logger := ioc.InitLogger()
 	writeDAO := article_dao.NewWriteDAO(db)

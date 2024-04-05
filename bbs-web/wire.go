@@ -29,7 +29,7 @@ func InitWebServer(path string) *gin.Engine {
 		ioc.InitDatabase,
 		jwtx.NewRedisJWTHandler,
 
-		article_dao.NewArticleDao,
+		article_dao.NewGormArticleDao,
 		article_dao.NewReadDAO,
 		article_dao.NewWriteDAO,
 		dao.NewUserDao,
