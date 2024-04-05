@@ -23,7 +23,7 @@ type mongoArticleDao struct {
 	// 代表线上库
 	livCol *mongo.Collection
 	// 用于雪花算法
-	node snowflake.Node
+	node *snowflake.Node
 }
 
 func NewMongoArticleDao(client *mongo.Client, database *mongo.Database, col *mongo.Collection, livCol *mongo.Collection) *mongoArticleDao {
