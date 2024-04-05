@@ -39,8 +39,8 @@ func (svc *articleService) Save(ctx context.Context, art domain.Article) (int64,
 }
 
 func (svc *articleService) Withdraw(ctx context.Context, art domain.Article) error {
-	//TODO implement me
-	panic("implement me")
+	art.Status = domain.ArticleStatusPrivate // 把状态设置为私有
+	return svc.repo.SyncStatus(ctx, art.Id, art.Author.Id, art.Status)
 }
 
 // Publish

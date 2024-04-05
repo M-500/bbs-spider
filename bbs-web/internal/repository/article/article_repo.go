@@ -165,8 +165,8 @@ func (repo *articleRepo) toEntity(art domain.Article) dao.ArticleModel {
 }
 
 func (repo *articleRepo) SyncStatus(ctx context.Context, id int64, author int64, status domain.ArticleStatus) error {
-	//TODO implement me
-	panic("implement me")
+
+	return repo.artDao.SyncStatus(ctx, author, id, uint8(status))
 }
 
 func (repo *articleRepo) List(ctx context.Context, uid int64, offset int, limit int) ([]domain.Article, error) {

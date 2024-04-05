@@ -4,6 +4,7 @@ import (
 	"bbs-web/internal/repository/dao"
 	"context"
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"time"
@@ -122,7 +123,7 @@ func (a *articleDao) Upsert(ctx context.Context, art dao.PublishArticleModels) e
 func (a *articleDao) Sync(ctx context.Context, art dao.ArticleModel) (int64, error) {
 	// 这里采用闭包形态操作事务 GORM帮我们管理了事务的生命周期
 	var id = int64(art.ID)
-	err := a.db.Transaction(func(tx *gorm.DB) error {
+	err := a.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var err error
 		txDao := NewArticleDao(tx)
 		if id > 0 {
@@ -140,8 +141,32 @@ func (a *articleDao) Sync(ctx context.Context, art dao.ArticleModel) (int64, err
 }
 
 func (a *articleDao) SyncStatus(ctx context.Context, author, id int64, status uint8) error {
-	//TODO implement me
-	panic("implement me")
+	// 也要开启事务
+	now := time.Now()
+	err := a.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		res := tx.Model(&dao.ArticleModel{}).
+			Where("id = ? AND author_id = ?", id, author).
+			Updates(map[string]any{
+				"status":     status,
+				"updated_at": now,
+			})
+		if res.Error != nil {
+			// 数据库有问题
+			return res.Error
+		}
+		if res.RowsAffected == 0 {
+			// 要么Id不存在，要么作者不对
+			return fmt.Errorf("文章不存在 Id: %d 作者: %d", id, author)
+		}
+		// 操作线上库
+		return tx.Model(&dao.PublishArticleModels{}).
+			Where("id = ?", id). // 这里因为上面已经过滤了authorid，所以这里不需要再次查询
+			Updates(map[string]any{
+				"status":     status,
+				"updated_at": now,
+			}).Error
+	})
+	return err
 }
 
 func (a *articleDao) ListPub(ctx context.Context, start time.Time, offset int, limit int) ([]dao.ArticleModel, error) {

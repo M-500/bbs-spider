@@ -1,11 +1,14 @@
 package handler
 
 import (
+	"bbs-web/internal/domain"
 	"bbs-web/internal/service/article"
+	"bbs-web/internal/web/jwtx"
 	"bbs-web/internal/web/vo"
 	"bbs-web/pkg/ginplus"
 	"bbs-web/pkg/logger"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 // @Description
@@ -53,8 +56,25 @@ func (h *ArticleHandler) Edit(ctx *gin.Context, req vo.ArticleReq) (ginplus.Resu
 //	@Description: 下架 撤回文章
 //	@receiver h
 //	@param ctx
-func (h *ArticleHandler) Withdraw(ctx *gin.Context) {
-
+func (h *ArticleHandler) Withdraw(ctx *gin.Context, user jwtx.UserClaims) (ginplus.Result, error) {
+	id := ctx.Param("id")
+	i, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return ginplus.Result{
+			Msg: "参数错误",
+		}, err
+	}
+	//user.Id
+	err = h.svc.Withdraw(ctx, domain.Article{
+		Id: i,
+		Author: domain.Author{
+			Id: user.Id,
+		},
+	})
+	if err != nil {
+		return ginplus.Result{}, err
+	}
+	return ginplus.Result{}, nil
 }
 
 // Publish
