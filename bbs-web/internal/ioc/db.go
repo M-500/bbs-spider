@@ -9,13 +9,16 @@ import (
 	promsdk "github.com/prometheus/client_golang/prometheus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/plugin/opentelemetry/tracing"
 	"gorm.io/plugin/prometheus"
 	"time"
 )
 
 func InitDatabase(cfg *Config) *gorm.DB {
-	config := &gorm.Config{}
+	config := &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	}
 	db, err := gorm.Open(mysql.Open(cfg.Database.DSN), config)
 	if err != nil {
 		panic(err)

@@ -16,8 +16,8 @@ export default {
     }
   },
   methods: {
-    toDetail() {
-      this.$router.push('/detail')
+    toDetail(id) {
+      this.$router.push('/detail/' + id)
     },
     getArticleList(){
       PubArticleListAPI(this.form).then((res) => {

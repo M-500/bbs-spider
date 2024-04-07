@@ -3,7 +3,8 @@
     <div class="pageLeft">
       <div class="pageContent">
         <div class="articlePage">
-          <mavon-editor class="markdown" :value="get_mark_data()" :subfield="false" :defaultOpen="prop.defaultOpen" :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :scrollStyle="prop.scrollStyle"></mavon-editor>
+<!--          <mavon-editor class="markdown" :value="article.content" :subfield="false" :defaultOpen="prop.defaultOpen" :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :scrollStyle="prop.scrollStyle"></mavon-editor>-->
+          <mavon-editor class="markdown" v-model="this.article.content" :subfield="false" :defaultOpen="prop.defaultOpen" :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :scrollStyle="prop.scrollStyle"></mavon-editor>
         </div>
 
         <div class="articleComment">
@@ -40,13 +41,16 @@
 
 
 <script>
+import { PubArticleDetailAPI } from "@/api/article/reader";
+import article from "./edit/Article.vue";
 export default ({
   name: 'detail',
   data() {
     return {
-      artile: {
-        title: "关于我是个大傻逼",
-        content: "# 傻子\n\n```\nPython\n```\n\n",
+      id: this.$route.params.id,
+      article: {
+        title: "",
+        content: "",
       },
       comments: [
         {
@@ -95,13 +99,30 @@ export default ({
   methods: {
     get_mark_data() {
       return "# 傻子\n\n```\nPython\n```\n\n"
+    },
+
+    articleContent(){
+      PubArticleDetailAPI(this.id).then((res) => {
+        article.id = res.Id;
+        article.title = res.Title;
+        article.content= res.Content;
+        console.log("res",res)
+      }).catch((e) => {
+        this.$message({
+          message: e.msg,
+          type: "error",
+        });
+      });
     }
+  },
+  created() {
+    this.articleContent()
   },
   computed: {
     prop() {
       let data = {
         subfield: false,// 单双栏模式
-        defaultOpen: 'preview',//edit： 默认展示编辑区域 ， preview： 默认展示预览区域 
+        defaultOpen: 'preview',//edit： 默认展示编辑区域 ， preview： 默认展示预览区域
         editable: false,
         toolbarsFlag: false,
         scrollStyle: true

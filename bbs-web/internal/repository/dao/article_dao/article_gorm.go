@@ -19,7 +19,7 @@ type ArticleDAO interface {
 	UpdateById(ctx context.Context, art dao.ArticleModel) error
 	GetByAuthor(ctx context.Context, author int64, offset, limit int) ([]dao.ArticleModel, error)
 	GetById(ctx context.Context, id int64) (dao.ArticleModel, error)
-	GetPubById(ctx context.Context, id int64) (dao.ArticleModel, error)
+	GetPubById(ctx context.Context, id int64) (dao.PublishArticleModels, error)
 	Transaction(ctx context.Context, bizFunc func(txDao ArticleDAO) error) error
 	Sync(ctx context.Context, art dao.ArticleModel) (int64, error)
 	Upsert(ctx context.Context, art dao.PublishArticleModels) error
@@ -95,9 +95,10 @@ func (a *gormArticleDao) GetById(ctx context.Context, id int64) (dao.ArticleMode
 	return art, err
 }
 
-func (a *gormArticleDao) GetPubById(ctx context.Context, id int64) (dao.ArticleModel, error) {
-	//TODO implement me
-	panic("implement me")
+func (a *gormArticleDao) GetPubById(ctx context.Context, id int64) (dao.PublishArticleModels, error) {
+	var art dao.PublishArticleModels
+	err := a.db.WithContext(ctx).Model(&dao.ArticleModel{}).Where("id = ?", id).First(&art).Error
+	return art, err
 }
 
 // Transaction
