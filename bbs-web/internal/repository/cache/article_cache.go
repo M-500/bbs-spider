@@ -19,6 +19,10 @@ type ArticleCache interface {
 	DelFirstPage(ctx context.Context, uid int64) error
 
 	Set(ctx context.Context, data domain.Article) error
+
+	// SetPub 正常来说，创作者和读者的 Redis 集群要分开，因为读者是一个核心中的核心
+	SetPub(ctx context.Context, article domain.Article) error
+	GetPub(ctx context.Context, id int64) (domain.Article, error)
 }
 
 type articleCache struct {
@@ -58,10 +62,26 @@ func (c *articleCache) Set(ctx context.Context, data domain.Article) error {
 	}
 	return c.client.Set(ctx, c.authorArtKey(data.Id), res, time.Second*30).Err() // 设置30秒过期
 }
+
+func (c *articleCache) SetPub(ctx context.Context, article domain.Article) error {
+	marshal, err := json.Marshal(article)
+	if err != nil {
+		return err
+	}
+	// 大V有更长的过期时间，而普通用户基本上就是1分钟
+	return c.client.Set(ctx, c.readerArtKey(article.Id), marshal, time.Minute*30).Err()
+}
+
+func (c *articleCache) GetPub(ctx context.Context, id int64) (domain.Article, error) {
+	return domain.Article{}, nil
+}
 func (c *articleCache) firstPageKey(uid int64) string {
 	return fmt.Sprintf("article:first_page:%d", uid)
 }
 
 func (c *articleCache) authorArtKey(uid int64) string {
 	return fmt.Sprintf("article:author:%d", uid)
+}
+func (c *articleCache) readerArtKey(id int64) string {
+	return fmt.Sprintf("article:reader:%d", id)
 }

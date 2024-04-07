@@ -96,7 +96,13 @@ func (repo *articleRepo) Update(ctx context.Context, art domain.Article) error {
 
 func (repo *articleRepo) Sync(ctx context.Context, art domain.Article) (int64, error) {
 	// 去DAO层处理同步的问题
-	return repo.artDao.Sync(ctx, repo.toEntity(art))
+	id, err := repo.artDao.Sync(ctx, repo.toEntity(art))
+	if err == nil {
+		repo.cache.DelFirstPage(ctx, art.Author.Id)
+		// 提前缓存好这篇文章，业务数据预加载
+		repo.cache.SetPub(ctx, art)
+	}
+	return id, err
 }
 
 //func (repo *articleRepo) SyncV3(ctx context.Context, art domain.Article) (int64, error) {
