@@ -47,3 +47,18 @@ type PublishArticleModels struct {
 func (PublishArticleModels) TableName() string {
 	return "articles_pub"
 }
+
+type InteractiveModel struct {
+	gorm.Model
+	// 同一个资源只能有一行，也就是要有联合唯一索引
+	Biz        string
+	BizId      int64
+	ReadCnt    int64 // 阅读计数
+	LikeCnt    int64 // 点赞数
+	CollectCnt int64 // 收藏数
+	CommentCnt int64 // 评论数
+}
+
+func (InteractiveModel) TableName() string {
+	return "interactive"
+}
