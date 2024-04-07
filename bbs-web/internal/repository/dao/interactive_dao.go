@@ -30,13 +30,12 @@ func (dao *interactiveDao) IncrReadCnt(ctx context.Context, biz string, bizId in
 	//dao.db.WithContext(ctx).Updates(map[string]any{
 	//	"read_cnt": cnt,
 	//})
-	now := time.Now()
 	// 数据库层 SQL支持update a = a + 1  实现Upsert语义
 	return dao.db.WithContext(ctx).Clauses(
 		clause.OnConflict{
 			DoUpdates: clause.Assignments(map[string]any{
 				"read_cnt":   gorm.Expr("read_cnt +1"),
-				"updated_at": now,
+				"updated_at": time.Now(),
 			}),
 		}).Create(&InteractiveModel{
 		Biz:        biz,
