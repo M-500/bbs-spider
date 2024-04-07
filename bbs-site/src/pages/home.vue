@@ -1,10 +1,37 @@
 <script>
+import { PubArticleListAPI } from "@/api/article/reader";
 export default {
   name: 'home',
+  data () {
+    return  {
+      form:{
+        page_num: 1,
+        page_size: 15,
+      },
+      articles:[
+        {},
+        {},
+        {},
+      ],
+    }
+  },
   methods: {
     toDetail() {
       this.$router.push('/detail')
     },
+    getArticleList(){
+      PubArticleListAPI(this.form).then((res) => {
+        this.articles = res
+      }).catch((e) => {
+        this.$message({
+          message: e.msg,
+          type: "error",
+        });
+      });
+    }
+  },
+  created() {
+    this.getArticleList()
   }
 }
 </script>
@@ -45,363 +72,19 @@ export default {
 
     <div class="right-main">
       <div class="left-item">
-        <div class="article-list">
-          <div class="article-item" @click="toDetail">
+        <div class="article-list" v-for="(item,index) in articles" :key="index" >
+          <div class="article-item" @click="toDetail(item.id)">
             <div class="avatar">
               <el-avatar :size="50" src="https://mlog.club/images/avatars/80.png"></el-avatar>
             </div>
             <div class="article-main-content">
               <div class="top">
                 <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
+                <div class="uTime"> 发布于{{item.ctime}}</div>
               </div>
               <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
-              </div>
-              <div class="bottom">
-                <div class="left">
-                  <div class="box">
-                    <img :src="require('@/assets/icon/dianzan.svg')" alt="">
-                    <span>赞 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/pinglun.svg')" alt="">
-                    <span>评论 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/guankan.svg')" alt="">
-                    <span>查看 4</span>
-                  </div>
-                </div>
-                <div class="right">
-                  <el-tag type="success">摸鱼</el-tag>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="article-item">
-            <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
-            </div>
-            <div class="article-main-content">
-              <div class="top">
-                <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
-              </div>
-              <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
-              </div>
-              <div class="bottom">
-                <div class="left">
-                  <div class="box">
-                    <img :src="require('@/assets/icon/dianzan.svg')" alt="">
-                    <span>赞 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/pinglun.svg')" alt="">
-                    <span>评论 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/guankan.svg')" alt="">
-                    <span>查看 4</span>
-                  </div>
-                </div>
-                <div class="right">
-                  <el-tag type="success">摸鱼</el-tag>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="article-item">
-            <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
-            </div>
-            <div class="article-main-content">
-              <div class="top">
-                <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
-              </div>
-              <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
-              </div>
-              <div class="bottom">
-                <div class="left">
-                  <div class="box">
-                    <img :src="require('@/assets/icon/dianzan.svg')" alt="">
-                    <span>赞 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/pinglun.svg')" alt="">
-                    <span>评论 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/guankan.svg')" alt="">
-                    <span>查看 4</span>
-                  </div>
-                </div>
-                <div class="right">
-                  <el-tag type="success">摸鱼</el-tag>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="article-item">
-            <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
-            </div>
-            <div class="article-main-content">
-              <div class="top">
-                <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
-              </div>
-              <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
-              </div>
-              <div class="bottom">
-                <div class="left">
-                  <div class="box">
-                    <img :src="require('@/assets/icon/dianzan.svg')" alt="">
-                    <span>赞 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/pinglun.svg')" alt="">
-                    <span>评论 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/guankan.svg')" alt="">
-                    <span>查看 4</span>
-                  </div>
-                </div>
-                <div class="right">
-                  <el-tag type="success">摸鱼</el-tag>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="article-item">
-            <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
-            </div>
-            <div class="article-main-content">
-              <div class="top">
-                <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
-              </div>
-              <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
-              </div>
-              <div class="bottom">
-                <div class="left">
-                  <div class="box">
-                    <img :src="require('@/assets/icon/dianzan.svg')" alt="">
-                    <span>赞 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/pinglun.svg')" alt="">
-                    <span>评论 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/guankan.svg')" alt="">
-                    <span>查看 4</span>
-                  </div>
-                </div>
-                <div class="right">
-                  <el-tag type="success">摸鱼</el-tag>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="article-item">
-            <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
-            </div>
-            <div class="article-main-content">
-              <div class="top">
-                <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
-              </div>
-              <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
-              </div>
-              <div class="bottom">
-                <div class="left">
-                  <div class="box">
-                    <img :src="require('@/assets/icon/dianzan.svg')" alt="">
-                    <span>赞 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/pinglun.svg')" alt="">
-                    <span>评论 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/guankan.svg')" alt="">
-                    <span>查看 4</span>
-                  </div>
-                </div>
-                <div class="right">
-                  <el-tag type="success">摸鱼</el-tag>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="article-item">
-            <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
-            </div>
-            <div class="article-main-content">
-              <div class="top">
-                <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
-              </div>
-              <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
-              </div>
-              <div class="bottom">
-                <div class="left">
-                  <div class="box">
-                    <img :src="require('@/assets/icon/dianzan.svg')" alt="">
-                    <span>赞 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/pinglun.svg')" alt="">
-                    <span>评论 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/guankan.svg')" alt="">
-                    <span>查看 4</span>
-                  </div>
-                </div>
-                <div class="right">
-                  <el-tag type="success">摸鱼</el-tag>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="article-item">
-            <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
-            </div>
-            <div class="article-main-content">
-              <div class="top">
-                <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
-              </div>
-              <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
-              </div>
-              <div class="bottom">
-                <div class="left">
-                  <div class="box">
-                    <img :src="require('@/assets/icon/dianzan.svg')" alt="">
-                    <span>赞 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/pinglun.svg')" alt="">
-                    <span>评论 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/guankan.svg')" alt="">
-                    <span>查看 4</span>
-                  </div>
-                </div>
-                <div class="right">
-                  <el-tag type="success">摸鱼</el-tag>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="article-item">
-            <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
-            </div>
-            <div class="article-main-content">
-              <div class="top">
-                <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
-              </div>
-              <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
-              </div>
-              <div class="bottom">
-                <div class="left">
-                  <div class="box">
-                    <img :src="require('@/assets/icon/dianzan.svg')" alt="">
-                    <span>赞 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/pinglun.svg')" alt="">
-                    <span>评论 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/guankan.svg')" alt="">
-                    <span>查看 4</span>
-                  </div>
-                </div>
-                <div class="right">
-                  <el-tag type="success">摸鱼</el-tag>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="article-item">
-            <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
-            </div>
-            <div class="article-main-content">
-              <div class="top">
-                <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
-              </div>
-              <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
-              </div>
-              <div class="bottom">
-                <div class="left">
-                  <div class="box">
-                    <img :src="require('@/assets/icon/dianzan.svg')" alt="">
-                    <span>赞 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/pinglun.svg')" alt="">
-                    <span>评论 4</span>
-                  </div>
-                  <div class="box">
-                    <img :src="require('@/assets/icon/guankan.svg')" alt="">
-                    <span>查看 4</span>
-                  </div>
-                </div>
-                <div class="right">
-                  <el-tag type="success">摸鱼</el-tag>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="article-item">
-            <div class="avatar">
-              <img src="https://mlog.club/images/avatars/80.png" alt="">
-            </div>
-            <div class="article-main-content">
-              <div class="top">
-                <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于2024-02-22 09:54:00</div>
-              </div>
-              <div class="content">
-                <div class="title">Go 语言社区系统 BBS-GO 4.0.0 发布，升级vue3、nuxt3</div>
-                <div class="abs">文档地址 帮助文档：https://bbs-go.com 官网交流：https://mlog.club 问题反馈：https://mlog.club/topics/node/3 功能建议收集：https://mlog.club/topic/609 git...</div>
+                <div class="title">{{item.title}}</div>
+                <div class="abs">{{item.summary}}...</div>
               </div>
               <div class="bottom">
                 <div class="left">

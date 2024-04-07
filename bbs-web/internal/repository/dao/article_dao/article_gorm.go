@@ -76,7 +76,7 @@ func (a *gormArticleDao) GetByAuthor(ctx context.Context, author int64, offset, 
 		Offset(offset).
 		Limit(limit).
 		// 方式一 :
-		Order("update_at DESC create_at ASC").
+		Order("updated_at DESC, created_at ASC").
 		// 方式二:
 		//Order(clause.OrderBy{
 		//	Columns: []clause.OrderByColumn{
