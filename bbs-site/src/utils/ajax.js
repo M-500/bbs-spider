@@ -80,6 +80,12 @@ const onerror = e => {
     const resp = e.response
     console.log("diudiudiu", resp)
     if (resp) {
+        if(resp.status == 403){
+          window.localStorage.clear()
+          window.sessionStorage.clear()
+          this.$router.push("/login")
+          throw resp.statusText
+        }
         if (resp.data) {
             throw resp.data
         }

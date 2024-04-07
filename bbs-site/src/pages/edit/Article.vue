@@ -17,6 +17,9 @@ export default {
     }
   },
   methods: {
+    changeString (value, html) {
+      this.form.content = html
+    },
     handleAvatarSuccess(res, file) {
       this.form.cover = URL.createObjectURL(file.raw);
     },
@@ -59,8 +62,7 @@ export default {
           <el-input type="textarea" v-model="form.summary" :autosize="{ minRows: 2, maxRows: 4}"></el-input>
         </el-form-item>
         <el-form-item label="文章内容">
-          <mavon-editor v-model="form.content" />
-          <!-- <el-input type="textarea" v-model="form.desc" :autosize="{ minRows: 4, maxRows: 10}"></el-input> -->
+          <mavon-editor v-model="form.content" @change="changeString"/>
         </el-form-item>
         <el-form-item label="文章图片">
           <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
