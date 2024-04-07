@@ -10,6 +10,7 @@ import (
 	"bbs-web/internal/ioc"
 	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/article"
+	"bbs-web/internal/repository/cache"
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/repository/dao/article_dao"
 	"bbs-web/internal/service"
@@ -26,8 +27,10 @@ func InitWebServer(path string) *gin.Engine {
 	config := ioc.InitConfig(path)
 	db := ioc.InitDatabase(config)
 	articleDAO := article_dao.NewGormArticleDao(db)
-	articleRepository := article.NewArticleRepo(articleDAO)
+	cmdable := ioc.InitRedis(config)
+	articleCache := cache.NewArticleCache(cmdable)
 	logger := ioc.InitLogger()
+	articleRepository := article.NewArticleRepo(articleDAO, articleCache, logger)
 	writeDAO := article_dao.NewWriteDAO(db)
 	artWriterRepo := article.NewArtWriterRepo(writeDAO)
 	readDAO := article_dao.NewReadDAO(db)
@@ -39,7 +42,6 @@ func InitWebServer(path string) *gin.Engine {
 	iUserDao := dao.NewUserDao(db)
 	iUserRepo := repository.NewUserRepo(iUserDao)
 	iUserService := service.NewUserService(iUserRepo)
-	cmdable := ioc.InitRedis(config)
 	jwtHandler := jwtx.NewRedisJWTHandler(cmdable)
 	userHandler := handler.NewUserHandler(iUserService, iCaptchaSvc, jwtHandler)
 	router := web.NewRouter(articleHandler, captchaHandler, userHandler)

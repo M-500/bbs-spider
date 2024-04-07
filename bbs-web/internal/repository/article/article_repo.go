@@ -221,7 +221,9 @@ func (repo *articleRepo) List(ctx context.Context, uid int64, offset int, limit 
 		return nil, err
 	}
 	data := slice.Map[dao.ArticleModel, domain.Article](res, func(idx int, src dao.ArticleModel) domain.Article {
-		return repo.toDomain(src)
+		temp := repo.toDomain(src)
+		temp.Content = "" // 强制不展示列表内容，为了让缓存更轻量，因为列表页不会展示详细信息
+		return temp
 	})
 	// 回写缓存的时候，考虑是set 还是delete
 	/**

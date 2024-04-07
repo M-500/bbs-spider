@@ -6,6 +6,7 @@ import (
 	"bbs-web/internal/ioc"
 	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/article"
+	"bbs-web/internal/repository/cache"
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/repository/dao/article_dao"
 	"bbs-web/internal/service"
@@ -29,6 +30,7 @@ func InitWebServer(path string) *gin.Engine {
 		ioc.InitDatabase,
 		jwtx.NewRedisJWTHandler,
 
+		cache.NewArticleCache,
 		article_dao.NewGormArticleDao,
 		article_dao.NewReadDAO,
 		article_dao.NewWriteDAO,
