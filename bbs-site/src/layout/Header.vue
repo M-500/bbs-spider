@@ -5,6 +5,7 @@ export default {
   data() {
     return {
       username: curUser.getUserName(),
+      avatar: curUser.getUserAvatar(),
     }
   },
   methods: {
@@ -47,7 +48,7 @@ export default {
       <el-dropdown @command="handleCommand">
         <div class="avatar-warp">
           <!-- <img class="avatar" :src="cover_image_link" alt="" /> -->
-          <img class="avatar" src="" alt="" />
+          <img class="avatar" :src="avatar" alt="" />
           <span>{{ username }}</span>
           <i class="el-icon-arrow-down el-icon--right"></i>
         </div>
@@ -82,5 +83,12 @@ export default {
 .editBtn {
   background-color: #00bbc9;
   border: #00bbc9 1px solid;
+}
+.avatar-warp{
+  display: flex;
+  align-items: center;
+  img{
+    height: 30px;
+  }
 }
 </style>

@@ -1,8 +1,10 @@
 package article
 
 import (
+	"bbs-web/internal/repository/cache"
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/repository/dao/article_dao"
+	"bbs-web/pkg/logger"
 	"bbs-web/pkg/utils/zifo/slice"
 	"context"
 	"gorm.io/gorm"
@@ -37,15 +39,27 @@ type articleRepo struct {
 
 	// 引入db
 	db *gorm.DB
+	// 引入cache
+	cache cache.ArticleCache
+
+	l logger.Logger
 }
 
-func NewArticleRepo(artDao article_dao.ArticleDAO) ArticleRepository {
+func NewArticleRepo(artDao article_dao.ArticleDAO, c cache.ArticleCache, l logger.Logger) ArticleRepository {
 	return &articleRepo{
 		artDao: artDao,
+		cache:  c,
+		l:      l,
 	}
 }
 
 func (repo *articleRepo) Create(ctx context.Context, art domain.Article) (int64, error) {
+	go func() {
+		err := repo.cache.DelFirstPage(ctx, art.Author.Id)
+		if err != nil {
+			repo.l.Error("删除文章列表页缓存失败", logger.Error(err))
+		}
+	}()
 	return repo.artDao.Insert(ctx, dao.ArticleModel{
 		AuthorId:    art.Author.Id,
 		Title:       art.Title,
@@ -58,7 +72,12 @@ func (repo *articleRepo) Create(ctx context.Context, art domain.Article) (int64,
 }
 
 func (repo *articleRepo) Update(ctx context.Context, art domain.Article) error {
-
+	go func() {
+		err := repo.cache.DelFirstPage(ctx, art.Author.Id)
+		if err != nil {
+			repo.l.Error("删除文章列表页缓存失败", logger.Error(err))
+		}
+	}()
 	return repo.artDao.UpdateById(ctx, dao.ArticleModel{
 		Model: gorm.Model{
 			ID: uint(art.Id),
@@ -188,13 +207,38 @@ func (repo *articleRepo) SyncStatus(ctx context.Context, id int64, author int64,
 }
 
 func (repo *articleRepo) List(ctx context.Context, uid int64, offset int, limit int) ([]domain.Article, error) {
+	// 可以选择缓存第一页的数据 第一页一般都是热点数据
+	if offset == 0 && limit <= 100 {
+		// 试图从缓存中获取数据
+		page, err := repo.cache.GetFirstPage(ctx, uid)
+		if err == nil {
+			return page[:limit], nil
+		}
+		// 否则直接走DB的逻辑
+	}
 	res, err := repo.artDao.GetByAuthor(ctx, uid, offset, limit)
 	if err != nil {
 		return nil, err
 	}
-	return slice.Map[dao.ArticleModel, domain.Article](res, func(idx int, src dao.ArticleModel) domain.Article {
+	data := slice.Map[dao.ArticleModel, domain.Article](res, func(idx int, src dao.ArticleModel) domain.Article {
 		return repo.toDomain(src)
-	}), nil
+	})
+	// 回写缓存的时候，考虑是set 还是delete
+	/**
+	如果创作者不太可能高并发，那么就可以直接set，否则应该del
+
+	*/
+	if offset == 0 && limit <= 100 {
+		// 这里要回写缓存  当然也可以用go func 来执行
+		//_ = repo.cache.SetFirstPage(ctx, uid, data)
+		go func() {
+			err = repo.cache.SetFirstPage(ctx, uid, data)
+			if err != nil {
+				repo.l.Error("文章列表回写缓存失败", logger.Error(err))
+			}
+		}()
+	}
+	return data, nil
 }
 
 func (repo *articleRepo) GetByID(ctx context.Context, id int64) (domain.Article, error) {

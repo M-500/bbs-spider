@@ -43,6 +43,7 @@ func (repo *userRepo) toDomain(u dao.UserMode) domain.UserInfo {
 		NickName: u.Nickname,
 		Password: u.Password,
 		BirthDay: u.Birthday,
+		Avatar:   u.Avatar,
 	}
 }
 

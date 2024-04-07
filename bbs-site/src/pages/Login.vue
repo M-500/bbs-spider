@@ -78,7 +78,7 @@ export default {
       curUser.setToken(res.token);
       curUser.setUserName(res.userName);
       curUser.setUserId(res.id);
-      curUser.setUserAvatar(res.avatar);
+      curUser.setUserAvatar(res.cover);
     },
     resetForm(form) {
       this.$refs[form].resetFields()

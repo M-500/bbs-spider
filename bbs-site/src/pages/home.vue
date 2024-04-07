@@ -23,6 +23,22 @@ export default {
             <img :src="require('@/assets/icon/a-shijianzuijin.svg')" alt="">
             <div class="title">推荐</div>
           </div>
+
+          <div class="tag-box">
+            <img :src="require('@/assets/icon/a-shijianzuijin.svg')" alt="">
+            <div class="title">关注</div>
+          </div>
+
+          <div class="tag-box">
+            <img :src="require('@/assets/icon/a-shijianzuijin.svg')" alt="">
+            <div class="title">收藏</div>
+          </div>
+
+
+          <div class="tag-box">
+            <img :src="require('@/assets/icon/a-shijianzuijin.svg')" alt="">
+            <div class="title">我的</div>
+          </div>
         </div>
       </div>
     </div>

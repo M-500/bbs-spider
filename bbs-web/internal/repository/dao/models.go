@@ -15,6 +15,7 @@ type UserMode struct {
 	Gender   string     `gorm:"type:varchar(128);comment:性别;column:gender"`
 	Birthday *time.Time `gorm:"comment:生日;column:birthday"`
 	IsAdmin  int64      `gorm:"int;default:0;comment:是否是admin，默认0,非管理员;column:gender"`
+	Avatar   string     `gorm:"type:varchar(200);comment:用户头像"`
 }
 
 func (UserMode) TableName() string {
