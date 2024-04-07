@@ -4,7 +4,7 @@
       <div class="pageContent">
         <div class="articlePage">
 <!--          <mavon-editor class="markdown" :value="article.content" :subfield="false" :defaultOpen="prop.defaultOpen" :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :scrollStyle="prop.scrollStyle"></mavon-editor>-->
-          <mavon-editor class="markdown" v-model="this.article.content" :subfield="false" :defaultOpen="prop.defaultOpen" :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :scrollStyle="prop.scrollStyle"></mavon-editor>
+          <mavon-editor class="markdown" v-model="article.content" :subfield="false"  :toolbars="false" :editable="false" :defaultOpen="'preview'" :toolbarsFlag="false"></mavon-editor>
         </div>
 
         <div class="articleComment">
@@ -47,8 +47,12 @@ export default ({
   name: 'detail',
   data() {
     return {
+      markdownOption: {
+        bold: true, // 粗体
+      },
       id: this.$route.params.id,
       article: {
+        id: "",
         title: "",
         content: "",
       },
@@ -97,16 +101,11 @@ export default ({
     }
   },
   methods: {
-    get_mark_data() {
-      return "# 傻子\n\n```\nPython\n```\n\n"
-    },
-
     articleContent(){
       PubArticleDetailAPI(this.id).then((res) => {
         article.id = res.Id;
         article.title = res.Title;
         article.content= res.Content;
-        console.log("res",res)
       }).catch((e) => {
         this.$message({
           message: e.msg,
