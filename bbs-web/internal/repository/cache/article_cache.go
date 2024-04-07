@@ -32,7 +32,6 @@ type articleCache struct {
 func NewArticleCache(cmd redis.Cmdable) ArticleCache {
 	return &articleCache{client: cmd}
 }
-
 func (c *articleCache) GetFirstPage(ctx context.Context, uid int64) ([]domain.Article, error) {
 	res, err := c.client.Get(ctx, c.firstPageKey(uid)).Bytes()
 	if err != nil {
