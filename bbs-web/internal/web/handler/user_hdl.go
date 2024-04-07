@@ -9,6 +9,7 @@ import (
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/service"
 	"bbs-web/internal/web/jwtx"
+	"bbs-web/internal/web/resp"
 	"bbs-web/internal/web/vo"
 	"bbs-web/pkg/ginplus"
 	"errors"
@@ -47,8 +48,14 @@ func (h *UserHandler) PwdLogin(ctx *gin.Context, req vo.PwdLoginReq) (ginplus.Re
 			Msg:  err.Error(),
 		}, err
 	}
+	loginResp := resp.PWDLoginResp{
+		Token:    "Bearer " + token,
+		UserName: user.UserName,
+		UserId:   user.Id,
+		Cover:    user.Avatar,
+	}
 	return ginplus.Result{
-		Data: "Bearer " + token,
+		Data: loginResp,
 	}, nil
 }
 

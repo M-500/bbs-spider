@@ -34,13 +34,8 @@ func NewArticleHandler(svc article.IArticleService, l logger.Logger) *ArticleHan
 //	@Description: 编辑文章
 //	@receiver h
 //	@param ctx
-func (h *ArticleHandler) Edit(ctx *gin.Context, req vo.ArticleReq) (ginplus.Result, error) {
-
-	// 获取用户
-	//get := ctx.MustGet(constant.JWT_USET_Key)
-	//claims, ok := c.(ijwt.UserClaims) 做类型断言
-	// 超时控制
-	id, err := h.svc.Save(ctx.Request.Context(), req.ToDomain(1))
+func (h *ArticleHandler) Edit(ctx *gin.Context, req vo.ArticleReq, c jwtx.UserClaims) (ginplus.Result, error) {
+	id, err := h.svc.Save(ctx.Request.Context(), req.ToDomain(c.Id))
 	if err != nil {
 		h.log.Error("编辑文章出错", logger.Error(err))
 		return ginplus.Result{

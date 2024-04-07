@@ -47,7 +47,7 @@ func NewArticleRepo(artDao article_dao.ArticleDAO) ArticleRepository {
 
 func (repo *articleRepo) Create(ctx context.Context, art domain.Article) (int64, error) {
 	return repo.artDao.Insert(ctx, dao.ArticleModel{
-		AuthorId:    0,
+		AuthorId:    art.Author.Id,
 		Title:       art.Title,
 		Summary:     art.Summary,
 		Content:     art.Content,
@@ -63,7 +63,7 @@ func (repo *articleRepo) Update(ctx context.Context, art domain.Article) error {
 		Model: gorm.Model{
 			ID: uint(art.Id),
 		},
-		AuthorId:    0,
+		AuthorId:    art.Author.Id,
 		Title:       art.Title,
 		Summary:     art.Summary,
 		Content:     art.Content,

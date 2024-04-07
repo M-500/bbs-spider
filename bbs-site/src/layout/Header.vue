@@ -1,23 +1,37 @@
 <script>
+import curUser from "@/utils/cur-user";
 export default {
   name: 'Header',
   data() {
     return {
-
+      username: curUser.getUserName(),
     }
   },
   methods: {
-    toLogin() {
-      this.$router.push('/login')
-    },
     toHome() {
       this.$router.push('/home')
-    },
+       },
     toEdit() {
-      this.$router.push('/article/edit')
-    }
-  },
-
+       this.$router.push( '/article/edit')
+    },
+    handleCommand(command) {
+      if (command === "exitSys") {
+        this.logout();
+      }
+      // if (command === "userCenter") {
+      //   this.$router.push({
+      //     name: "userCenter",
+      //   });
+      // }
+    },
+    logout(){
+      window.sessionStorage.clear()
+      window.localStorage.clear();
+      // 如果当前界面刷新 那么就会清空vuex的数据
+      this.$router.push("/login");
+      window.location.reload();
+    },
+  }
 }
 </script>
 
@@ -30,8 +44,20 @@ export default {
     </div>
     <div class="show-login">
       <el-button class="editBtn" size="mini" icon="el-icon-edit" type="primary" @click="toEdit">写文章</el-button>
-      <el-button size="mini" plain @click="toLogin">登录</el-button>
+      <el-dropdown @command="handleCommand">
+        <div class="avatar-warp">
+          <!-- <img class="avatar" :src="cover_image_link" alt="" /> -->
+          <img class="avatar" src="" alt="" />
+          <span>{{ username }}</span>
+          <i class="el-icon-arrow-down el-icon--right"></i>
+        </div>
+        <el-dropdown-menu>
+          <!-- <el-dropdown-item command="userCenter">个人中心</el-dropdown-item> -->
+          <el-dropdown-item command="exitSys">用户退出</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
+
   </div>
 </template>
 
@@ -53,7 +79,7 @@ export default {
     //max-width: 100%;
   }
 }
-.editBtn{
+.editBtn {
   background-color: #00bbc9;
   border: #00bbc9 1px solid;
 }

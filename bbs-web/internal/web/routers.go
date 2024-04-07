@@ -35,7 +35,7 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 
 	articleGroup := engine.Group("/articles")
 	{
-		articleGroup.POST("/edit", gp.WrapJson[vo.ArticleReq](r.artHdl.Edit))
+		articleGroup.POST("/edit", gp.WrapBodyAndToken[vo.ArticleReq, jwtx.UserClaims](r.artHdl.Edit))
 		articleGroup.POST("/:id/withdraw", gp.WrapToken[jwtx.UserClaims](r.artHdl.Withdraw))
 		articleGroup.POST("/publish", gp.WrapJson[vo.ArticleReq](r.artHdl.Publish))
 		articleGroup.POST("/list", gp.WrapBodyAndToken[vo.ArticleListReq, jwtx.UserClaims](r.artHdl.List)) // 创作者查看自己的文章列表

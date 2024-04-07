@@ -12,6 +12,7 @@ type UserInfo struct {
 	NickName string
 	Password string
 	BirthDay *time.Time
+	Avatar   string
 	// 文章数
 	// 粉丝数
 	// 关注数量
