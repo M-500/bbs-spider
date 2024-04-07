@@ -31,7 +31,7 @@ type gormArticleDao struct {
 	db *gorm.DB
 }
 
-func NewArticleDao(db *gorm.DB) ArticleDAO {
+func NewGormArticleDao(db *gorm.DB) ArticleDAO {
 	return &gormArticleDao{
 		db: db,
 	}
@@ -68,8 +68,25 @@ func (a *gormArticleDao) UpdateById(ctx context.Context, art dao.ArticleModel) e
 }
 
 func (a *gormArticleDao) GetByAuthor(ctx context.Context, author int64, offset, limit int) ([]dao.ArticleModel, error) {
-	//TODO implement me
-	panic("implement me")
+	var arts []dao.ArticleModel
+	// 涉及order by的时候 一定要让order by 条件命中索引，因为索引天然有序
+	// SQL优化案例 早起的order by 没有命中索引，所以内存排序很慢，优化这个查询
+	err := a.db.WithContext(ctx).Model(&dao.ArticleModel{}).
+		Where("author_id = ?", author).
+		Offset(offset).
+		Limit(limit).
+		// 方式一 :
+		Order("update_at DESC create_at ASC").
+		// 方式二:
+		//Order(clause.OrderBy{
+		//	Columns: []clause.OrderByColumn{
+		//		{Column: clause.Column{Name: "update_at"}, Desc: true},
+		//		{Column: clause.Column{Name: "create_at"}, Desc: false},
+		//	},
+		//	Expression: nil,
+		//}).
+		Find(&arts).Error
+	return arts, err
 }
 
 func (a *gormArticleDao) GetById(ctx context.Context, id int64) (dao.ArticleModel, error) {
@@ -87,7 +104,7 @@ func (a *gormArticleDao) GetPubById(ctx context.Context, id int64) (dao.ArticleM
 //	@Description:
 func (a *gormArticleDao) Transaction(ctx context.Context, bizFunc func(txDao ArticleDAO) error) error {
 	return a.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		txDao := NewArticleDao(tx)
+		txDao := NewGormArticleDao(tx)
 		return bizFunc(txDao)
 	})
 }
@@ -125,7 +142,7 @@ func (a *gormArticleDao) Sync(ctx context.Context, art dao.ArticleModel) (int64,
 	var id = int64(art.ID)
 	err := a.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var err error
-		txDao := NewArticleDao(tx)
+		txDao := NewGormArticleDao(tx)
 		if id > 0 {
 			err = txDao.UpdateById(ctx, art)
 		} else {

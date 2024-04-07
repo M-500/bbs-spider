@@ -3,6 +3,7 @@ package article
 import (
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/repository/dao/article_dao"
+	"bbs-web/pkg/utils/zifo/slice"
 	"context"
 	"gorm.io/gorm"
 	"time"
@@ -149,6 +150,23 @@ func (repo *articleRepo) SyncV1(ctx context.Context, art domain.Article) (int64,
 	return id, err
 }
 
+func (repo *articleRepo) toDomain(src dao.ArticleModel) domain.Article {
+	return domain.Article{
+		Id:      int64(src.ID),
+		Title:   src.Title,
+		Content: src.Content,
+		Author: domain.Author{
+			Id: src.AuthorId,
+		},
+		Status:      domain.ArticleStatus(src.Status),
+		Summary:     src.Summary,
+		ContentType: src.ContentType,
+		Cover:       src.Cover,
+		Ctime:       src.CreatedAt,
+		Utime:       src.UpdatedAt,
+	}
+}
+
 func (repo *articleRepo) toEntity(art domain.Article) dao.ArticleModel {
 	return dao.ArticleModel{
 		Model: gorm.Model{
@@ -170,8 +188,13 @@ func (repo *articleRepo) SyncStatus(ctx context.Context, id int64, author int64,
 }
 
 func (repo *articleRepo) List(ctx context.Context, uid int64, offset int, limit int) ([]domain.Article, error) {
-	//TODO implement me
-	panic("implement me")
+	res, err := repo.artDao.GetByAuthor(ctx, uid, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+	return slice.Map[dao.ArticleModel, domain.Article](res, func(idx int, src dao.ArticleModel) domain.Article {
+		return repo.toDomain(src)
+	}), nil
 }
 
 func (repo *articleRepo) GetByID(ctx context.Context, id int64) (domain.Article, error) {

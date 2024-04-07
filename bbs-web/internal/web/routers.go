@@ -4,7 +4,7 @@ import (
 	"bbs-web/internal/web/handler"
 	"bbs-web/internal/web/jwtx"
 	"bbs-web/internal/web/vo"
-	"bbs-web/pkg/ginplus"
+	gp "bbs-web/pkg/ginplus"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,17 +28,17 @@ func NewRouter(artHdl *handler.ArticleHandler, codeHdl *handler.CaptchaHandler, 
 }
 
 func (r *Router) RegisterURL(engine *gin.Engine) {
-	engine.POST("/sign-up", ginplus.WrapJson[vo.RegisterUserReq](r.userHdl.Register)) // 注册用户
-	engine.POST("/pwd-login", ginplus.WrapJson[vo.PwdLoginReq](r.userHdl.PwdLogin))   // 账号密码登录
+	engine.POST("/sign-up", gp.WrapJson[vo.RegisterUserReq](r.userHdl.Register)) // 注册用户
+	engine.POST("/pwd-login", gp.WrapJson[vo.PwdLoginReq](r.userHdl.PwdLogin))   // 账号密码登录
 
-	engine.GET("/code", ginplus.Wrap(r.codeHdl.ImageCaptcha))
+	engine.GET("/code", gp.Wrap(r.codeHdl.ImageCaptcha))
 
 	articleGroup := engine.Group("/articles")
 	{
-		articleGroup.POST("/edit", ginplus.WrapJson[vo.ArticleReq](r.artHdl.Edit))
-		articleGroup.POST("/:id/withdraw", ginplus.WrapToken[jwtx.UserClaims](r.artHdl.Withdraw))
-		articleGroup.POST("/publish", ginplus.WrapJson[vo.ArticleReq](r.artHdl.Publish))
-		articleGroup.POST("/list", ginplus.WrapBodyAndToken[vo.ArticleListReq, jwtx.UserClaims](r.artHdl.List))
+		articleGroup.POST("/edit", gp.WrapJson[vo.ArticleReq](r.artHdl.Edit))
+		articleGroup.POST("/:id/withdraw", gp.WrapToken[jwtx.UserClaims](r.artHdl.Withdraw))
+		articleGroup.POST("/publish", gp.WrapJson[vo.ArticleReq](r.artHdl.Publish))
+		articleGroup.POST("/list", gp.WrapBodyAndToken[vo.ArticleListReq, jwtx.UserClaims](r.artHdl.List)) // 创作者查看自己的文章列表
 		articleGroup.GET("/detail/:id", r.artHdl.Detail)
 	}
 

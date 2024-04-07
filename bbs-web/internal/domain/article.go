@@ -26,6 +26,19 @@ type Article struct {
 	Utime       time.Time
 }
 
+// Abstract
+//
+//	@Description: 根据内容获取摘要  如果数据库不存储摘要的话，就要用这个方法
+//	@receiver a
+//	@return string
+func (a Article) Abstract() string {
+	cs := []rune(a.Content)
+	if len(cs) < 100 {
+		return a.Content
+	}
+	return string(cs[:100])
+}
+
 // 使用衍生类型 方便在上面加方法
 type ArticleStatus uint8
 

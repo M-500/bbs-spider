@@ -91,8 +91,7 @@ func (svc *articleService) PublishV1(ctx context.Context, art domain.Article) (i
 	return id, err
 }
 func (svc *articleService) List(ctx context.Context, uid int64, offset int, limit int) ([]domain.Article, error) {
-	// 获取文章列表，分页信息
-	panic("implement me")
+	return svc.repo.List(ctx, uid, offset, limit)
 }
 
 func (svc *articleService) ListPub(ctx context.Context, start time.Time, offset, limit int) ([]domain.Article, error) {
