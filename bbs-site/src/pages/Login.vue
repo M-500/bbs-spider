@@ -64,7 +64,7 @@ export default {
       this.$refs[form].validate(async valid => {
         if (!valid) return this.$message.error('非法输入数据，请重新输入')
         pwdLoginAPI(this.form).then((res) => {
-          curUser.setToken(res);
+          this.setUserStorage(res)
           this.$router.push('/home')
         }).catch((e) => {
           this.$message({
@@ -73,6 +73,12 @@ export default {
           });
         });
       })
+    },
+    setUserStorage(res){
+      curUser.setToken(res.token);
+      curUser.setUserName(res.userName);
+      curUser.setUserId(res.id);
+      curUser.setUserAvatar(res.avatar);
     },
     resetForm(form) {
       this.$refs[form].resetFields()

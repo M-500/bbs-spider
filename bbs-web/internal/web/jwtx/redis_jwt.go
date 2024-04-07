@@ -100,7 +100,7 @@ func (r *RedisJwtHandler) ParseToken(ctx *gin.Context, tokenStr string) (UserCla
 		return UserClaims{}, NotLogin
 	}
 	// TODO 是否需要校验Redis的Token是否过期？
-	return UserClaims{}, err
+	return claims, nil
 }
 
 func NewRedisJWTHandler(cmd redis.Cmdable) JwtHandler {
