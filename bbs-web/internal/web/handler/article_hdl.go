@@ -4,9 +4,11 @@ import (
 	"bbs-web/internal/domain"
 	"bbs-web/internal/service/article"
 	"bbs-web/internal/web/jwtx"
+	"bbs-web/internal/web/resp"
 	"bbs-web/internal/web/vo"
 	"bbs-web/pkg/ginplus"
 	"bbs-web/pkg/logger"
+	"bbs-web/pkg/utils/zifo/slice"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
@@ -100,12 +102,32 @@ func (h *ArticleHandler) Publish(ctx *gin.Context, req vo.ArticleReq) (ginplus.R
 //	@Description: 查看列表
 //	@receiver h
 //	@param ctx
-func (h *ArticleHandler) List(ctx *gin.Context) {
-
+func (h *ArticleHandler) List(ctx *gin.Context, req vo.ArticleListReq, user jwtx.UserClaims) (ginplus.Result, error) {
+	list, err := h.svc.List(ctx, user.Id, req.PageNum, req.PageSize)
+	if err != nil {
+		return ginplus.Result{
+			Code: 502001,
+			Msg:  "",
+		}, err
+	}
+	return ginplus.Result{
+		Data: slice.Map[domain.Article, resp.ArticleResp](list, func(idx int, src domain.Article) resp.ArticleResp {
+			return resp.ArticleResp{
+				Id:          src.Id,
+				Title:       src.Title,
+				AuthorId:    src.Author.Id,
+				AuthorName:  src.Author.UserName,
+				Status:      src.Status.String(),
+				Summary:     src.Summary,
+				ContentType: src.ContentType,
+				Cover:       src.Cover,
+				Ctime:       src.Ctime,
+				Utime:       src.Utime,
+			}
+		})}, nil
 }
 
 func (h *ArticleHandler) Detail(ctx *gin.Context) {
-
 }
 
 // Like

@@ -15,6 +15,11 @@ type ArticleReq struct {
 	Cover       string `json:"cover" binding:"-"`
 }
 
+type ArticleListReq struct {
+	PageNum  int `json:"page_num"`
+	PageSize int `json:"page_size"`
+}
+
 func (req ArticleReq) ToDomain(uid int64) domain.Article {
 	return domain.Article{
 		Id:          req.Id,

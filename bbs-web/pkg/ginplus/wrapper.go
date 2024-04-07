@@ -33,6 +33,35 @@ func WrapParam[T any](tagFn func(ctx *gin.Context, req T) (Result, error)) gin.H
 	}
 }
 
+func WrapBodyAndToken[Req any, C jwt.Claims](tagFn func(ctx *gin.Context, req Req, userToken C) (Result, error)) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		var req Req
+		if err := ctx.Bind(&req); err != nil {
+			return
+		}
+		val, ok := ctx.Get("users")
+		if !ok {
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		c, ok := val.(C)
+		if !ok {
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		res, err := tagFn(ctx, req, c)
+		if err != nil {
+			fmt.Println("执行业务逻辑错误")
+			// TODO 这里要记录日志，或者监控啥的
+			ctx.JSON(http.StatusOK, res)
+			return
+		}
+		res.Msg = "OK"
+		ctx.JSON(http.StatusOK, res)
+		return
+	}
+}
+
 func WrapToken[C jwt.Claims](tagFn func(ctx *gin.Context, userToken C) (Result, error)) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		val, ok := ctx.Get("users")
