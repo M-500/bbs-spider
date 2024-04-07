@@ -3,8 +3,14 @@
     <div class="pageLeft">
       <div class="pageContent">
         <div class="articlePage">
-<!--          <mavon-editor class="markdown" :value="article.content" :subfield="false" :defaultOpen="prop.defaultOpen" :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :scrollStyle="prop.scrollStyle"></mavon-editor>-->
-          <mavon-editor class="markdown" v-model="article.content" :subfield="false"  :toolbars="false" :editable="false" :defaultOpen="'preview'" :toolbarsFlag="false"></mavon-editor>
+          <mavon-editor  :value="getHTML()"
+                         :subfield="false"
+                         defaultOpen="preview"
+                         :toolbarsFlag="false"
+                         :editable="false"
+          ></mavon-editor>
+<!--          <mavon-editor class="markdown" :value="getHTML" :subfield="false" :defaultOpen="prop.defaultOpen" :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :scrollStyle="prop.scrollStyle"></mavon-editor>-->
+<!--          <mavon-editor class="markdown" v-model="article.content" :subfield="false"  :toolbars="false" :editable="false" :defaultOpen="'preview'" :toolbarsFlag="false"></mavon-editor>-->
         </div>
 
         <div class="articleComment">
@@ -42,6 +48,7 @@
 
 <script>
 import { PubArticleDetailAPI } from "@/api/article/reader";
+// import { marked } from 'marked';
 import article from "./edit/Article.vue";
 export default ({
   name: 'detail',
@@ -101,6 +108,9 @@ export default ({
     }
   },
   methods: {
+    getHTML(){
+      return marked(this.article.content)
+    },
     articleContent(){
       PubArticleDetailAPI(this.id).then((res) => {
         article.id = res.Id;
