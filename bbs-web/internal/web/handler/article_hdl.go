@@ -6,9 +6,10 @@ import (
 	"bbs-web/internal/web/jwtx"
 	"bbs-web/internal/web/resp"
 	"bbs-web/internal/web/vo"
-	"bbs-web/pkg/ginplus"
+	ginplus "bbs-web/pkg/ginplus"
 	"bbs-web/pkg/logger"
 	"bbs-web/pkg/utils/zifo/slice"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
@@ -122,7 +123,44 @@ func (h *ArticleHandler) List(ctx *gin.Context, req vo.ArticleListReq, user jwtx
 		})}, nil
 }
 
-func (h *ArticleHandler) Detail(ctx *gin.Context) {
+func (h *ArticleHandler) Detail(ctx *gin.Context, user jwtx.UserClaims) (ginplus.Result, error) {
+	artIdStr := ctx.Param("id") // 从URL中获取id
+	artId, err := strconv.ParseInt(artIdStr, 10, 64)
+	if err != nil {
+		return ginplus.Result{
+			Code: 502002,
+			Msg:  "参数错误",
+		}, nil
+	}
+	art, err := h.svc.GetById(ctx, artId)
+	if err != nil {
+		return ginplus.Result{
+			Code: 502005,
+			Msg:  "系统错误",
+		}, err
+	}
+	if art.Id != user.Id {
+		// 说明非法访问 ，需要做反爬,或者上报风控系统
+		return ginplus.Result{
+			Code: 5002003,
+			Msg:  "输入错误",
+		}, fmt.Errorf("非法访问文章，创作者 ID 不匹配 %d", user.Id)
+	}
+	return ginplus.Result{
+		Data: resp.ArticleResp{
+			Id:          art.Id,
+			Title:       art.Title,
+			AuthorId:    art.Author.Id,
+			AuthorName:  art.Author.UserName,
+			Status:      art.Status.String(),
+			Summary:     art.Summary,
+			Content:     art.Content,
+			ContentType: art.ContentType,
+			Cover:       art.Cover,
+			Ctime:       art.Ctime,
+			Utime:       art.Utime,
+		},
+	}, nil
 }
 
 // Like

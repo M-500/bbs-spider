@@ -244,8 +244,8 @@ func (repo *articleRepo) List(ctx context.Context, uid int64, offset int, limit 
 }
 
 func (repo *articleRepo) GetByID(ctx context.Context, id int64) (domain.Article, error) {
-	//TODO implement me
-	panic("implement me")
+	res, err := repo.artDao.GetById(ctx, id)
+	return repo.toDomain(res), err
 }
 
 func (repo *articleRepo) GetPublishedById(ctx context.Context, id int64) (domain.Article, error) {

@@ -13,6 +13,7 @@ type ArticleResp struct {
 	AuthorName  string    `json:"authorName"`
 	Status      string    `json:"status"` // 状态这个东西，前端处理 后端处理都可以
 	Summary     string    `json:"summary"`
+	Content     string    `json:"content"`
 	ContentType string    `json:"contentType"`
 	Cover       string    `json:"cover"`
 	Ctime       time.Time `json:"ctime"`

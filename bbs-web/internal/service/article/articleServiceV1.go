@@ -100,8 +100,7 @@ func (svc *articleService) ListPub(ctx context.Context, start time.Time, offset,
 }
 
 func (svc *articleService) GetById(ctx context.Context, id int64) (domain.Article, error) {
-	//TODO implement me
-	panic("implement me")
+	return svc.repo.GetByID(ctx, id)
 }
 
 func (svc *articleService) GetPublishedById(ctx context.Context, id, uid int64) (domain.Article, error) {

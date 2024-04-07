@@ -90,8 +90,9 @@ func (a *gormArticleDao) GetByAuthor(ctx context.Context, author int64, offset, 
 }
 
 func (a *gormArticleDao) GetById(ctx context.Context, id int64) (dao.ArticleModel, error) {
-	//TODO implement me
-	panic("implement me")
+	var art dao.ArticleModel
+	err := a.db.WithContext(ctx).Model(&dao.ArticleModel{}).Where("id = ?", id).First(&art).Error
+	return art, err
 }
 
 func (a *gormArticleDao) GetPubById(ctx context.Context, id int64) (dao.ArticleModel, error) {
