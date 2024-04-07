@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bbs-web/internal/domain"
+	"bbs-web/internal/service"
 	"bbs-web/internal/service/article"
 	"bbs-web/internal/web/jwtx"
 	"bbs-web/internal/web/resp"
@@ -19,14 +20,20 @@ import (
 // @Date 2024-03-26 15:47
 
 type ArticleHandler struct {
-	svc article.IArticleService
-	log logger.Logger
+	svc      article.IArticleService
+	log      logger.Logger
+	interSvc service.InteractiveService
+	biz      string // 业务ID
 }
 
-func NewArticleHandler(svc article.IArticleService, l logger.Logger) *ArticleHandler {
+func NewArticleHandler(svc article.IArticleService,
+	intrSvc service.InteractiveService,
+	l logger.Logger) *ArticleHandler {
 	return &ArticleHandler{
-		svc: svc,
-		log: l,
+		svc:      svc,
+		log:      l,
+		interSvc: intrSvc,
+		biz:      "article",
 	}
 }
 
@@ -190,9 +197,32 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 	}
 	article, err := h.svc.GetPublishedById(ctx, id, user.Id)
 	if err != nil {
-
+		return ginplus.Result{
+			Code: 501003,
+			Msg:  "系统错误",
+		}, err
 	}
-	return ginplus.Result{Data: article}, nil
+	// 异步增加阅读计数
+	go func() {
+		// 阅读数+1
+		err1 := h.interSvc.IncrReadCnt(ctx, h.biz, article.Id)
+		if err1 != nil {
+			h.log.Error("增加文章阅读数失败", logger.Error(err1), logger.Int64("Article_ID", article.Id))
+		}
+	}()
+	return ginplus.Result{Data: resp.ArticleResp{
+		Id:          article.Id,
+		Title:       article.Title,
+		AuthorId:    article.Author.Id,
+		AuthorName:  article.Author.UserName,
+		Status:      article.Status.String(),
+		Summary:     article.Summary,
+		Content:     article.Content,
+		ContentType: article.ContentType,
+		Cover:       article.Cover,
+		Ctime:       article.Ctime,
+		Utime:       article.Utime,
+	}}, nil
 }
 
 // Reward
