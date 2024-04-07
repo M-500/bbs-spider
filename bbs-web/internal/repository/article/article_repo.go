@@ -212,6 +212,9 @@ func (repo *articleRepo) List(ctx context.Context, uid int64, offset int, limit 
 		// 试图从缓存中获取数据
 		page, err := repo.cache.GetFirstPage(ctx, uid)
 		if err == nil {
+			go func() {
+				repo.preCache(ctx, page)
+			}()
 			return page[:limit], nil
 		}
 		// 否则直接走DB的逻辑
@@ -238,9 +241,19 @@ func (repo *articleRepo) List(ctx context.Context, uid int64, offset int, limit 
 			if err != nil {
 				repo.l.Error("文章列表回写缓存失败", logger.Error(err))
 			}
+			repo.preCache(ctx, data)
 		}()
 	}
 	return data, nil
+}
+
+// 预加载 预测加载，过期时间短一点
+func (repo *articleRepo) preCache(ctx context.Context, data []domain.Article) {
+	// 是不是要考虑文章内容太长就不缓存
+	if len(data) > 0 {
+		err := repo.cache.Set(ctx, data[0])
+		repo.l.Error("文章缓存预加载失败", logger.Error(err))
+	}
 }
 
 func (repo *articleRepo) GetByID(ctx context.Context, id int64) (domain.Article, error) {

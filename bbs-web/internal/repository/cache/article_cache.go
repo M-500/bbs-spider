@@ -17,6 +17,8 @@ type ArticleCache interface {
 	GetFirstPage(ctx context.Context, uid int64) ([]domain.Article, error)
 	SetFirstPage(ctx context.Context, uid int64, data []domain.Article) error
 	DelFirstPage(ctx context.Context, uid int64) error
+
+	Set(ctx context.Context, data domain.Article) error
 }
 
 type articleCache struct {
@@ -48,6 +50,18 @@ func (c *articleCache) SetFirstPage(ctx context.Context, uid int64, data []domai
 func (c *articleCache) DelFirstPage(ctx context.Context, uid int64) error {
 	return c.client.Del(ctx, c.firstPageKey(uid)).Err()
 }
+
+func (c *articleCache) Set(ctx context.Context, data domain.Article) error {
+	res, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	return c.client.Set(ctx, c.authorArtKey(data.Id), res, time.Minute).Err() // 设置10分钟的过期时间
+}
 func (c *articleCache) firstPageKey(uid int64) string {
+	return fmt.Sprintf("article:first_page:%d", uid)
+}
+
+func (c *articleCache) authorArtKey(uid int64) string {
 	return fmt.Sprintf("article:first_page:%d", uid)
 }
