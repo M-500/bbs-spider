@@ -13,10 +13,33 @@ import (
 
 type InteractiveDao interface {
 	IncrReadCnt(ctx context.Context, biz string, bizId int64) error
+	IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error
+	DelLikeInfo(ctx context.Context, biz string, bizId int64) error
 }
 
 type interactiveDao struct {
 	db *gorm.DB
+}
+
+func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId int64) error {
+
+}
+
+func (dao *interactiveDao) IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error {
+	return dao.db.WithContext(ctx).Clauses(
+		clause.OnConflict{
+			DoUpdates: clause.Assignments(map[string]any{
+				"like_cnt":   gorm.Expr("read_cnt +1"),
+				"updated_at": time.Now(),
+			}),
+		}).Create(&InteractiveModel{
+		Biz:        biz,
+		BizId:      id,
+		ReadCnt:    0,
+		LikeCnt:    1,
+		CollectCnt: 0,
+		CommentCnt: 0,
+	}).Error
 }
 
 func (dao *interactiveDao) IncrReadCnt(ctx context.Context, biz string, bizId int64) error {

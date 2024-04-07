@@ -11,6 +11,7 @@ import (
 
 type InteractiveRepo interface {
 	IncrReadCnt(ctx context.Context, biz string, bizId int64) error
+	IncrLike(ctx context.Context, biz string, id int64, uid int64) error
 }
 
 type interactiveRepo struct {
@@ -20,5 +21,11 @@ type interactiveRepo struct {
 func (repo *interactiveRepo) IncrReadCnt(ctx context.Context, biz string, bizId int64) error {
 	// 要考虑缓存方案了
 
-	return nil
+	return repo.dao.IncrReadCnt(ctx, biz, bizId)
+}
+
+func (repo *interactiveRepo) IncrLike(ctx context.Context, biz string, id int64, uid int64) error {
+	// 插入数据库
+	return repo.dao.IncrLikeCnt(ctx, biz, id, uid)
+	// 同步缓存
 }

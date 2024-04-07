@@ -37,9 +37,10 @@ func (i *interactiveService) IncrReadCnt(ctx *gin.Context, biz string, id int64)
 	return i.cache.IncrReadCntIfPresent(ctx, biz, id)
 }
 
-func (i *interactiveService) Like(ctx *gin.Context, biz string, id int64, id2 int64) error {
-	return nil
+func (i *interactiveService) Like(ctx *gin.Context, biz string, id int64, uid int64) error {
+
+	return i.repo.IncrLike(ctx, biz, id, uid)
 }
-func (i *interactiveService) CancelLike(ctx *gin.Context, biz string, id int64, id2 int64) error {
-	return nil
+func (i *interactiveService) CancelLike(ctx *gin.Context, biz string, id int64, uid int64) error {
+	return i.repo
 }
