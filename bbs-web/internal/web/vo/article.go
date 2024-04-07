@@ -33,3 +33,9 @@ func (req ArticleReq) ToDomain(uid int64) domain.Article {
 		},
 	}
 }
+
+// 点赞和取消点赞
+type LikeReq struct {
+	Like bool  `json:"like"`
+	Id   int64 `json:"id"`
+}

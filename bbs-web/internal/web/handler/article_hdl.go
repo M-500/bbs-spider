@@ -175,10 +175,20 @@ func (h *ArticleHandler) Detail(ctx *gin.Context, user jwtx.UserClaims) (ginplus
 //	@Description: 点赞
 //	@receiver h
 //	@param ctx
-func (h *ArticleHandler) Like(ctx *gin.Context) {
-	ctx.JSON(200, gin.H{
-		"msg": "13e1",
-	})
+func (h *ArticleHandler) Like(ctx *gin.Context, req vo.LikeReq, c jwtx.UserClaims) (ginplus.Result, error) {
+	var err error
+	if req.Like {
+		err = h.interSvc.Like(ctx, h.biz, req.Id, c.Id)
+	} else {
+		err = h.interSvc.CancelLike(ctx, h.biz, req.Id, c.Id)
+	}
+	if err != nil {
+		return ginplus.Result{
+			Code: 502005,
+			Msg:  "系统错误",
+		}, err
+	}
+	return ginplus.Result{Msg: "OK!"}, nil
 }
 
 // PubDetail
