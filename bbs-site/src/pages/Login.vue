@@ -1,16 +1,17 @@
 <script>
 
 import { imageCaptchaAPI, pwdLoginAPI } from "@/api/sign-in/login";
+import curUser from "@/utils/cur-user";
 export default {
   name: 'PwdLogin',
   data() {
     return {
       captchaUri: "",
       form: {
-        username: '',
+        username: 'admin',
         captcha_id: '',
         captcha_code: '',
-        password: ''
+        password: 'wulinlin'
       },
       rules: {
         username: [
@@ -63,8 +64,7 @@ export default {
       this.$refs[form].validate(async valid => {
         if (!valid) return this.$message.error('非法输入数据，请重新输入')
         pwdLoginAPI(this.form).then((res) => {
-          console.log(res)
-          window.localStorage.setItem('token', res.data)
+          curUser.setToken(res);
           this.$router.push('/home')
         }).catch((e) => {
           this.$message({
@@ -72,16 +72,6 @@ export default {
             type: "error",
           });
         });
-        // const { data: res } = await this.$http.post('sj/login', this.form)
-        // if (!res.success) return this.$message.error(res.msg)
-        // window.localStorage.setItem('token', res.data.token)
-        // // 将权限数据存到store中
-        // this.$store.commit('setRightList', res.data.menu_list)
-        // this.$store.commit('setUsername', res.data.username)
-        // this.$store.commit('setPhoto', res.data.cover_image_link)
-        // // 将用户所具备的权限动态添加到路由规则
-        // initDynamicRouter()
-        // await this.$router.push('admin/index')
       })
     },
     resetForm(form) {
@@ -113,9 +103,12 @@ export default {
         <el-form-item>
           <el-button class="loginBtn" type="primary" @click="submitForm('form')">登录</el-button>
         </el-form-item>
-        <el-form-item>
+        <div class="reg">
+          没有账号？<span class="regSpan" @click="toRegister('form')">去注册</span>
+        </div>
+        <!-- <el-form-item>
           <el-button class="regBtn" type="primary" @click="toRegister('form')">注册</el-button>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
     </div>
   </div>
@@ -172,16 +165,15 @@ export default {
   background: linear-gradient(to right, #193441, #3e606f);
   background-blend-mode: normal, normal;
 }
-.regBtn {
-  height: 44px;
-  width: 100%;
-  font-size: 20px;
-  font-weight: normal;
-  font-stretch: normal;
-  letter-spacing: 2px;
+.reg {
+}
+.regSpan {
   color: #ffffff;
-  background: linear-gradient(to right, #d1dbbd, #ecf0f1);
-  background-blend-mode: normal, normal;
+  background: linear-gradient(to right, #193441, #3e606f);
+}
+
+.regSpan :hover {
+  color: #193441;
 }
 
 .captcha {
