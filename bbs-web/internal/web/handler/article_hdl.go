@@ -179,10 +179,20 @@ func (h *ArticleHandler) Like(ctx *gin.Context) {
 //	@Description: 阅读
 //	@receiver h
 //	@param ctx
-func (h *ArticleHandler) PubDetail(ctx *gin.Context) {
-	ctx.JSON(200, gin.H{
-		"msg": "13e1",
-	})
+func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginplus.Result, error) {
+	idstr := ctx.Param("id")
+	id, err := strconv.ParseInt(idstr, 10, 64)
+	if err != nil {
+		return ginplus.Result{
+			Code: 502004,
+			Msg:  "参数错误",
+		}, err
+	}
+	article, err := h.svc.GetPublishedById(ctx, id, user.Id)
+	if err != nil {
+
+	}
+	return ginplus.Result{Data: article}, nil
 }
 
 // Reward

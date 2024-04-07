@@ -44,7 +44,7 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 
 	pub := engine.Group("/pub")
 	{
-		pub.GET("/:id", r.artHdl.PubDetail) // 读取文章详情
+		pub.GET("/:id", gp.WrapToken[jwtx.UserClaims](r.artHdl.PubDetail)) // 读取文章详情
 		pub.POST("/like", r.artHdl.Like)
 		pub.POST("/reward", r.artHdl.Reward)
 	}

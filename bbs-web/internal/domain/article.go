@@ -11,6 +11,8 @@ type Author struct {
 	Id       int64
 	UserName string
 	NickName string
+	BirthDay *time.Time
+	Avatar   string
 }
 type Article struct {
 	Id      int64

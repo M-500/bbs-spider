@@ -56,12 +56,12 @@ func (c *articleCache) Set(ctx context.Context, data domain.Article) error {
 	if err != nil {
 		return err
 	}
-	return c.client.Set(ctx, c.authorArtKey(data.Id), res, time.Minute).Err() // 设置10分钟的过期时间
+	return c.client.Set(ctx, c.authorArtKey(data.Id), res, time.Second*30).Err() // 设置30秒过期
 }
 func (c *articleCache) firstPageKey(uid int64) string {
 	return fmt.Sprintf("article:first_page:%d", uid)
 }
 
 func (c *articleCache) authorArtKey(uid int64) string {
-	return fmt.Sprintf("article:first_page:%d", uid)
+	return fmt.Sprintf("article:author:%d", uid)
 }

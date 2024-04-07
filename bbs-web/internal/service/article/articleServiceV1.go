@@ -18,6 +18,7 @@ type articleService struct {
 	l         logger.Logger
 	writeRepo article.ArtWriterRepo
 	readRepo  article.ArticleReaderRepository
+	//userSvc   service.IUserService
 }
 
 func NewArticleService(repo article.ArticleRepository, l logger.Logger, writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository) IArticleService {
@@ -104,8 +105,35 @@ func (svc *articleService) GetById(ctx context.Context, id int64) (domain.Articl
 }
 
 func (svc *articleService) GetPublishedById(ctx context.Context, id, uid int64) (domain.Article, error) {
-	//TODO implement me
-	panic("implement me")
+	art, err := svc.repo.GetPublishedById(ctx, id, uid)
+	if err != nil {
+		return domain.Article{}, err
+	}
+	return art, err
+	//// 组装User
+	//user, err := svc.userSvc.FindById(ctx, uid)
+	//if err != nil {
+	//	return domain.Article{}, err
+	//}
+	//return domain.Article{
+	//	Id:      art.Id,
+	//	Title:   art.Title,
+	//	Content: art.Content,
+	//	Author: domain.Author{
+	//		Id:       user.Id,
+	//		UserName: user.UserName,
+	//		NickName: user.NickName,
+	//		BirthDay: user.BirthDay,
+	//		Avatar:   user.Avatar,
+	//	},
+	//	Status:      art.Status,
+	//	Summary:     art.Summary,
+	//	ContentType: art.ContentType,
+	//	Cover:       art.Cover,
+	//	Ctime:       art.Ctime,
+	//	Utime:       art.Utime,
+	//}, nil
+
 }
 
 func (svc *articleService) GetByIds(ctx context.Context, biz string, ids []int64) ([]domain.Article, error) {

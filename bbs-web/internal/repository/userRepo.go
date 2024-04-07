@@ -13,6 +13,7 @@ import (
 type IUserRepo interface {
 	CreateUser(ctx context.Context, u domain.UserInfo) error
 	FindByUsername(ctx context.Context, username string) (domain.UserInfo, error)
+	FindById(ctx context.Context, id int64) (domain.UserInfo, error)
 }
 
 type userRepo struct {
@@ -34,6 +35,11 @@ func (repo *userRepo) CreateUser(ctx context.Context, u domain.UserInfo) error {
 		Nickname: u.UserName,
 		IsAdmin:  0,
 	})
+}
+
+func (repo *userRepo) FindById(ctx context.Context, id int64) (domain.UserInfo, error) {
+	user, err := repo.dao.FindById(ctx, id)
+	return repo.toDomain(user), err
 }
 
 func (repo *userRepo) toDomain(u dao.UserMode) domain.UserInfo {

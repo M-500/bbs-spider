@@ -1,6 +1,7 @@
 package article
 
 import (
+	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/cache"
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/repository/dao/article_dao"
@@ -25,14 +26,14 @@ type ArticleRepository interface {
 	SyncStatus(ctx context.Context, id int64, author int64, status domain.ArticleStatus) error
 	List(ctx context.Context, uid int64, offset int, limit int) ([]domain.Article, error)
 	GetByID(ctx context.Context, id int64) (domain.Article, error)
-	GetPublishedById(ctx context.Context, id int64) (domain.Article, error)
+	GetPublishedById(ctx context.Context, id, uid int64) (domain.Article, error)
 	ListPub(ctx context.Context, start time.Time, offset int, limit int) ([]domain.Article, error)
 	//FindById(ctx context.Context, id int64) domain.Article
 }
 
 type articleRepo struct {
-	artDao article_dao.ArticleDAO
-
+	artDao   article_dao.ArticleDAO
+	userRepo repository.IUserRepo
 	// 操作两个dao
 	readDAO  article_dao.ReadDAO
 	writeDAO article_dao.WriteDAO
@@ -45,11 +46,12 @@ type articleRepo struct {
 	l logger.Logger
 }
 
-func NewArticleRepo(artDao article_dao.ArticleDAO, c cache.ArticleCache, l logger.Logger) ArticleRepository {
+func NewArticleRepo(artDao article_dao.ArticleDAO, c cache.ArticleCache, l logger.Logger, userRepo repository.IUserRepo) ArticleRepository {
 	return &articleRepo{
-		artDao: artDao,
-		cache:  c,
-		l:      l,
+		userRepo: userRepo,
+		artDao:   artDao,
+		cache:    c,
+		l:        l,
 	}
 }
 
@@ -250,9 +252,11 @@ func (repo *articleRepo) List(ctx context.Context, uid int64, offset int, limit 
 // 预加载 预测加载，过期时间短一点
 func (repo *articleRepo) preCache(ctx context.Context, data []domain.Article) {
 	// 是不是要考虑文章内容太长就不缓存
-	if len(data) > 0 {
+	if len(data) > 0 && len(data[0].Content) < 1024*1024 {
 		err := repo.cache.Set(ctx, data[0])
-		repo.l.Error("文章缓存预加载失败", logger.Error(err))
+		if err != nil {
+			repo.l.Error("文章缓存预加载失败", logger.Error(err))
+		}
 	}
 }
 
@@ -261,9 +265,34 @@ func (repo *articleRepo) GetByID(ctx context.Context, id int64) (domain.Article,
 	return repo.toDomain(res), err
 }
 
-func (repo *articleRepo) GetPublishedById(ctx context.Context, id int64) (domain.Article, error) {
-	//TODO implement me
-	panic("implement me")
+func (repo *articleRepo) GetPublishedById(ctx context.Context, id, uid int64) (domain.Article, error) {
+	art, err := repo.artDao.GetPubById(ctx, id)
+	if err != nil {
+		return domain.Article{}, err
+	}
+	// 你在这边要组装 user 了，适合单体应用
+	user, err := repo.userRepo.FindById(ctx, art.AuthorId)
+	if err != nil {
+		return domain.Article{}, err
+	}
+	return domain.Article{
+		Id:      int64(art.ID),
+		Title:   art.Title,
+		Content: art.Content,
+		Author: domain.Author{
+			Id:       user.Id,
+			UserName: user.UserName,
+			NickName: user.NickName,
+			BirthDay: user.BirthDay,
+			Avatar:   user.Avatar,
+		},
+		Status:      domain.ArticleStatus(art.Status),
+		Summary:     art.Summary,
+		ContentType: art.ContentType,
+		Cover:       art.Cover,
+		Ctime:       art.CreatedAt,
+		Utime:       art.UpdatedAt,
+	}, nil
 }
 
 func (repo *articleRepo) ListPub(ctx context.Context, start time.Time, offset int, limit int) ([]domain.Article, error) {
