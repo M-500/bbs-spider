@@ -5,7 +5,7 @@ export default {
   data () {
     return  {
       form:{
-        page_num: 1,
+        page_num: 0,
         page_size: 15,
       },
       articles:[

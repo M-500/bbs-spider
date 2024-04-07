@@ -99,7 +99,6 @@ func (h *ArticleHandler) Publish(ctx *gin.Context, req vo.ArticleReq) (ginplus.R
 //	@receiver h
 //	@param ctx
 func (h *ArticleHandler) List(ctx *gin.Context, req vo.ArticleListReq, user jwtx.UserClaims) (ginplus.Result, error) {
-	req.PageNum -= 1
 	list, err := h.svc.List(ctx, user.Id, req.PageNum, req.PageSize)
 	if err != nil {
 		return ginplus.Result{

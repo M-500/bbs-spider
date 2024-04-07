@@ -223,6 +223,10 @@ func (repo *articleRepo) List(ctx context.Context, uid int64, offset int, limit 
 			go func() {
 				repo.preCache(ctx, page)
 			}()
+			// 处理一下数组越界问题
+			if limit > len(page) {
+				limit = len(page)
+			}
 			return page[:limit], nil
 		}
 		// 否则直接走DB的逻辑
