@@ -114,7 +114,6 @@ export default {
 .reply-box-avatar{
   display: flex;
   justify-content: flex-start;
-  margin-left: 20px;
   margin-right: 20px;
 }
 .avatar{
