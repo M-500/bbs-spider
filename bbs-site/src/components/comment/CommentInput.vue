@@ -1,13 +1,13 @@
 <template>
-  <div class="comment-form">
-    <div class="comment-create">
-      <div ref="commentEditor" class="comment-input-wrapper">
-        <div class="comment-quote-info">
-          回复：
-          <label v-text="叼毛A" />
-          <i class="iconfont icon-close" alt="取消回复" @click="cancelReply" />
+  <div class="box-normal">
+    <div class="reply-box-avatar">
+      <div class="avatar">
+        <img src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" alt="">
+      </div>
+      <div class="reply-box-wrap">
+        <div class="textarea-wrap">
+          <textarea name="" id="" cols="30" rows="2" placeholder="诶哟不错哦，发条评论吧"></textarea>
         </div>
-        <text-editor ref="simpleEditor" v-model="value" @submit="create" />
       </div>
     </div>
   </div>
@@ -105,71 +105,37 @@ export default {
 </script>
 
 <style scoped >
-.comment-form {
-  background-color: var(--bg-color);
-  padding: 10px;
-  margin-bottom: 10px;
-
-  .comment-create {
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
-    padding: 0;
-    box-sizing: border-box;
-
-    .comment-quote-info {
-      font-size: 13px;
-      color: #4a4a4a;
-      margin-bottom: 3px;
-      font-weight: 600;
-
-      i {
-        font-size: 12px !important;
-        color: var(--text-link-color);
-        cursor: pointer;
-      }
-
-      i:hover {
-        color: red;
-      }
-    }
-
-    .comment-input-wrapper {
-      margin-bottom: 8px;
-
-      .text-input {
-        outline: none;
-        width: 100%;
-        height: 85px;
-        font-size: 14px;
-        padding: 10px 40px 10px 10px;
-        color: #4a4a4a;
-        line-height: 16px;
-        max-width: 100%;
-        resize: none;
-        border: 1px solid #e9e9e9;
-        box-sizing: border-box;
-        border-radius: #e9e9e9;
-      }
-    }
-
-    .comment-button-wrapper {
-      user-select: none;
-      display: flex;
-      float: right;
-      height: 30px;
-      line-height: 30px;
-
-      span {
-        color: #d8d8d8;
-        font-size: 13px;
-        margin-right: 5px;
-      }
-
-      button {
-        font-weight: 500;
-      }
-    }
+.box-normal{
+  margin-top: 10px;
+  font-weight: 400;
+  height: 50px;
+}
+.reply-box-avatar{
+  display: flex;
+  justify-content: flex-start;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.avatar{
+  margin-right: 20px;
+  img{
+    height: 50px;
+    border-radius: 50%;
+  }
+}
+.reply-box-wrap{
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* 纵向排列 */
+  justify-content: center;
+}
+.textarea-wrap{
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* 纵向排列 */
+  justify-content: center;
+  textarea{
+    width: 100%;
   }
 }
 </style>
