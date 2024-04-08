@@ -24,7 +24,7 @@ type InteractiveDao interface {
 
 	Get(ctx context.Context, biz string, id int64) (InteractiveModel, error)
 	GetLikeInfo(ctx context.Context, biz string, id int64, uid int64) (UserLikeBizModel, error)
-	GetCollectInfo(ctx context.Context, biz string, id int64, uid int64) (UserLikeBizModel, error)
+	GetCollectInfo(ctx context.Context, biz string, id int64, uid int64) (UserCollectBizModel, error)
 }
 
 type interactiveDao struct {
@@ -139,8 +139,16 @@ func (dao *interactiveDao) Get(ctx context.Context, biz string, id int64) (Inter
 	return data, err
 }
 func (dao *interactiveDao) GetLikeInfo(ctx context.Context, biz string, id int64, uid int64) (UserLikeBizModel, error) {
-	panic("")
+	var res UserLikeBizModel
+	err := dao.db.WithContext(ctx).Model(&UserLikeBizModel{}).
+		Where("biz_id = ? AND biz = ? AND uid = ?", id, biz, uid).
+		First(&res).Error
+	return res, err
 }
-func (dao *interactiveDao) GetCollectInfo(ctx context.Context, biz string, id int64, uid int64) (UserLikeBizModel, error) {
-	panic("")
+func (dao *interactiveDao) GetCollectInfo(ctx context.Context, biz string, id int64, uid int64) (UserCollectBizModel, error) {
+	var res UserCollectBizModel
+	err := dao.db.WithContext(ctx).Model(&UserCollectBizModel{}).
+		Where("biz_id = ? AND biz = ? AND uid = ?", id, biz, uid).
+		First(&res).Error
+	return res, err
 }

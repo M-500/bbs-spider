@@ -24,7 +24,7 @@ var luaIncrCnt string
 const (
 	fieldReadCnt       = "read_cnt"
 	fieldLikeCnt       = "like_cnt"
-	fieldCollectionCnt = "like_cnt"
+	fieldCollectionCnt = "collect_cnt"
 )
 
 var (
@@ -63,7 +63,8 @@ func (r *redisInteractiveCache) Get(ctx context.Context, biz string, bizId int64
 	// 判空
 	if len(result) == 0 {
 		// 缓存不存在
-		return domain.Interactive{}, ErrKeyNotExist
+		//return domain.Interactive{}, ErrKeyNotExist
+		return domain.Interactive{}, nil
 	}
 	var res domain.Interactive
 	res.CollectCnt, _ = strconv.ParseInt(result[fieldCollectionCnt], 10, 64)
@@ -72,8 +73,17 @@ func (r *redisInteractiveCache) Get(ctx context.Context, biz string, bizId int64
 
 	return res, nil
 }
+
 func (r *redisInteractiveCache) Set(ctx context.Context, biz string, bizId int64, intr domain.Interactive) error {
-	panic("")
+	key := r.key(biz, bizId)
+	err := r.client.HSet(ctx, key,
+		fieldReadCnt, intr.ReadCnt,
+		fieldLikeCnt, intr.LikeCnt,
+		fieldCollectionCnt, intr.CollectCnt).Err()
+	if err != nil {
+		return err
+	}
+	return r.client.Expire(ctx, key, time.Minute*15).Err()
 }
 
 func (r *redisInteractiveCache) IncrReadCntIfPresent(ctx context.Context, biz string, bizId int64) error {

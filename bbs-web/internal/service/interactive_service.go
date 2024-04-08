@@ -5,6 +5,7 @@ import (
 	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/cache"
 	"context"
+	"fmt"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -59,21 +60,6 @@ func (i *interactiveService) Get(ctx context.Context, biz string, id int64, uid 
 		liked     bool
 		collected bool
 	)
-	//var wg sync.WaitGroup
-	//wg.Add(3)
-	//go func() {
-	//	defer  wg.Done()
-	//
-	//}()
-	//go func() {
-	//	defer  wg.Done()
-	//
-	//}()
-	//go func() {
-	//	defer  wg.Done()
-	//
-	//}()
-	//wg.Wait()
 	eg.Go(func() error {
 		var err error
 		data, err = i.repo.Get(ctx, biz, id)
@@ -89,13 +75,14 @@ func (i *interactiveService) Get(ctx context.Context, biz string, id int64, uid 
 		collected, err = i.repo.Collected(ctx, biz, id, uid)
 		return err
 	})
-	err := eg.Wait()
-	if err != nil {
-		return domain.Interactive{}, err
+	lastErr := eg.Wait()
+	if lastErr != nil {
+		fmt.Println("我不理解", lastErr)
+		return domain.Interactive{}, lastErr
 	}
 	data.Liked = liked
 	data.Collected = collected
-	return data, err
+	return data, lastErr
 }
 
 func (i *interactiveService) CollectArt(ctx context.Context, biz string, bizId int64, uId int64, cId int64) error {

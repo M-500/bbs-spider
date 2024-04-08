@@ -28,10 +28,11 @@ type interactiveRepo struct {
 	l     logger.Logger
 }
 
-func NewInteractiveRepo(dao dao.InteractiveDao, l logger.Logger) InteractiveRepo {
+func NewInteractiveRepo(dao dao.InteractiveDao, cache cache.RedisInteractiveCache, l logger.Logger) InteractiveRepo {
 	return &interactiveRepo{
-		dao: dao,
-		l:   l,
+		dao:   dao,
+		cache: cache,
+		l:     l,
 	}
 }
 
@@ -70,7 +71,7 @@ func (repo *interactiveRepo) Liked(ctx context.Context, biz string, bizId int64,
 	_, err := repo.dao.GetLikeInfo(ctx, biz, bizId, uid)
 	switch err {
 	case nil:
-		return true, err
+		return true, nil
 	case dao.ErrRecordNotFound:
 		return false, nil
 	default:
@@ -82,7 +83,7 @@ func (repo *interactiveRepo) Collected(ctx context.Context, biz string, bizId in
 	_, err := repo.dao.GetCollectInfo(ctx, biz, bizId, uid)
 	switch err {
 	case nil:
-		return true, err
+		return true, nil
 	case dao.ErrRecordNotFound:
 		return false, nil
 	default:

@@ -21,17 +21,18 @@
             <div class="pageBottomBox">
               <img :src="require('@/assets/icon/guankan.svg')" alt="">
               <span>浏览</span>
-              <span>171</span>
+              <span class="spanNum">{{article.readCnt}}</span>
             </div>
             <div class="pageBottomBox">
               <img v-if="!likeForm.like" :src="require('@/assets/icon/like.svg')" alt="" @click="doLike">
               <img v-else :src="require('@/assets/icon/liked.svg')" alt="" @click="doLike">
               <span>点赞</span>
+              <span class="spanNum">{{article.likeCnt}}</span>
             </div>
             <div class="pageBottomBox">
               <img :src="require('@/assets/icon/collect.svg')" alt="" @click="doCollect">
               <span>收藏</span>
-              <span>171</span>
+              <span class="spanNum">{{article.collectCnt}}</span>
             </div>
           </div>
         </div>
@@ -113,6 +114,9 @@ export default ({
         title: "",
         summary:"",
         content: "",
+        readCnt:0,
+        likeCnt:0,
+        collectCnt:0,
       },
       comments: [
       ]
@@ -142,6 +146,7 @@ export default ({
         article.id = res.id;
         article.title = res.title;
         article.content= marked(res.content);
+
       }).catch((e) => {
         this.$message({
           message: e.msg,
@@ -156,6 +161,10 @@ export default ({
       this.article.title = res.title;
       this.article.summary = res.summary;
       this.article.content= marked(res.content);
+      this.article.likeCnt = res.likeCnt
+      this.article.readCnt = res.readCnt
+      this.article.collectCnt = res.collectCnt
+
       this.isLoading = false;
     }).catch((e) => {
       this.isLoading = false;
@@ -300,5 +309,10 @@ export default ({
   margin-top: 0.32em;
   color: #1f2d3d;
   font-size: 1.4em;
+}
+.spanNum{
+  margin-left: 5px;
+  color: #1f2d3d;
+  font-size: 14px;
 }
 </style>

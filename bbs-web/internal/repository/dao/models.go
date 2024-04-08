@@ -81,4 +81,25 @@ func (UserLikeBizModel) TableName() string {
 // Collection
 // @Description: 收藏夹
 type Collection struct {
+	gorm.Model
+	CName string `gorm:"comment:收藏夹名称;type:varchar(32);column:c_name"`
+	Sort  int64  `gorm:"comment:收藏夹排序;default:0;type:int;column:sort"`
+}
+
+func (Collection) TableName() string {
+	return "collect"
+}
+
+// UserCollectBizModel
+// @Description: 业务收藏夹关联表
+type UserCollectBizModel struct {
+	gorm.Model
+	BizId int64  `gorm:"comment:业务ID;not null;uniqueIndex:uid_type_biz"` // 因为建立联合索引时候，索引的顺序只和结构体字段的顺序有关，所以要注意 bizID和biz的顺序不能乱
+	Biz   string `gorm:"comment:业务标识符;type:varchar(128);not null;uniqueIndex:uid_type_biz"`
+	Uid   int64  `gorm:"comment:用户ID;not null;uniqueIndex:uid_type_biz"`
+	Cid   int64  `gorm:"comment:收藏夹的ID;index"`
+}
+
+func (UserCollectBizModel) TableName() string {
+	return "user_to_biz_collect"
 }
