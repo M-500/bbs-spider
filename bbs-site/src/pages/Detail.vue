@@ -13,7 +13,8 @@
               <span>171</span>
             </div>
             <div class="pageBottomBox">
-              <img :src="require('@/assets/icon/like.svg')" alt="" @click="doLike">
+              <img v-if="!likeForm.like" :src="require('@/assets/icon/like.svg')" alt="" @click="doLike">
+              <img v-else :src="require('@/assets/icon/liked.svg')" alt="" @click="doLike">
               <span>点赞</span>
             </div>
             <div class="pageBottomBox">
@@ -63,6 +64,7 @@ export default ({
   },
   methods: {
     doLike(){
+      this.likeForm.like = true
       console.log(this.likeForm)
       ArticleLikeDetailAPI(this.likeForm).then( (res) =>{
         console.log(res,"点赞结果")

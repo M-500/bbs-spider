@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"bbs-web/internal/repository/cache"
 	"bbs-web/internal/repository/dao"
 	"context"
 )
@@ -16,7 +17,8 @@ type InteractiveRepo interface {
 }
 
 type interactiveRepo struct {
-	dao dao.InteractiveDao
+	dao   dao.InteractiveDao
+	cache cache.RedisInteractiveCache
 }
 
 func NewInteractiveRepo(dao dao.InteractiveDao) InteractiveRepo {
@@ -38,10 +40,15 @@ func (repo *interactiveRepo) IncrLike(ctx context.Context, biz string, id int64,
 		return err
 	}
 	// 同步缓存
-	return nil
+	return repo.cache.IncrLikeCntIfPresent(ctx, biz, id)
+
 }
 func (repo *interactiveRepo) DecrLike(ctx context.Context, biz string, id int64, uid int64) error {
 	// 插入数据库
-	return repo.dao.IncrLikeCnt(ctx, biz, id, uid)
+	err := repo.dao.DelLikeInfo(ctx, biz, id, uid)
+	if err != nil {
+		return err
+	}
 	// 同步缓存
+	return repo.cache.DecrLikeCntIfPresent(ctx, biz, id)
 }

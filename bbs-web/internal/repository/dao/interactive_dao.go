@@ -14,7 +14,7 @@ import (
 type InteractiveDao interface {
 	IncrReadCnt(ctx context.Context, biz string, bizId int64) error
 	IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error
-	DelLikeInfo(ctx context.Context, biz string, bizId int64) error
+	DelLikeInfo(ctx context.Context, biz string, bizId int64, uid int64) error
 	IncrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error
 	DecrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error
 }
@@ -32,9 +32,27 @@ func NewInteractiveDao(db *gorm.DB) InteractiveDao {
 // DelLikeInfo
 //
 //	@Description: 删除点赞
-func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId int64) error {
-
-	return nil
+func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId int64, uid int64) error {
+	now := time.Now()
+	err := dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// 1. 软删除某一条数据
+		err := tx.Model(&UserLikeBizModel{}).
+			Where("biz_id = ? AND biz = ? AND uid = ?", bizId, biz, uid).
+			Updates(map[string]any{
+				"deleted_at": now,
+				"updated_at": now,
+			}).Error
+		if err != nil {
+			return err
+		}
+		// 2. 总数-1
+		return tx.Model(&InteractiveModel{}).Where("biz_id = ? AND biz = ? ", bizId, biz).
+			Updates(map[string]any{
+				"updated_at": now,
+				"like_cnt":   gorm.Expr("like_cnt - 1"),
+			}).Error
+	})
+	return err
 }
 
 // IncrLikeInfo
