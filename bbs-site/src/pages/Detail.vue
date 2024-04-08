@@ -2,44 +2,20 @@
   <div class="mainContainer">
     <div class="pageLeft">
       <div class="pageContent">
+
         <div class="articlePage">
-          <mavon-editor  :value="getHTML()"
-                         :subfield="false"
-                         defaultOpen="preview"
-                         :toolbarsFlag="false"
-                         :editable="false"
-          ></mavon-editor>
-<!--          <mavon-editor class="markdown" :value="getHTML" :subfield="false" :defaultOpen="prop.defaultOpen" :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :scrollStyle="prop.scrollStyle"></mavon-editor>-->
-<!--          <mavon-editor class="markdown" v-model="article.content" :subfield="false"  :toolbars="false" :editable="false" :defaultOpen="'preview'" :toolbarsFlag="false"></mavon-editor>-->
-        </div>
+<!--          <mavon-editor  :value="article.content"></mavon-editor>-->
+<!--&lt;!&ndash;          <mavon-editor class="markdown" :value="getHTML" :subfield="false" :defaultOpen="prop.defaultOpen" :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :scrollStyle="prop.scrollStyle"></mavon-editor>&ndash;&gt;-->
+<!--          <mavon-editor class="markdown" :value="getHTML()" :subfield="false"  :toolbars="false" :editable="false" :defaultOpen="'preview'" :toolbarsFlag="false"></mavon-editor>-->
 
-        <div class="articleComment">
-          <div class="commentForm">
-            <div class="commentTitle">3条评论</div>
-            <div class="commentData">
-              <el-input v-model="input" type="textarea" :rows="2" placeholder="请输入内容"></el-input>
-            </div>
-          </div>
-          <div class="comment-list">
-            <el-card v-for="comment in comments" :key="comment.id" class="comment-card">
-              <div slot="header" class="clearfix">
-                <span>评论人：{{ comment.author }}</span>
-                <el-avatar :src="comment.avatar" size="small" shape="circle" class="avatar"></el-avatar>
-              </div>
-              <div class="comment-content">{{ comment.content }}</div>
-              <div class="child-comments">
-                <comment-list :comments="comment.children" v-if="comment.children && comment.children.length > 0"></comment-list>
-              </div>
-            </el-card>
-          </div>
-
+          <div v-if="isLoading">Loading</div>
+          <div v-else><div v-html="article.content" class="markdown-body" style="text-align:left;margin-bottom:50px"></div></div>
         </div>
       </div>
     </div>
     <div class="pageRight">
       你有毒
       <div class="userCard">
-
       </div>
     </div>
   </div>
@@ -48,12 +24,14 @@
 
 <script>
 import { PubArticleDetailAPI } from "@/api/article/reader";
-// import { marked } from 'marked';
 import article from "./edit/Article.vue";
+// import 'mavon-editor/dist/css/index.css'
+import {marked} from "marked";
 export default ({
   name: 'detail',
   data() {
     return {
+      isLoading: true,
       markdownOption: {
         bold: true, // 粗体
       },
@@ -64,58 +42,15 @@ export default ({
         content: "",
       },
       comments: [
-        {
-          id: 1,
-          author: 'Alice',
-          avatar: 'https://via.placeholder.com/50',
-          content: '这是一条评论。'
-        },
-        {
-          id: 2,
-          author: 'Bob',
-          avatar: 'https://via.placeholder.com/50',
-          content: '这是另一条评论。',
-          children: [
-            {
-              id: 21,
-              author: 'Charlie',
-              avatar: 'https://via.placeholder.com/50',
-              content: '这是 Bob 的回复。'
-            },
-            {
-              id: 22,
-              author: 'David',
-              avatar: 'https://via.placeholder.com/50',
-              content: '这是另一条回复。',
-              children: [
-                {
-                  id: 221,
-                  author: 'Eva',
-                  avatar: 'https://via.placeholder.com/50',
-                  content: '这是 David 的回复。'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          id: 3,
-          author: 'Eve',
-          avatar: 'https://via.placeholder.com/50',
-          content: '这是另一条评论。'
-        }
       ]
     }
   },
   methods: {
-    getHTML(){
-      return marked(this.article.content)
-    },
     articleContent(){
       PubArticleDetailAPI(this.id).then((res) => {
-        article.id = res.Id;
-        article.title = res.Title;
-        article.content= res.Content;
+        article.id = res.id;
+        article.title = res.title;
+        article.content= marked(res.content);
       }).catch((e) => {
         this.$message({
           message: e.msg,
@@ -124,8 +59,19 @@ export default ({
       });
     }
   },
-  created() {
-    this.articleContent()
+  mounted() {
+    PubArticleDetailAPI(this.id).then((res) => {
+      this.article.id = res.id;
+      this.article.title = res.title;
+      this.article.content= marked(res.content);
+      this.isLoading = false;
+    }).catch((e) => {
+      this.isLoading = false;
+      this.$message({
+        message: e.msg,
+        type: "error",
+      });
+    });
   },
   computed: {
     prop() {

@@ -172,7 +172,7 @@ func (h *ArticleHandler) Detail(ctx *gin.Context, user jwtx.UserClaims) (ginplus
 
 // Like
 //
-//	@Description: 点赞
+//	@Description: 点赞和取消点赞
 //	@receiver h
 //	@param ctx
 func (h *ArticleHandler) Like(ctx *gin.Context, req vo.LikeReq, c jwtx.UserClaims) (ginplus.Result, error) {
