@@ -19,11 +19,11 @@ export default {
       if (command === "exitSys") {
         this.logout();
       }
-      // if (command === "userCenter") {
-      //   this.$router.push({
-      //     name: "userCenter",
-      //   });
-      // }
+      if (command === "userCenter") {
+        this.$router.push({
+          name: "userCenter",
+        });
+      }
     },
     logout(){
       window.sessionStorage.clear()
@@ -45,7 +45,7 @@ export default {
     </div>
     <div class="show-login">
       <el-button class="editBtn" size="mini" icon="el-icon-edit" type="primary" @click="toEdit">写文章</el-button>
-      <el-dropdown @command="handleCommand">
+      <el-dropdown class="userDrop" @command="handleCommand">
         <div class="avatar-warp">
           <!-- <img class="avatar" :src="cover_image_link" alt="" /> -->
           <img class="avatar" :src="avatar" alt="" />
@@ -53,7 +53,7 @@ export default {
           <i class="el-icon-arrow-down el-icon--right"></i>
         </div>
         <el-dropdown-menu>
-          <!-- <el-dropdown-item command="userCenter">个人中心</el-dropdown-item> -->
+           <el-dropdown-item command="userCenter">个人中心</el-dropdown-item>
           <el-dropdown-item command="exitSys">用户退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -89,6 +89,18 @@ export default {
   align-items: center;
   img{
     height: 30px;
+    border-radius: 50%;
+  }
+}
+.show-login{
+  display: flex;
+}
+.userDrop{
+  margin-left: 20px;
+}
+.avatar-warp{
+  span{
+    margin-left: 5px;
   }
 }
 </style>
