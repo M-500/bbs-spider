@@ -139,7 +139,8 @@ export default {
     width: 100%;
     padding: 10px 0 10px;
     resize: none;
-        overflow: hidden;
+    padding-left: 8px;
+    overflow: hidden;
   }
   .pubBtn{
     position: absolute; /* 绝对定位 */
