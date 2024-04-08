@@ -37,7 +37,7 @@
 <script>
 import { PubArticleDetailAPI } from "@/api/article/reader";
 import article from "./edit/Article.vue";
-// import 'mavon-editor/dist/css/index.css'
+import 'mavon-editor/dist/css/index.css'
 import {marked} from "marked";
 export default ({
   name: 'detail',

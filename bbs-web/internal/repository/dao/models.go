@@ -62,3 +62,21 @@ type InteractiveModel struct {
 func (InteractiveModel) TableName() string {
 	return "interactive"
 }
+
+// UserLikeBizModel 用户点赞资源关联表
+type UserLikeBizModel struct {
+	gorm.Model
+	// 思考一下为什么联合索引的顺序是 bizid uid biz （提示: 根据业务场景来）
+	BizId int64  `gorm:"comment:业务ID;not null;uniqueIndex:uid_type_biz"` // 因为建立联合索引时候，索引的顺序只和结构体字段的顺序有关，所以要注意 bizID和biz的顺序不能乱
+	Uid   int64  `gorm:"comment:用户ID;not null;uniqueIndex:uid_type_biz"`
+	Biz   string `gorm:"comment:业务标识符;type:varchar(128);not null;uniqueIndex:uid_type_biz"`
+}
+
+func (UserLikeBizModel) TableName() string {
+	return "user_to_biz_like"
+}
+
+// Collection
+// @Description: 收藏夹
+type Collection struct {
+}

@@ -42,6 +42,7 @@ func (i *interactiveService) Like(ctx *gin.Context, biz string, id int64, uid in
 
 	return i.repo.IncrLike(ctx, biz, id, uid)
 }
+
 func (i *interactiveService) CancelLike(ctx *gin.Context, biz string, id int64, uid int64) error {
-	return nil
+	return i.repo.DecrLike(ctx, biz, id, uid)
 }

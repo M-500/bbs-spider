@@ -16,6 +16,7 @@ type InteractiveDao interface {
 	IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error
 	DelLikeInfo(ctx context.Context, biz string, bizId int64) error
 	IncrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error
+	DecrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error
 }
 
 type interactiveDao struct {
@@ -28,11 +29,17 @@ func NewInteractiveDao(db *gorm.DB) InteractiveDao {
 	}
 }
 
+// DelLikeInfo
+//
+//	@Description: 删除点赞
 func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId int64) error {
 
 	return nil
 }
 
+// IncrLikeInfo
+//
+//	@Description: 新增点赞 以及更新点赞记录  你需要一张表来记录谁给某一篇文章点了赞
 func (dao *interactiveDao) IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error {
 	return dao.db.WithContext(ctx).Clauses(
 		clause.OnConflict{
@@ -51,6 +58,10 @@ func (dao *interactiveDao) IncrLikeInfo(ctx context.Context, biz string, id int6
 }
 
 func (dao *interactiveDao) IncrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error {
+	return nil
+}
+
+func (dao *interactiveDao) DecrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error {
 	return nil
 }
 
