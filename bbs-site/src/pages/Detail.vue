@@ -13,7 +13,7 @@
               <span>171</span>
             </div>
             <div class="pageBottomBox">
-              <img :src="require('@/assets/icon/like.svg')" alt="">
+              <img :src="require('@/assets/icon/like.svg')" alt="" @click="doLike">
               <span>点赞</span>
             </div>
             <div class="pageBottomBox">
@@ -35,7 +35,7 @@
 
 
 <script>
-import { PubArticleDetailAPI } from "@/api/article/reader";
+import { PubArticleDetailAPI,ArticleLikeDetailAPI } from "@/api/article/reader";
 import article from "./edit/Article.vue";
 import 'mavon-editor/dist/css/index.css'
 import {marked} from "marked";
@@ -46,6 +46,10 @@ export default ({
       isLoading: true,
       markdownOption: {
         bold: true, // 粗体
+      },
+      likeForm:{
+        id: parseInt(this.$route.params.id),
+        like: true,
       },
       id: this.$route.params.id,
       article: {
@@ -58,6 +62,17 @@ export default ({
     }
   },
   methods: {
+    doLike(){
+      console.log(this.likeForm)
+      ArticleLikeDetailAPI(this.likeForm).then( (res) =>{
+        console.log(res,"点赞结果")
+      }).catch((e) => {
+        this.$message({
+          message: e.msg,
+          type: "error",
+        });
+      });
+    },
     articleContent(){
       PubArticleDetailAPI(this.id).then((res) => {
         article.id = res.id;
@@ -141,6 +156,17 @@ export default ({
   align-items: center; /* 在交叉轴上居中 */
   img{
     height: 20px;
+    transition: transform 0.2s ease;
+    margin-right: 5px;
+  }
+  img:hover {
+    transform: scale(1.5);
+    animation: shake 0.2s ease-in-out;
+  }
+  @keyframes shake {
+    0% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    100% { transform: translateX(-2px); }
   }
 }
 </style>

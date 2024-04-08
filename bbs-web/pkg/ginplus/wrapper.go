@@ -36,7 +36,7 @@ func WrapParam[T any](tagFn func(ctx *gin.Context, req T) (Result, error)) gin.H
 func WrapBodyAndToken[Req any, C jwt.Claims](tagFn func(ctx *gin.Context, req Req, userToken C) (Result, error)) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var req Req
-		if err := ctx.Bind(&req); err != nil {
+		if err := ctx.ShouldBindJSON(&req); err != nil {
 			return
 		}
 		val, ok := ctx.Get("users")

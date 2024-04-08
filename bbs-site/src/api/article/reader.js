@@ -8,3 +8,7 @@ export const PubArticleListAPI = (params = {}) => {
 export const PubArticleDetailAPI = (id,params = {}) => {
   return api.$get("/pub/"+id, params)
 }
+
+export const ArticleLikeDetailAPI = (params = {}) => {
+  return api.$post("/pub/like", params)
+}

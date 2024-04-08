@@ -41,25 +41,36 @@ func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId in
 //
 //	@Description: 新增点赞 以及更新点赞记录  你需要一张表来记录谁给某一篇文章点了赞
 func (dao *interactiveDao) IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error {
-	dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		// 是否需要校验重复点赞的问题？
-
-		return nil
+	now := time.Now()
+	err := dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// 是否需要校验重复点赞的问题？不用
+		err := tx.Model(&UserLikeBizModel{}).Clauses(
+			clause.OnConflict{
+				DoUpdates: clause.Assignments(map[string]any{
+					"updated_at": now,
+				}),
+			}).Create(&UserLikeBizModel{
+			BizId: id,
+			Biz:   biz,
+			Uid:   uid,
+		}).Error
+		if err != nil {
+			return err
+		}
+		// 更新点赞总数
+		return tx.WithContext(ctx).Clauses(
+			clause.OnConflict{
+				DoUpdates: clause.Assignments(map[string]any{
+					"like_cnt":   gorm.Expr("like_cnt + 1"),
+					"updated_at": time.Now(),
+				}),
+			}).Create(&InteractiveModel{
+			Biz:     biz,
+			BizId:   id,
+			LikeCnt: 1,
+		}).Error
 	})
-	return dao.db.WithContext(ctx).Clauses(
-		clause.OnConflict{
-			DoUpdates: clause.Assignments(map[string]any{
-				"like_cnt":   gorm.Expr("read_cnt +1"),
-				"updated_at": time.Now(),
-			}),
-		}).Create(&InteractiveModel{
-		Biz:        biz,
-		BizId:      id,
-		ReadCnt:    0,
-		LikeCnt:    1,
-		CollectCnt: 0,
-		CommentCnt: 0,
-	}).Error
+	return err
 }
 
 func (dao *interactiveDao) IncrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error {
@@ -83,12 +94,9 @@ func (dao *interactiveDao) IncrReadCnt(ctx context.Context, biz string, bizId in
 	//})
 	// 数据库层 SQL支持update a = a + 1  实现Upsert语义
 	createObj := InteractiveModel{
-		Biz:        biz,
-		BizId:      bizId,
-		ReadCnt:    1,
-		LikeCnt:    0,
-		CollectCnt: 0,
-		CommentCnt: 0,
+		Biz:     biz,
+		BizId:   bizId,
+		ReadCnt: 1,
 	}
 	return dao.db.WithContext(ctx).Clauses(
 		clause.OnConflict{

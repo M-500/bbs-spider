@@ -37,7 +37,6 @@ func (repo *interactiveRepo) IncrLike(ctx context.Context, biz string, id int64,
 	if err != nil {
 		return err
 	}
-
 	// 同步缓存
 	return nil
 }
