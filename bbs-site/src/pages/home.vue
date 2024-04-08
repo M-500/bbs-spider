@@ -73,16 +73,16 @@ export default {
     <div class="right-main">
       <div class="left-item">
         <div class="article-list" v-for="(item,index) in articles" :key="index" >
-          <div class="article-item" @click="toDetail(item.id)">
+          <div class="article-item">
             <div class="avatar">
               <el-avatar :size="50" src="https://mlog.club/images/avatars/80.png"></el-avatar>
             </div>
             <div class="article-main-content">
               <div class="top">
                 <div class="uInfo">大喵喵酱</div>
-                <div class="uTime"> 发布于{{item.ctime}}</div>
+                <div class="uTime"> 发布于 {{item.ctime}}</div>
               </div>
-              <div class="content">
+              <div class="content" @click="toDetail(item.id)">
                 <div class="title">{{item.title}}</div>
                 <div class="abs">{{item.summary}}...</div>
               </div>
@@ -184,35 +184,42 @@ export default {
   display: flex;
   flex-direction: column; /* 纵向排列 */
   .article-item {
-    margin: 0 10px 15px;
+    margin: 0 15px 18px;
     background-color: #f9f9f9;
     display: flex;
     border: #f9f9ff 1px solid;
     border-radius: 4px;
-    padding: 10px;
+    padding: 15px;
     justify-content: flex-start; /* 横向排列并靠左对齐 */
     .avatar img {
       width: 50px;
     }
     .article-main-content {
       margin-left: 10px;
+      width: 100%;
       .top {
         margin-bottom: 5px;
-
         display: flex;
         justify-content: space-between;
         .uInfo {
           color: #70727c;
           font-weight: bold;
+          font-size: 15px;
         }
         .uTime {
+          font-size: 13px;
+          color: #1f2d3d;
         }
       }
       .content {
         .title {
           font-weight: bold;
-          font-size: 17px;
-          margin-bottom: 2px;
+          font-size: 18px;
+          margin-bottom: 12px;
+        }
+        .abs{
+          font-size: 16px;
+          color: #1f2d3d;
         }
       }
     }

@@ -33,7 +33,7 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 
 	engine.GET("/code", gp.Wrap(r.codeHdl.ImageCaptcha)) // 获取图片验证码
 
-	articleGroup := engine.Group("/articles")
+	articleGroup := engine.Group("/articles") // 文章创作者关注的接口
 	{
 		articleGroup.POST("/edit", gp.WrapBodyAndToken[vo.ArticleReq, jwtx.UserClaims](r.artHdl.Edit))     // 新建文章
 		articleGroup.POST("/:id/withdraw", gp.WrapToken[jwtx.UserClaims](r.artHdl.Withdraw))               // 下架某一篇文章
@@ -42,10 +42,11 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 		articleGroup.GET("/detail/:id", gp.WrapToken[jwtx.UserClaims](r.artHdl.Detail))                    // 作者查看文章详情
 	}
 
-	pub := engine.Group("/pub")
+	pub := engine.Group("/pub") // 读者关注的接口
 	{
-		pub.GET("/:id", gp.WrapToken[jwtx.UserClaims](r.artHdl.PubDetail))                 // 读取文章详情
-		pub.POST("/like", gp.WrapBodyAndToken[vo.LikeReq, jwtx.UserClaims](r.artHdl.Like)) // 点赞/取消点赞某一篇文章
+		pub.GET("/:id", gp.WrapToken[jwtx.UserClaims](r.artHdl.PubDetail))                          // 读取文章详情
+		pub.POST("/like", gp.WrapBodyAndToken[vo.LikeReq, jwtx.UserClaims](r.artHdl.Like))          // 点赞/取消点赞某一篇文章
+		pub.POST("/collect", gp.WrapBodyAndToken[vo.CollectReq, jwtx.UserClaims](r.artHdl.Collect)) // 收藏/取消收藏 某一篇文章
 		pub.POST("/reward", r.artHdl.Reward)
 	}
 }

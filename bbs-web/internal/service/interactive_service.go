@@ -3,7 +3,7 @@ package service
 import (
 	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/cache"
-	"github.com/gin-gonic/gin"
+	"context"
 )
 
 // @Description
@@ -11,9 +11,11 @@ import (
 // @Date 2024-04-07 19:13
 
 type InteractiveService interface {
-	IncrReadCnt(ctx *gin.Context, biz string, id int64) error
-	Like(ctx *gin.Context, biz string, id int64, id2 int64) error
-	CancelLike(ctx *gin.Context, biz string, id int64, id2 int64) error
+	IncrReadCnt(ctx context.Context, biz string, id int64) error
+	Like(ctx context.Context, biz string, id int64, id2 int64) error
+	CancelLike(ctx context.Context, biz string, id int64, id2 int64) error
+
+	CollectArt(ctx context.Context, biz string, bizId int64, uId int64, cId int64) error
 }
 
 type interactiveService struct {
@@ -28,7 +30,7 @@ func NewInteractiveService(repo repository.InteractiveRepo, cache cache.RedisInt
 	}
 }
 
-func (i *interactiveService) IncrReadCnt(ctx *gin.Context, biz string, id int64) error {
+func (i *interactiveService) IncrReadCnt(ctx context.Context, biz string, id int64) error {
 	// 操作DB和操作缓存的顺序能换吗？？
 	err := i.repo.IncrReadCnt(ctx, biz, id)
 	if err != nil {
@@ -38,11 +40,15 @@ func (i *interactiveService) IncrReadCnt(ctx *gin.Context, biz string, id int64)
 	return i.cache.IncrReadCntIfPresent(ctx, biz, id)
 }
 
-func (i *interactiveService) Like(ctx *gin.Context, biz string, id int64, uid int64) error {
+func (i *interactiveService) Like(ctx context.Context, biz string, id int64, uid int64) error {
 
 	return i.repo.IncrLike(ctx, biz, id, uid)
 }
 
-func (i *interactiveService) CancelLike(ctx *gin.Context, biz string, id int64, uid int64) error {
+func (i *interactiveService) CancelLike(ctx context.Context, biz string, id int64, uid int64) error {
 	return i.repo.DecrLike(ctx, biz, id, uid)
+}
+
+func (i *interactiveService) CollectArt(ctx context.Context, biz string, bizId int64, uId int64, cId int64) error {
+	return nil
 }

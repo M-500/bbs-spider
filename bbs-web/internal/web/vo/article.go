@@ -39,3 +39,9 @@ type LikeReq struct {
 	Like bool  `json:"like"`
 	Id   int64 `json:"id"`
 }
+
+// 收藏和取消收藏
+type CollectReq struct {
+	Collect bool  `json:"collect"`
+	Id      int64 `json:"id"`
+}

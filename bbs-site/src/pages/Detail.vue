@@ -29,7 +29,7 @@
               <span>点赞</span>
             </div>
             <div class="pageBottomBox">
-              <img :src="require('@/assets/icon/collect.svg')" alt="">
+              <img :src="require('@/assets/icon/collect.svg')" alt="" @click="doCollect">
               <span>收藏</span>
               <span>171</span>
             </div>
@@ -61,6 +61,21 @@
           </a></div>
       </div>
     </div>
+
+    <el-dialog
+      title="添加到收藏夹"
+      :visible.sync="dialogVisible"
+      width="30%"
+      center
+      :before-close="handleClose">
+      <span><el-checkbox v-model="checked3" label="备选项1" border size="medium"></el-checkbox>
+        </span>
+      <span><el-checkbox v-model="checked4" label="备选项2" border size="medium"></el-checkbox></span>
+        <span slot="footer" class="dialog-footer">
+
+        <el-button size="mini" type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -74,6 +89,7 @@ export default ({
   name: 'detail',
   data() {
     return {
+      dialogVisible: false,
       isLoading: true,
       markdownOption: {
         bold: true, // 粗体
@@ -94,6 +110,9 @@ export default ({
     }
   },
   methods: {
+    doCollect(){
+      this.dialogVisible = true
+    },
     doLike(){
       this.likeForm.like = true
       console.log(this.likeForm)

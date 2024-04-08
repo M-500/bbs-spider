@@ -7,7 +7,7 @@ import Article from "../pages/edit/Article.vue";
 import Register from "../pages/Register.vue"
 import Detail from "../pages/Detail.vue"
 import curUser from '@/utils/cur-user'
-
+import userCenter from "../pages/user/userCenter.vue";
 Vue.use(VueRouter)
 
 
@@ -28,11 +28,15 @@ const routes = [
         name: 'Article',
         component: Article,
       },
-
       {
         path: '/detail/:id',
         name: 'Detail',
         component: Detail
+      },
+      {
+        path: '/user-center',
+        name: 'userCenter',
+        component: userCenter
       }
     ]
   },

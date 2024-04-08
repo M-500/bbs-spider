@@ -191,6 +191,16 @@ func (h *ArticleHandler) Like(ctx *gin.Context, req vo.LikeReq, c jwtx.UserClaim
 	return ginplus.Result{Msg: "OK!"}, nil
 }
 
+func (h *ArticleHandler) Collect(ctx *gin.Context, req vo.CollectReq, c jwtx.UserClaims) (ginplus.Result, error) {
+	//var err error
+	//if req.Collect {
+	//	err = h.interSvc.CollectArt(ctx)
+	//} else {
+	//
+	//}
+	return ginplus.Result{}, nil
+}
+
 // PubDetail
 //
 //	@Description: 阅读

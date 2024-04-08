@@ -40,6 +40,18 @@ services:
     image: grafana/grafana-enterprise:10.2.0
     ports:
       - 3000:3000
+#  clickhouse:
+#    image: yandex/clickhouse-server
+#    container_name: clickhouse-server
+#    ports:
+#      - "8123:8123" # ClickHouse HTTP port
+#      - "9000:9000" # ClickHouse native TCP port
+#    volumes:
+#      - ./clickhouse:/var/lib/clickhouse # 挂载本地目录到容器内，可选
+#    environment:
+#      - CLICKHOUSE_USER=default
+#      - CLICKHOUSE_PASSWORD=password
+#    command: [ "clickhouse-server" ]
 #  zipkin:
 #    #    用的是不支持 Kafka 之类的简化版本
 #    image: openzipkin/zipkin-slim:2.24
