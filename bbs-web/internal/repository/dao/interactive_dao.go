@@ -22,6 +22,12 @@ type interactiveDao struct {
 	db *gorm.DB
 }
 
+func NewInteractiveDao(db *gorm.DB) InteractiveDao {
+	return &interactiveDao{
+		db: db,
+	}
+}
+
 func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId int64) error {
 
 	return nil
@@ -76,8 +82,4 @@ func (dao *interactiveDao) IncrReadCnt(ctx context.Context, biz string, bizId in
 				"updated_at": time.Now(),
 			}),
 		}).Create(&createObj).Error
-}
-
-func NewInteractiveDao() InteractiveDao {
-	return &interactiveDao{}
 }

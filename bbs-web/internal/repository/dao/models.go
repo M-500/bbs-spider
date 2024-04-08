@@ -51,8 +51,8 @@ func (PublishArticleModels) TableName() string {
 type InteractiveModel struct {
 	gorm.Model
 	// 同一个资源只能有一行，也就是要有联合唯一索引
-	Biz        string `gorm:"comment:业务标识符;type:varchar(128);not null"`
-	BizId      int64  `gorm:"comment:业务ID;not null;"`
+	BizId      int64  `gorm:"comment:业务ID;not null;uniqueIndex:id_type_biz"` // 因为建立联合索引时候，索引的顺序只和结构体字段的顺序有关，所以要注意 bizID和biz的顺序不能乱
+	Biz        string `gorm:"comment:业务标识符;type:varchar(128);not null;uniqueIndex:id_type_biz"`
 	ReadCnt    int64  `gorm:"comment:阅读数;default:0"` // 阅读计数
 	LikeCnt    int64  `gorm:"comment:点赞数;default:0"` // 点赞数
 	CollectCnt int64  `gorm:"comment:收藏数;default:0"` // 收藏数

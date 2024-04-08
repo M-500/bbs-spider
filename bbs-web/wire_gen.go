@@ -38,7 +38,7 @@ func InitWebServer(path string) *gin.Engine {
 	readDAO := article_dao.NewReadDAO(db)
 	articleReaderRepository := article.NewArticleReaderRepo(readDAO)
 	iArticleService := article2.NewArticleService(articleRepository, logger, artWriterRepo, articleReaderRepository)
-	interactiveDao := dao.NewInteractiveDao()
+	interactiveDao := dao.NewInteractiveDao(db)
 	interactiveRepo := repository.NewInteractiveRepo(interactiveDao)
 	redisInteractiveCache := cache.NewRedisInteractiveCache(cmdable)
 	interactiveService := service.NewInteractiveService(interactiveRepo, redisInteractiveCache)
