@@ -7,15 +7,17 @@ import (
 
 type UserMode struct {
 	gorm.Model
-	Username string     `gorm:"uniqueIndex;not null;type:varchar(32);column:username;comment:用户名，唯一索引，不能为空"`
-	Phone    string     `gorm:"index;type:varchar(32);comment:手机号;column:phone"`
-	Email    string     `gorm:"index;type:varchar(128);comment:邮箱;column:email"`
-	Password string     `gorm:"type:varchar(128);comment:密码;column:password"`
-	Nickname string     `gorm:"type:varchar(128);comment:昵称;column:nickname"`
-	Gender   string     `gorm:"type:varchar(128);comment:性别;column:gender"`
-	Birthday *time.Time `gorm:"comment:生日;column:birthday"`
-	IsAdmin  int64      `gorm:"int;default:0;comment:是否是admin，默认0,非管理员;column:gender"`
-	Avatar   string     `gorm:"type:varchar(200);comment:用户头像"`
+	Username    string     `gorm:"uniqueIndex;not null;type:varchar(32);column:username;comment:用户名，唯一索引，不能为空"`
+	Phone       string     `gorm:"index;type:varchar(32);comment:手机号;column:phone"`
+	Email       string     `gorm:"index;type:varchar(128);comment:邮箱;column:email"`
+	HomePage    string     `gorm:"type:varchar(500);comment:个人主页;column:home_page"`
+	Description string     `gorm:"type:text;comment:个性签名(描述);column:description"`
+	Password    string     `gorm:"type:varchar(128);comment:密码;column:password"`
+	Nickname    string     `gorm:"type:varchar(128);comment:昵称;column:nickname"`
+	Gender      string     `gorm:"type:varchar(128);comment:性别;column:gender"`
+	Birthday    *time.Time `gorm:"comment:生日;column:birthday"`
+	IsAdmin     int64      `gorm:"int;default:0;comment:是否是admin，默认0,非管理员;column:gender"`
+	Avatar      string     `gorm:"type:varchar(200);comment:用户头像"`
 }
 
 func (UserMode) TableName() string {

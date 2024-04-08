@@ -59,6 +59,21 @@ func (i *interactiveService) Get(ctx context.Context, biz string, id int64, uid 
 		liked     bool
 		collected bool
 	)
+	//var wg sync.WaitGroup
+	//wg.Add(3)
+	//go func() {
+	//	defer  wg.Done()
+	//
+	//}()
+	//go func() {
+	//	defer  wg.Done()
+	//
+	//}()
+	//go func() {
+	//	defer  wg.Done()
+	//
+	//}()
+	//wg.Wait()
 	eg.Go(func() error {
 		var err error
 		data, err = i.repo.Get(ctx, biz, id)
