@@ -1,8 +1,12 @@
 <template>
   <div class="comment-component">
     <div class="comment-header">
-      <span v-if="commentCount > 0">{{ commentCount }}条评论</span>
-      <span v-else>评论</span>
+      <span>评论</span>
+      <span>162</span>
+      <div class="selector">
+        <span>最热</span>
+        <span>最新</span>
+      </div>
     </div>
 
     <template v-if="isLogin">
@@ -104,8 +108,8 @@ export default {
     display: flex;
     padding-top: 20px;
     margin: 0 10px;
-    color: var(--text-color);
-    font-size: 16px;
+    color: #1f2d3d;
+    font-size: 18px;
     font-weight: 500;
   }
 

@@ -35,13 +35,15 @@
               <span class="spanNum">{{article.collectCnt}}</span>
             </div>
           </div>
+          <hr class="custom-hr">
+          <Comment :entityType=1 :entityId=2 :commentsPage={} :commentCount=12></Comment>
         </div>
 
 
       </div>
-      <div class="commentContent">
-        <Comment :entityType=1 :entityId=2 :commentsPage={} :commentCount=12></Comment>
-      </div>
+<!--      <div class="commentContent">-->
+<!--       -->
+<!--      </div>-->
     </div>
     <div class="pageRight">
       <div class="userCard">
@@ -211,7 +213,7 @@ export default ({
 .articlePage {
   background-color: #f9f9f9;
   padding: 10px 24px 25px;
-  border-radius: 2px;
+  border-radius: 8px;
 }
 .articleComment {
   margin-top: 5px;
@@ -315,9 +317,35 @@ export default ({
   color: #1f2d3d;
   font-size: 14px;
 }
-.commentContent{
-  margin-top: 10px;
-  border-radius: 5px;
-  background-color:#f9f9f9;
+.custom-hr{
+  position: relative;
+  margin: 40px auto;
+  border: 2px dashed #d2ebfd;
+  width: calc(100% - 4px);
+}
+.custom-hr:before {
+  display: inline-block;
+  font-weight: 600;
+  font-family: 'Font Awesome 6 Free';
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  position: absolute;
+  top: -10px;
+  left: 5%;
+  z-index: 1;
+  color: #d2ebfd;
+  content: '\f0c4';
+  font-size: 20px;
+  line-height: 1;
+  -webkit-transition: all 1s ease-in-out;
+  -moz-transition: all 1s ease-in-out;
+  -o-transition: all 1s ease-in-out;
+  -ms-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+hr{
+  box-sizing: content-box;
+  height: 0;
+  overflow: visible;
 }
 </style>
