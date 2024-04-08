@@ -315,4 +315,9 @@ export default ({
   color: #1f2d3d;
   font-size: 14px;
 }
+.commentContent{
+  margin-top: 10px;
+  border-radius: 5px;
+  background-color:#f9f9f9;
+}
 </style>

@@ -1,6 +1,5 @@
 <template>
   <div class="comment-component">
-    评论啊 草尼玛
     <div class="comment-header">
       <span v-if="commentCount > 0">{{ commentCount }}条评论</span>
       <span v-else>评论</span>

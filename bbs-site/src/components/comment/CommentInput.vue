@@ -14,7 +14,11 @@
 </template>
 
 <script>
+import TextEditor from "./TextEditor.vue";
 export default {
+  components:{
+    TextEditor
+  },
   props: {
     entityType: {
       type: String,
@@ -115,7 +119,7 @@ export default {
 
     .comment-quote-info {
       font-size: 13px;
-      color: var(--text-color);
+      color: #4a4a4a;
       margin-bottom: 3px;
       font-weight: 600;
 
@@ -139,13 +143,13 @@ export default {
         height: 85px;
         font-size: 14px;
         padding: 10px 40px 10px 10px;
-        color: var(--text-color);
+        color: #4a4a4a;
         line-height: 16px;
         max-width: 100%;
         resize: none;
-        border: 1px solid var(--border-color);
+        border: 1px solid #e9e9e9;
         box-sizing: border-box;
-        border-radius: var(--jinsom-border-radius);
+        border-radius: #e9e9e9;
       }
     }
 
@@ -157,7 +161,7 @@ export default {
       line-height: 30px;
 
       span {
-        color: var(--text-color4);
+        color: #d8d8d8;
         font-size: 13px;
         margin-right: 5px;
       }
