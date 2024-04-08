@@ -48,8 +48,8 @@ func (repo *interactiveRepo) toDomain(model dao.InteractiveModel) domain.Interac
 func (repo *interactiveRepo) Get(ctx context.Context, biz string, bizId int64) (domain.Interactive, error) {
 	// 要从缓存中拿出阅读数量 点赞 收藏 评论等
 	intr, err := repo.cache.Get(ctx, biz, bizId)
-	if err != nil {
-		return domain.Interactive{}, err
+	if err == nil {
+		return intr, err
 	}
 	// 从数据库拿出阅读数量
 	intrDao, err := repo.dao.Get(ctx, biz, bizId)
