@@ -41,6 +41,11 @@ func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId in
 //
 //	@Description: 新增点赞 以及更新点赞记录  你需要一张表来记录谁给某一篇文章点了赞
 func (dao *interactiveDao) IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error {
+	dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// 是否需要校验重复点赞的问题？
+
+		return nil
+	})
 	return dao.db.WithContext(ctx).Clauses(
 		clause.OnConflict{
 			DoUpdates: clause.Assignments(map[string]any{
