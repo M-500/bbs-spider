@@ -6,7 +6,8 @@
       </div>
       <div class="reply-box-wrap">
         <div class="textarea-wrap">
-          <textarea name="" id="" cols="30" rows="2" placeholder="诶哟不错哦，发条评论吧"></textarea>
+          <textarea name="" id="" cols="30" rows="1" placeholder="诶哟不错哦，发条评论吧"></textarea>
+          <el-button size="mini" class="pubBtn">发布</el-button>
         </div>
       </div>
     </div>
@@ -117,7 +118,7 @@ export default {
   margin-right: 20px;
 }
 .avatar{
-  margin-right: 20px;
+  margin-right: 10px;
   img{
     height: 50px;
     border-radius: 50%;
@@ -134,8 +135,17 @@ export default {
   display: flex;
   flex-direction: column; /* 纵向排列 */
   justify-content: center;
+  position: relative; /* 使得子元素相对于父元素进行定位 */
   textarea{
     width: 100%;
+    padding: 10px 0 10px;
+    resize: none;
+        overflow: hidden;
+  }
+  .pubBtn{
+    position: absolute; /* 绝对定位 */
+        right: 3px;
+        background-color:cornsilk;
   }
 }
 </style>
