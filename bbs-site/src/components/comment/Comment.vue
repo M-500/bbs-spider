@@ -2,9 +2,10 @@
   <div class="comment-component">
     <div class="comment-header">
       <span>评论</span>
-      <span>162</span>
+      <span class="commentCnt">162</span>
       <div class="selector">
-        <span>最热</span>
+        <span class="selector-active">最热</span>
+        <span>|</span>
         <span>最新</span>
       </div>
     </div>
@@ -107,10 +108,28 @@ export default {
   .comment-header {
     display: flex;
     padding-top: 20px;
+    align-items: center;
     margin: 0 10px;
     color: #1f2d3d;
     font-size: 18px;
     font-weight: 500;
+    .commentCnt{
+      font-size: 14px;
+    }
+    span{
+      margin-right: 5px;
+    }
+    .selector{
+      margin-left: 30px;
+      font-size: 12px;
+      span{
+        margin-left: 5px;
+        color: #0ff123;
+      }
+      .selector-active{
+        color: #1f2d3d;
+      }
+    }
   }
 
   .comment-not-login {
