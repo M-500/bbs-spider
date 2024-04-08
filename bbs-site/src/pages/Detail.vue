@@ -2,14 +2,26 @@
   <div class="mainContainer">
     <div class="pageLeft">
       <div class="pageContent">
-
         <div class="articlePage">
-<!--          <mavon-editor  :value="article.content"></mavon-editor>-->
-<!--&lt;!&ndash;          <mavon-editor class="markdown" :value="getHTML" :subfield="false" :defaultOpen="prop.defaultOpen" :toolbarsFlag="prop.toolbarsFlag" :editable="prop.editable" :scrollStyle="prop.scrollStyle"></mavon-editor>&ndash;&gt;-->
-<!--          <mavon-editor class="markdown" :value="getHTML()" :subfield="false"  :toolbars="false" :editable="false" :defaultOpen="'preview'" :toolbarsFlag="false"></mavon-editor>-->
-
           <div v-if="isLoading">Loading</div>
           <div v-else><div v-html="article.content" class="markdown-body" style="text-align:left;margin-bottom:50px"></div></div>
+
+          <div class="pageBottom">
+            <div class="pageBottomBox">
+              <img :src="require('@/assets/icon/guankan.svg')" alt="">
+              <span>浏览</span>
+              <span>171</span>
+            </div>
+            <div class="pageBottomBox">
+              <img :src="require('@/assets/icon/like.svg')" alt="">
+              <span>点赞</span>
+            </div>
+            <div class="pageBottomBox">
+              <img :src="require('@/assets/icon/collect.svg')" alt="">
+              <span>收藏</span>
+              <span>171</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -117,5 +129,18 @@ export default ({
   background-color: #f9f9f9;
   padding: 10px 24px 25px;
   border-radius: 2px;
+}
+.pageBottom{
+  display: flex;
+  justify-content: space-around;
+
+}
+.pageBottomBox{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center; /* 在交叉轴上居中 */
+  img{
+    height: 20px;
+  }
 }
 </style>
