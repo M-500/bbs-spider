@@ -1,10 +1,9 @@
 
 <template>
   <div>
-    <button class="button follow-btn" :class="{ 'is-followed': followed }" @click="follow" >
-      <i class="iconfont icon-add" />
-      <span>{{ followed ? '已关注' : '关注' }}</span>
-    </button>
+    <el-button size="mini" class="button follow-btn" icon="el-icon-plus"  :class="{ 'is-followed': followed }" @click="follow" >
+      {{ followed ? '已关注' : '关注' }}
+    </el-button>
   </div>
 </template>
 
@@ -21,6 +20,11 @@ export default {
       default: false,
     },
   },
+  methods:{
+    follow(){
+
+    },
+  }
 }
 </script>
 
@@ -28,7 +32,7 @@ export default {
 <style scoped>
 .follow-btn {
   font-size: 12px;
-  height: 25px;
+  //height: 25px;
   background-color: #2469f6; // TODO
   border-color: #2469f6;
   color: #fff;

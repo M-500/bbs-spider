@@ -98,30 +98,22 @@ export default{
       flex-direction: column;
       width: 100%;
       .nickname {
+        margin: 0;
         font-size: 18px;
         font-weight: 700;
         a {
           color: #ffffff;
           &:hover {
             color: #ffffff;
-            text-decoration: underline;
+            //text-decoration: underline;
           }
         }
       }
-
       .description {
         font-size: 14px;
         color: #1f2d3d;
-      }
-
-      .homepage {
-        font-size: 14px;
-        a {
-          color: var(--color2);
-          &:hover {
-            color: var(--text-link-color);
-            text-decoration: underline;
-          }
+        p{
+          margin: 0;
         }
       }
     }
@@ -131,14 +123,4 @@ export default{
   }
 }
 
-.dark-mode {
-  .profile-info {
-    background-image: linear-gradient(
-      90deg,
-      #00000088,
-      rgba(255, 255, 255, 0.5),
-      #dce9f200
-    );
-  }
-}
 </style>

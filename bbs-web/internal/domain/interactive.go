@@ -1,0 +1,14 @@
+package domain
+
+// @Description
+// @Author 代码小学生王木木
+// @Date 2024-04-08 18:36
+
+type Interactive struct {
+	ReadCnt    int64 `json:"read_cnt"`
+	LikeCnt    int64 `json:"like_cnt"`
+	CollectCnt int64 `json:"collect_cnt"`
+	CommentCnt int64 `json:"comment_cnt"`
+	Liked      bool  `json:"liked"`
+	Collected  bool  `json:"collected"`
+}

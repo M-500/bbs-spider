@@ -7,6 +7,7 @@
 package cache
 
 import (
+	"bbs-web/internal/domain"
 	"context"
 	"fmt"
 	"time"
@@ -30,6 +31,9 @@ type RedisInteractiveCache interface {
 	IncrCollCntIfPresent(ctx context.Context, biz string, bizId int64) error
 
 	DecrLikeCntIfPresent(ctx context.Context, biz string, bizId int64) error
+
+	Get(ctx context.Context, biz string, bizId int64) (domain.Interactive, error)
+	Set(ctx context.Context, biz string, bizId int64, intr domain.Interactive) error
 }
 
 type redisInteractiveCache struct {
@@ -42,6 +46,13 @@ func NewRedisInteractiveCache(client redis.Cmdable) RedisInteractiveCache {
 		client:     client,
 		expiration: time.Minute,
 	}
+}
+
+func (r *redisInteractiveCache) Get(ctx context.Context, biz string, bizId int64) (domain.Interactive, error) {
+	panic("")
+}
+func (r *redisInteractiveCache) Set(ctx context.Context, biz string, bizId int64, intr domain.Interactive) error {
+	panic("")
 }
 
 func (r *redisInteractiveCache) IncrReadCntIfPresent(ctx context.Context, biz string, bizId int64) error {

@@ -12,6 +12,7 @@ import (
 	"bbs-web/pkg/utils/zifo/slice"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/sync/errgroup"
 	"strconv"
 )
 
@@ -215,10 +216,22 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 			Msg:  "参数错误",
 		}, err
 	}
-	article, err := h.svc.GetPublishedById(ctx, id, user.Id)
+	var eg errgroup.Group
+	var article domain.Article
+	var intr domain.Interactive
+	eg.Go(func() error {
+		article, err = h.svc.GetPublishedById(ctx, id, user.Id)
+		return err
+	})
+	eg.Go(func() error {
+		intr, err = h.interSvc.Get(ctx, h.biz, id, user.Id)
+		return err
+	})
+	err = eg.Wait() // 任何一个地方返回的err 都会被捕捉到
 	if err != nil {
+		//
 		return ginplus.Result{
-			Code: 501003,
+			Code: 502005,
 			Msg:  "系统错误",
 		}, err
 	}
@@ -230,6 +243,8 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 			h.log.Error("增加文章阅读数失败", logger.Error(err1), logger.Int64("Article_ID", article.Id))
 		}
 	}()
+	// 这里异步获取文章的点赞数 收藏数 评论数等信息
+
 	return ginplus.Result{Data: resp.ArticleResp{
 		Id:          article.Id,
 		Title:       article.Title,
@@ -238,6 +253,10 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 		Status:      article.Status.String(),
 		Summary:     article.Summary,
 		Content:     article.Content,
+		LikeCnt:     intr.LikeCnt,
+		ReadCnt:     intr.ReadCnt,
+		CommentCnt:  intr.CommentCnt,
+		CollectCnt:  intr.CollectCnt,
 		ContentType: article.ContentType,
 		Cover:       article.Cover,
 		Ctime:       article.Ctime,

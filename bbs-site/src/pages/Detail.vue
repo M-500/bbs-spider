@@ -35,6 +35,11 @@
             </div>
           </div>
         </div>
+
+
+      </div>
+      <div class="commentContent">
+        <Comment :entityType=1 :entityId=2 :commentsPage={} :commentCount=12></Comment>
       </div>
     </div>
     <div class="pageRight">
@@ -68,25 +73,29 @@
       width="30%"
       center
       :before-close="handleClose">
-      <span><el-checkbox v-model="checked3" label="备选项1" border size="medium"></el-checkbox>
-        </span>
-      <span><el-checkbox v-model="checked4" label="备选项2" border size="medium"></el-checkbox></span>
-        <span slot="footer" class="dialog-footer">
+<!--      <span><el-checkbox v-model="checked3" label="备选项1" border size="medium"></el-checkbox>-->
+<!--        </span>-->
+<!--      <span><el-checkbox v-model="checked4" label="备选项2" border size="medium"></el-checkbox></span>-->
+<!--        <span slot="footer" class="dialog-footer">-->
 
-        <el-button size="mini" type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
+<!--        <el-button size="mini" type="primary" @click="dialogVisible = false">确 定</el-button>-->
+<!--      </span>-->
     </el-dialog>
   </div>
 </template>
 
 
 <script>
+import Comment from "../components/comment/Comment.vue";
 import { PubArticleDetailAPI,ArticleLikeDetailAPI } from "@/api/article/reader";
 import article from "./edit/Article.vue";
 import 'mavon-editor/dist/css/index.css'
 import {marked} from "marked";
 export default ({
   name: 'detail',
+  components:{
+    Comment
+  },
   data() {
     return {
       dialogVisible: false,
@@ -110,6 +119,9 @@ export default ({
     }
   },
   methods: {
+    handleClose(){
+      this.dialogVisible = false
+    },
     doCollect(){
       this.dialogVisible = true
     },

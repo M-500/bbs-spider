@@ -1,9 +1,11 @@
 package service
 
 import (
+	"bbs-web/internal/domain"
 	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/cache"
 	"context"
+	"golang.org/x/sync/errgroup"
 )
 
 // @Description
@@ -16,6 +18,7 @@ type InteractiveService interface {
 	CancelLike(ctx context.Context, biz string, id int64, id2 int64) error
 
 	CollectArt(ctx context.Context, biz string, bizId int64, uId int64, cId int64) error
+	Get(ctx context.Context, biz string, id int64, uid int64) (domain.Interactive, error)
 }
 
 type interactiveService struct {
@@ -47,6 +50,37 @@ func (i *interactiveService) Like(ctx context.Context, biz string, id int64, uid
 
 func (i *interactiveService) CancelLike(ctx context.Context, biz string, id int64, uid int64) error {
 	return i.repo.DecrLike(ctx, biz, id, uid)
+}
+
+func (i *interactiveService) Get(ctx context.Context, biz string, id int64, uid int64) (domain.Interactive, error) {
+	var (
+		eg        errgroup.Group
+		data      domain.Interactive
+		liked     bool
+		collected bool
+	)
+	eg.Go(func() error {
+		var err error
+		data, err = i.repo.Get(ctx, biz, id)
+		return err
+	})
+	eg.Go(func() error {
+		var err error
+		liked, err = i.repo.Liked(ctx, biz, id, uid)
+		return err
+	})
+	eg.Go(func() error {
+		var err error
+		collected, err = i.repo.Collected(ctx, biz, id, uid)
+		return err
+	})
+	err := eg.Wait()
+	if err != nil {
+		return domain.Interactive{}, err
+	}
+	data.Liked = liked
+	data.Collected = collected
+	return data, err
 }
 
 func (i *interactiveService) CollectArt(ctx context.Context, biz string, bizId int64, uId int64, cId int64) error {
