@@ -10,5 +10,7 @@ func InitTable(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&UserMode{},
 		&ArticleModel{},
+		&PublishArticleModels{},
+		&InteractiveModel{},
 	)
 }

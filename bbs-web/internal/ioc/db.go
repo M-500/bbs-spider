@@ -10,6 +10,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 	"gorm.io/plugin/opentelemetry/tracing"
 	"gorm.io/plugin/prometheus"
 	"time"
@@ -18,6 +19,10 @@ import (
 func InitDatabase(cfg *Config) *gorm.DB {
 	config := &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
+	}
+	config.NamingStrategy = schema.NamingStrategy{
+		TablePrefix:   "bbs_",
+		SingularTable: true,
 	}
 	db, err := gorm.Open(mysql.Open(cfg.Database.DSN), config)
 	if err != nil {

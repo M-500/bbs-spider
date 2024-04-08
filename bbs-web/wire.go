@@ -35,15 +35,19 @@ func InitWebServer(path string) *gin.Engine {
 		article_dao.NewReadDAO,
 		article_dao.NewWriteDAO,
 		dao.NewUserDao,
+		dao.NewInteractiveDao,
 
 		article.NewArticleRepo,
 		article.NewArticleReaderRepo,
 		article.NewArtWriterRepo,
 		repository.NewUserRepo,
+		repository.NewInteractiveRepo,
+		cache.NewRedisInteractiveCache,
 
 		article2.NewArticleService,
 		service.NewCaptchaService,
 		service.NewUserService,
+		service.NewInteractiveService,
 
 		handler.NewArticleHandler,
 		handler.NewCaptchaHandler,

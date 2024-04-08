@@ -68,7 +68,7 @@ func (r *RedisJwtHandler) ExtractToken(ctx *gin.Context) string {
 func (r *RedisJwtHandler) GetJWTToken(ctx *gin.Context, uid int64) (string, error) {
 	claims := UserClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 30)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
 		},
 		Id: uid,
 	}

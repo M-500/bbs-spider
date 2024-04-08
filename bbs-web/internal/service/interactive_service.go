@@ -21,9 +21,10 @@ type interactiveService struct {
 	cache cache.RedisInteractiveCache
 }
 
-func NewInteractiveService(repo repository.InteractiveRepo) InteractiveService {
+func NewInteractiveService(repo repository.InteractiveRepo, cache cache.RedisInteractiveCache) InteractiveService {
 	return &interactiveService{
-		repo: repo,
+		repo:  repo,
+		cache: cache,
 	}
 }
 
@@ -42,5 +43,5 @@ func (i *interactiveService) Like(ctx *gin.Context, biz string, id int64, uid in
 	return i.repo.IncrLike(ctx, biz, id, uid)
 }
 func (i *interactiveService) CancelLike(ctx *gin.Context, biz string, id int64, uid int64) error {
-	return i.repo
+	return nil
 }

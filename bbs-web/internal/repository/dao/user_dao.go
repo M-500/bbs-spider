@@ -25,12 +25,12 @@ type userDao struct {
 
 func (dao *userDao) FindById(ctx context.Context, uid int64) (UserMode, error) {
 	var user UserMode
-	err := dao.db.WithContext(ctx).Where("id = ?", uid).First(&user).Error
+	err := dao.db.WithContext(ctx).Model(&UserMode{}).Where("id = ?", uid).First(&user).Error
 	return user, err
 }
 func (dao *userDao) FindByUserName(ctx context.Context, username string) (UserMode, error) {
 	var user UserMode
-	err := dao.db.WithContext(ctx).Where("username = ?", username).First(&user).Error
+	err := dao.db.WithContext(ctx).Model(&UserMode{}).Where("username = ?", username).First(&user).Error
 	return user, err
 }
 

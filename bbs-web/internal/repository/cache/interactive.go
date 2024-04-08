@@ -9,9 +9,14 @@ package cache
 import (
 	"context"
 	"fmt"
-	"github.com/redis/go-redis/v9"
 	"time"
+
+	_ "embed"
+	"github.com/redis/go-redis/v9"
 )
+
+//go:embed lua/interative_incr.lua
+var luaIncrCnt string
 
 type RedisInteractiveCache interface {
 	IncrReadCntIfPresent(ctx context.Context, biz string, bizId int64) error
@@ -22,8 +27,11 @@ type redisInteractiveCache struct {
 	expiration time.Duration
 }
 
-func NewRedisInteractiveCache() RedisInteractiveCache {
-	return &redisInteractiveCache{}
+func NewRedisInteractiveCache(client redis.Cmdable) RedisInteractiveCache {
+	return &redisInteractiveCache{
+		client:     client,
+		expiration: time.Minute,
+	}
 }
 
 func (r *redisInteractiveCache) IncrReadCntIfPresent(ctx context.Context, biz string, bizId int64) error {

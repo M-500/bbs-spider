@@ -51,12 +51,12 @@ func (PublishArticleModels) TableName() string {
 type InteractiveModel struct {
 	gorm.Model
 	// 同一个资源只能有一行，也就是要有联合唯一索引
-	Biz        string
-	BizId      int64
-	ReadCnt    int64 // 阅读计数
-	LikeCnt    int64 // 点赞数
-	CollectCnt int64 // 收藏数
-	CommentCnt int64 // 评论数
+	Biz        string `gorm:"comment:业务标识符;type:varchar(128);not null"`
+	BizId      int64  `gorm:"comment:业务ID;not null;"`
+	ReadCnt    int64  `gorm:"comment:阅读数;default:0"` // 阅读计数
+	LikeCnt    int64  `gorm:"comment:点赞数;default:0"` // 点赞数
+	CollectCnt int64  `gorm:"comment:收藏数;default:0"` // 收藏数
+	CommentCnt int64  `gorm:"comment:评论数;default:0"` // 评论数
 }
 
 func (InteractiveModel) TableName() string {

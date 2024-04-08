@@ -18,6 +18,12 @@ type interactiveRepo struct {
 	dao dao.InteractiveDao
 }
 
+func NewInteractiveRepo(dao dao.InteractiveDao) InteractiveRepo {
+	return &interactiveRepo{
+		dao: dao,
+	}
+}
+
 func (repo *interactiveRepo) IncrReadCnt(ctx context.Context, biz string, bizId int64) error {
 	// 要考虑缓存方案了
 

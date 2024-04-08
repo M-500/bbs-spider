@@ -15,6 +15,7 @@ type InteractiveDao interface {
 	IncrReadCnt(ctx context.Context, biz string, bizId int64) error
 	IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error
 	DelLikeInfo(ctx context.Context, biz string, bizId int64) error
+	IncrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error
 }
 
 type interactiveDao struct {
@@ -23,6 +24,7 @@ type interactiveDao struct {
 
 func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId int64) error {
 
+	return nil
 }
 
 func (dao *interactiveDao) IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error {
@@ -42,6 +44,10 @@ func (dao *interactiveDao) IncrLikeInfo(ctx context.Context, biz string, id int6
 	}).Error
 }
 
+func (dao *interactiveDao) IncrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error {
+	return nil
+}
+
 func (dao *interactiveDao) IncrReadCnt(ctx context.Context, biz string, bizId int64) error {
 	// 下面这种写法有大问题！ check do something
 	//var intr InteractiveModel
@@ -54,20 +60,22 @@ func (dao *interactiveDao) IncrReadCnt(ctx context.Context, biz string, bizId in
 	//	"read_cnt": cnt,
 	//})
 	// 数据库层 SQL支持update a = a + 1  实现Upsert语义
-	return dao.db.WithContext(ctx).Clauses(
-		clause.OnConflict{
-			DoUpdates: clause.Assignments(map[string]any{
-				"read_cnt":   gorm.Expr("read_cnt +1"),
-				"updated_at": time.Now(),
-			}),
-		}).Create(&InteractiveModel{
+	createObj := InteractiveModel{
 		Biz:        biz,
 		BizId:      bizId,
 		ReadCnt:    1,
 		LikeCnt:    0,
 		CollectCnt: 0,
 		CommentCnt: 0,
-	}).Error
+	}
+	return dao.db.WithContext(ctx).Clauses(
+		clause.OnConflict{
+			Columns: []clause.Column{{Name: "id"}},
+			DoUpdates: clause.Assignments(map[string]any{
+				"read_cnt":   gorm.Expr("read_cnt +1"),
+				"updated_at": time.Now(),
+			}),
+		}).Create(&createObj).Error
 }
 
 func NewInteractiveDao() InteractiveDao {
