@@ -9,7 +9,9 @@ package cache
 import (
 	"bbs-web/internal/domain"
 	"context"
+	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	_ "embed"
@@ -23,6 +25,10 @@ const (
 	fieldReadCnt       = "read_cnt"
 	fieldLikeCnt       = "like_cnt"
 	fieldCollectionCnt = "like_cnt"
+)
+
+var (
+	ErrKeyNotExist = errors.New("缓存不存在")
 )
 
 type RedisInteractiveCache interface {
@@ -49,7 +55,22 @@ func NewRedisInteractiveCache(client redis.Cmdable) RedisInteractiveCache {
 }
 
 func (r *redisInteractiveCache) Get(ctx context.Context, biz string, bizId int64) (domain.Interactive, error) {
-	panic("")
+	// TODO HgetALL 和 HMGet的区别
+	result, err := r.client.HGetAll(ctx, r.key(biz, bizId)).Result()
+	if err != nil {
+		return domain.Interactive{}, err
+	}
+	// 判空
+	if len(result) == 0 {
+		// 缓存不存在
+		return domain.Interactive{}, ErrKeyNotExist
+	}
+	var res domain.Interactive
+	res.CollectCnt, _ = strconv.ParseInt(result[fieldCollectionCnt], 10, 64)
+	res.LikeCnt, _ = strconv.ParseInt(result[fieldLikeCnt], 10, 64)
+	res.ReadCnt, _ = strconv.ParseInt(result[fieldReadCnt], 10, 64)
+
+	return res, nil
 }
 func (r *redisInteractiveCache) Set(ctx context.Context, biz string, bizId int64, intr domain.Interactive) error {
 	panic("")
