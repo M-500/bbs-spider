@@ -15,7 +15,6 @@ import (
 	"bbs-web/internal/web"
 	"bbs-web/internal/web/handler"
 	"bbs-web/internal/web/jwtx"
-	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 )
 
@@ -23,7 +22,7 @@ import (
 // @Author 代码小学生王木木
 // @Date 2024-03-26 15:57
 
-func InitWebServer(path string) *gin.Engine {
+func InitWebServer(path string) *App {
 	wire.Build(
 		ioc.InitConfig,
 		ioc.InitLogger,
@@ -33,6 +32,7 @@ func InitWebServer(path string) *gin.Engine {
 		ioc.InitSaramaClient,
 		ioc.InitConsumer,
 		ioc.InitSyncProducer,
+		article3.NewProducer,
 
 		article3.NewKafkaConsumer,
 
@@ -63,6 +63,8 @@ func InitWebServer(path string) *gin.Engine {
 
 		ioc.InitMiddleware,
 		ioc.InitGin,
+
+		wire.Struct(new(App), "*"),
 	)
-	return new(gin.Engine)
+	return new(App)
 }

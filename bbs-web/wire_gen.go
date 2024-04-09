@@ -7,6 +7,7 @@
 package main
 
 import (
+	article2 "bbs-web/internal/events/article"
 	"bbs-web/internal/ioc"
 	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/article"
@@ -14,16 +15,15 @@ import (
 	"bbs-web/internal/repository/dao"
 	"bbs-web/internal/repository/dao/article_dao"
 	"bbs-web/internal/service"
-	article2 "bbs-web/internal/service/article"
+	article3 "bbs-web/internal/service/article"
 	"bbs-web/internal/web"
 	"bbs-web/internal/web/handler"
 	"bbs-web/internal/web/jwtx"
-	"github.com/gin-gonic/gin"
 )
 
 // Injectors from wire.go:
 
-func InitWebServer(path string) *gin.Engine {
+func InitWebServer(path string) *App {
 	config := ioc.InitConfig(path)
 	db := ioc.InitDatabase(config)
 	articleDAO := article_dao.NewGormArticleDao(db)
@@ -37,7 +37,10 @@ func InitWebServer(path string) *gin.Engine {
 	artWriterRepo := article.NewArtWriterRepo(writeDAO)
 	readDAO := article_dao.NewReadDAO(db)
 	articleReaderRepository := article.NewArticleReaderRepo(readDAO)
-	iArticleService := article2.NewArticleService(articleRepository, logger, artWriterRepo, articleReaderRepository)
+	client := ioc.InitSaramaClient(config)
+	syncProducer := ioc.InitSyncProducer(client)
+	producer := article2.NewProducer(syncProducer)
+	iArticleService := article3.NewArticleService(articleRepository, logger, artWriterRepo, articleReaderRepository, producer)
 	interactiveDao := dao.NewInteractiveDao(db)
 	redisInteractiveCache := cache.NewRedisInteractiveCache(cmdable)
 	interactiveRepo := repository.NewInteractiveRepo(interactiveDao, redisInteractiveCache, logger)
@@ -51,5 +54,11 @@ func InitWebServer(path string) *gin.Engine {
 	router := web.NewRouter(articleHandler, captchaHandler, userHandler)
 	v := ioc.InitMiddleware(config, jwtHandler)
 	engine := ioc.InitGin(router, v)
-	return engine
+	kafkaConsumer := article2.NewKafkaConsumer(client, logger, interactiveRepo)
+	v2 := ioc.InitConsumer(kafkaConsumer)
+	app := &App{
+		server:    engine,
+		consumers: v2,
+	}
+	return app
 }

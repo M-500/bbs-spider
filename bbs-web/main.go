@@ -15,9 +15,17 @@ github https://github.com/mlogclub/bbs-go
 var configFile = flag.String("config", "etc/dev.yaml", "配置文件路径")
 
 func main() {
-	engine := InitWebServer(*configFile)
+	app := InitWebServer(*configFile)
+	engine := app.server
 	initPrometheus()
 	ioc.SetUpOTEL(ioc.AppConfig)
+
+	for _, consumer := range app.consumers {
+		err := consumer.Start()
+		if err != nil {
+			panic(err)
+		}
+	}
 	engine.Run(":8181")
 }
 func initPrometheus() {
