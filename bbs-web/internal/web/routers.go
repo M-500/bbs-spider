@@ -35,11 +35,11 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 
 	articleGroup := engine.Group("/articles") // 文章创作者关注的接口
 	{
-		articleGroup.POST("/edit", gp.WrapBodyAndToken[vo.ArticleReq, jwtx.UserClaims](r.artHdl.Edit))     // 新建文章
-		articleGroup.POST("/:id/withdraw", gp.WrapToken[jwtx.UserClaims](r.artHdl.Withdraw))               // 下架某一篇文章
-		articleGroup.POST("/publish", gp.WrapJson[vo.ArticleReq](r.artHdl.Publish))                        // 发布某一篇文章
-		articleGroup.POST("/list", gp.WrapBodyAndToken[vo.ArticleListReq, jwtx.UserClaims](r.artHdl.List)) // 创作者查看自己的文章列表
-		articleGroup.GET("/detail/:id", gp.WrapToken[jwtx.UserClaims](r.artHdl.Detail))                    // 作者查看文章详情
+		articleGroup.POST("/edit", gp.WrapBodyAndToken[vo.ArticleReq, jwtx.UserClaims](r.artHdl.Edit))       // 新建文章
+		articleGroup.POST("/:id/withdraw", gp.WrapToken[jwtx.UserClaims](r.artHdl.Withdraw))                 // 下架某一篇文章
+		articleGroup.POST("/publish", gp.WrapBodyAndToken[vo.ArticleReq, jwtx.UserClaims](r.artHdl.Publish)) // 发布某一篇文章
+		articleGroup.POST("/list", gp.WrapBodyAndToken[vo.ArticleListReq, jwtx.UserClaims](r.artHdl.List))   // 创作者查看自己的文章列表
+		articleGroup.GET("/detail/:id", gp.WrapToken[jwtx.UserClaims](r.artHdl.Detail))                      // 作者查看文章详情
 	}
 
 	pub := engine.Group("/pub") // 读者关注的接口
