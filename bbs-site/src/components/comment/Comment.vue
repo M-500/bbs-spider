@@ -27,18 +27,13 @@
       </div>
     </div>
 
-<!--    <comment-list-->
-<!--      ref="list"-->
-<!--      :entity-id="entityId"-->
-<!--      :entity-type="entityType"-->
-<!--      :comments-page="commentsPage"-->
-<!--      @reply="reply"-->
-<!--    />-->
+    <comment-list/>
   </div>
 </template>
 
 <script>
 import CommentInput from "./CommentInput.vue";
+import CommentList from "./CommentList.vue";
 export default {
   props: {
     entityType: {
@@ -63,7 +58,7 @@ export default {
     },
   },
   components:{
-    CommentInput
+    CommentInput,CommentList
   },
   computed: {
     isLogin() {
