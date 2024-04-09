@@ -25,6 +25,15 @@ type KafkaConsumer struct {
 	biz    string
 }
 
+func NewKafkaConsumer(client sarama.Client, l logger.Logger, repo repository.InteractiveRepo) *KafkaConsumer {
+	return &KafkaConsumer{
+		client: client,
+		l:      l,
+		repo:   repo,
+		biz:    "article",
+	}
+}
+
 func (c *KafkaConsumer) Consume(msg *sarama.ConsumerMessage, t ReadEvent) error {
 	timeout, cancelFunc := context.WithTimeout(context.Background(), time.Second)
 	defer cancelFunc()

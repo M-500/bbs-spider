@@ -3,6 +3,7 @@
 package main
 
 import (
+	article3 "bbs-web/internal/events/article"
 	"bbs-web/internal/ioc"
 	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/article"
@@ -29,6 +30,11 @@ func InitWebServer(path string) *gin.Engine {
 		ioc.InitRedis,
 		ioc.InitDatabase,
 		jwtx.NewRedisJWTHandler,
+		ioc.InitSaramaClient,
+		ioc.InitConsumer,
+		ioc.InitSyncProducer,
+
+		article3.NewKafkaConsumer,
 
 		cache.NewArticleCache,
 		article_dao.NewGormArticleDao,

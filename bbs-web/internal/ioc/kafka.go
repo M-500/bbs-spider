@@ -1,6 +1,9 @@
 package ioc
 
-import "github.com/IBM/sarama"
+import (
+	"bbs-web/internal/events/article"
+	"github.com/IBM/sarama"
+)
 
 // @Description
 // @Author 代码小学生王木木
@@ -14,4 +17,16 @@ func InitSaramaClient(cfg *Config) sarama.Client {
 		panic(err)
 	}
 	return client
+}
+
+func InitSyncProducer(c sarama.Client) sarama.SyncProducer {
+	producer, err := sarama.NewSyncProducerFromClient(c)
+	if err != nil {
+		panic(err)
+	}
+	return producer
+}
+
+func InitConsumer(c *article.KafkaConsumer) []article.Consumer {
+	return []article.Consumer{c}
 }

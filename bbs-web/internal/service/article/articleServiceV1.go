@@ -24,8 +24,14 @@ type articleService struct {
 	producer event.Producer
 }
 
-func NewArticleService(repo article.ArticleRepository, l logger.Logger, writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository) IArticleService {
-	return &articleService{repo: repo, l: l, writeRepo: writeRepo, readRepo: readRepo}
+func NewArticleService(repo article.ArticleRepository, l logger.Logger, writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository, producer event.Producer) IArticleService {
+	return &articleService{
+		repo:      repo,
+		l:         l,
+		writeRepo: writeRepo,
+		readRepo:  readRepo,
+		producer:  producer,
+	}
 }
 
 func NewArticleServiceV1(writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository, l logger.Logger) IArticleService {
