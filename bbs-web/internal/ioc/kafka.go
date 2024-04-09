@@ -27,6 +27,6 @@ func InitSyncProducer(c sarama.Client) sarama.SyncProducer {
 	return producer
 }
 
-func InitConsumer(c *article.KafkaConsumer) []article.Consumer {
+func InitConsumer(c article.Consumer) []article.Consumer {
 	return []article.Consumer{c}
 }

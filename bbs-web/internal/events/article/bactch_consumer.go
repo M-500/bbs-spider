@@ -20,6 +20,17 @@ type InteractiveReadEventBatchConsumer struct {
 	biz    string
 }
 
+func NewInteractiveReadEventBatchConsumer(client sarama.Client,
+	l logger.Logger,
+	repo repository.InteractiveRepo) Consumer {
+	return &InteractiveReadEventBatchConsumer{
+		client: client,
+		l:      l,
+		repo:   repo,
+		biz:    "article",
+	}
+}
+
 func (c *InteractiveReadEventBatchConsumer) Start() error {
 	client, err := sarama.NewConsumerGroupFromClient("interactive", c.client)
 	if err != nil {

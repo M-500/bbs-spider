@@ -25,7 +25,7 @@ type KafkaConsumer struct {
 	biz    string
 }
 
-func NewKafkaConsumer(client sarama.Client, l logger.Logger, repo repository.InteractiveRepo) *KafkaConsumer {
+func NewKafkaConsumer(client sarama.Client, l logger.Logger, repo repository.InteractiveRepo) Consumer {
 	return &KafkaConsumer{
 		client: client,
 		l:      l,

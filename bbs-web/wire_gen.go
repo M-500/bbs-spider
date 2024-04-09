@@ -54,8 +54,8 @@ func InitWebServer(path string) *App {
 	router := web.NewRouter(articleHandler, captchaHandler, userHandler)
 	v := ioc.InitMiddleware(config, jwtHandler)
 	engine := ioc.InitGin(router, v)
-	kafkaConsumer := article2.NewKafkaConsumer(client, logger, interactiveRepo)
-	v2 := ioc.InitConsumer(kafkaConsumer)
+	consumer := article2.NewInteractiveReadEventBatchConsumer(client, logger, interactiveRepo)
+	v2 := ioc.InitConsumer(consumer)
 	app := &App{
 		server:    engine,
 		consumers: v2,

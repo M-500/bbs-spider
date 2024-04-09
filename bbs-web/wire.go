@@ -34,7 +34,8 @@ func InitWebServer(path string) *App {
 		ioc.InitSyncProducer,
 		article3.NewProducer,
 
-		article3.NewKafkaConsumer,
+		//article3.NewKafkaConsumer,
+		article3.NewInteractiveReadEventBatchConsumer,
 
 		cache.NewArticleCache,
 		article_dao.NewGormArticleDao,
