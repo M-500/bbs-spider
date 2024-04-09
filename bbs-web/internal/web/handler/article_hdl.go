@@ -248,6 +248,8 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 	var eg errgroup.Group
 	var article domain.Article
 	var intr domain.Interactive
+
+	// 这里异步获取文章的点赞数 收藏数 评论数等信息
 	eg.Go(func() error {
 		article, err = h.svc.GetPublishedById(ctx, id, user.Id)
 		return err
@@ -265,14 +267,15 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 		}, err
 	}
 	// 异步增加阅读计数
-	go func() {
-		// 阅读数+1  最好集成kafka来异步处理，减轻MySQL的压力
-		err1 := h.interSvc.IncrReadCnt(ctx, h.biz, article.Id)
-		if err1 != nil {
-			h.log.Error("增加文章阅读数失败", logger.Error(err1), logger.Int64("Article_ID", article.Id))
-		}
-	}()
-	// 这里异步获取文章的点赞数 收藏数 评论数等信息
+	//go func() {
+	//	// 阅读数+1  最好集成kafka来异步处理，减轻MySQL的压力 因为这里会回写MySQL以新增阅读量
+	//	// 1. 如果你想摆脱原本主链路的超时控制，你就创建一个新的
+	//	// 2. 如果你不想，你就用 ctx
+	//	err1 := h.interSvc.IncrReadCnt(ctx, h.biz, article.Id)
+	//	if err1 != nil {
+	//		h.log.Error("增加文章阅读数失败", logger.Error(err1), logger.Int64("Article_ID", article.Id))
+	//	}
+	//}()
 
 	return ginplus.Result{Data: resp.ArticleResp{
 		Id:          article.Id,

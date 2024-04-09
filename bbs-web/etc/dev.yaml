@@ -20,7 +20,7 @@ mongodb:
 
 kakfa:
   borkers:
-    - "192.168.1.52:9092"
+    - "192.168.1.52:9094"
 
 otel:
   url: "http://192.168.1.52:14268/api/traces"
