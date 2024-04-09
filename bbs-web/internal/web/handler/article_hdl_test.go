@@ -5,6 +5,7 @@ package handler
 */
 import (
 	"bbs-web/internal/domain"
+	"bbs-web/internal/service"
 	"bbs-web/internal/service/article"
 	"bbs-web/internal/service/svcmocks"
 	"bbs-web/internal/web/vo"
@@ -32,7 +33,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 	tests := []struct {
 		name string
 
-		mock func(ctrl *gomock.Controller) article.IArticleService
+		mock func(ctrl *gomock.Controller) (article.IArticleService, service.InteractiveService, logger.Logger)
 
 		reqBody string
 
@@ -43,7 +44,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 		// 还有一些，1. 修改已有文章，并且发表成功  2. Bind返回错误  3. 找不到User 4.publish返回错误
 		{
 			name: "新建并发表",
-			mock: func(ctrl *gomock.Controller) article.IArticleService {
+			mock: func(ctrl *gomock.Controller) (article.IArticleService, service.InteractiveService, logger.Logger) {
 				svc := svcmocks.NewMockIArticleService(ctrl)
 				svc.EXPECT().Publish(gomock.Any(), domain.Article{
 					Id:      0,
@@ -59,7 +60,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 					Ctime:       time.Time{},
 					Utime:       time.Time{},
 				}).Return(int64(1), nil)
-				return svc
+				return svc, nil, nil
 			},
 			reqBody: `{
 				"id":0,
@@ -76,7 +77,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 		},
 		{
 			name: "发布失败",
-			mock: func(ctrl *gomock.Controller) article.IArticleService {
+			mock: func(ctrl *gomock.Controller) (article.IArticleService, service.InteractiveService, logger.Logger) {
 				svc := svcmocks.NewMockIArticleService(ctrl)
 				svc.EXPECT().Publish(gomock.Any(), domain.Article{
 					Id:      0,
@@ -92,7 +93,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 					Ctime:       time.Time{},
 					Utime:       time.Time{},
 				}).Return(int64(0), errors.New("publish 失败"))
-				return svc
+				return svc, nil, nil
 			},
 			reqBody: `{
 				"id":0,
@@ -113,7 +114,7 @@ func TestArticleHandler_Publish(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			h := NewArticleHandler(tt.mock(ctrl), logger.NewNoOpLogger())
+			h := NewArticleHandler(tt.mock(ctrl))
 			serverTest.POST("/articles/publish", ginplus.WrapJson[vo.ArticleReq](h.Publish))
 
 			req, err := http.NewRequest(http.MethodPost, "/articles/publish", bytes.NewBuffer([]byte(tt.reqBody)))

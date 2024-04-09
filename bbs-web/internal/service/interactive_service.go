@@ -5,7 +5,6 @@ import (
 	"bbs-web/internal/repository"
 	"bbs-web/internal/repository/cache"
 	"context"
-	"fmt"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -13,6 +12,7 @@ import (
 // @Author 代码小学生王木木
 // @Date 2024-04-07 19:13
 
+//go:generate mockgen -source=E:\workspace\github.com\bbs-spider\bbs-web\internal\service\interactive_service.go -package=svcmocks -destination=E:\workspace\github.com\bbs-spider\bbs-web\internal\service\svcmocks\interactive.mock.go
 type InteractiveService interface {
 	IncrReadCnt(ctx context.Context, biz string, id int64) error
 	Like(ctx context.Context, biz string, id int64, id2 int64) error
@@ -77,7 +77,6 @@ func (i *interactiveService) Get(ctx context.Context, biz string, id int64, uid 
 	})
 	lastErr := eg.Wait()
 	if lastErr != nil {
-		fmt.Println("我不理解", lastErr)
 		return domain.Interactive{}, lastErr
 	}
 	data.Liked = liked
