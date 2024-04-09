@@ -22,6 +22,15 @@ type articleService struct {
 	//userSvc   service.IUserService
 
 	producer event.Producer
+
+	ch chan readInfo
+}
+
+const batchSize = 10
+
+type readInfo struct {
+	Uid int64
+	Aid int64
 }
 
 func NewArticleService(repo article.ArticleRepository, l logger.Logger, writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository, producer event.Producer) IArticleService {
@@ -37,6 +46,38 @@ func NewArticleService(repo article.ArticleRepository, l logger.Logger, writeRep
 func NewArticleServiceV1(writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository, l logger.Logger) IArticleService {
 	return &articleService{
 		l: l, writeRepo: writeRepo, readRepo: readRepo}
+}
+
+func NewArticleServiceV2(repo article.ArticleRepository, l logger.Logger, writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository, producer event.Producer) IArticleService {
+	ch := make(chan readInfo, batchSize) // 创建一个10容量的通道
+	go func() {
+		for {
+			uids := make([]int64, 0, batchSize)
+			aids := make([]int64, 0, batchSize)
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+
+			for i := 0; i < batchSize; i++ {
+				select {
+				case info := <-ch:
+					uids = append(uids, info.Uid)
+					aids = append(aids, info.Aid)
+				case <-ctx.Done():
+					break
+				}
+			}
+			cancel()
+			//producer.ProduceReadEvent(ctx,event.ReadEventV1{})
+		}
+	}()
+
+	return &articleService{
+		repo:      repo,
+		l:         l,
+		writeRepo: writeRepo,
+		readRepo:  readRepo,
+		producer:  producer,
+		ch:        ch,
+	}
 }
 
 func (svc *articleService) Save(ctx context.Context, art domain.Article) (int64, error) {
@@ -126,6 +167,13 @@ func (svc *articleService) GetPublishedById(ctx context.Context, id, uid int64) 
 				svc.l.Error("发送读者阅读事件失败", logger.Error(err),
 					logger.Int64("articleId", art.Id),
 					logger.Int64("userId", uid))
+			}
+		}()
+		// 生产者也用批量做法，装逼写法
+		go func() {
+			svc.ch <- readInfo{
+				Uid: uid,
+				Aid: art.Id,
 			}
 		}()
 	}

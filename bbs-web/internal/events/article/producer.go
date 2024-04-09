@@ -15,3 +15,8 @@ type ReadEvent struct {
 	Uid int64 // 用户ID
 	Aid int64 // 文章id
 }
+
+type ReadEventBatch struct {
+	Uids []int64 // 用户ID
+	Aids []int64 // 文章id
+}
