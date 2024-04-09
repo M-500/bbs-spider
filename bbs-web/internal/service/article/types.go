@@ -9,6 +9,8 @@ import (
 // @Description
 // @Author 代码小学生王木木
 // @Date 2024-04-02 9:52
+
+//go:generate mockgen -source=./types.go -package=svcmocks -destination=../svcmocks/articleServiceV1.mock.go
 type IArticleService interface {
 	Save(ctx context.Context, art domain.Article) (int64, error)
 	Withdraw(ctx context.Context, art domain.Article) error

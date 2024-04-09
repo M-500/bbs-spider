@@ -5,6 +5,8 @@ package domain
 // @Date 2024-04-08 18:36
 
 type Interactive struct {
+	Biz        string
+	BizId      int64
 	ReadCnt    int64 `json:"read_cnt"`
 	LikeCnt    int64 `json:"like_cnt"`
 	CollectCnt int64 `json:"collect_cnt"`

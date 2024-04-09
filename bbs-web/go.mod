@@ -5,6 +5,7 @@ go 1.21.4
 require (
 	github.com/IBM/sarama v1.43.1
 	github.com/bwmarrin/snowflake v0.3.0
+	github.com/ecodeclub/ekit v0.0.8
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1

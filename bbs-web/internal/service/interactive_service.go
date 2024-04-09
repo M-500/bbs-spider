@@ -17,9 +17,9 @@ type InteractiveService interface {
 	IncrReadCnt(ctx context.Context, biz string, id int64) error
 	Like(ctx context.Context, biz string, id int64, id2 int64) error
 	CancelLike(ctx context.Context, biz string, id int64, id2 int64) error
-
 	CollectArt(ctx context.Context, biz string, bizId int64, uId int64, cId int64) error
 	Get(ctx context.Context, biz string, id int64, uid int64) (domain.Interactive, error)
+	GetByIds(ctx context.Context, biz string, ids []int64) (map[int64]domain.Interactive, error)
 }
 
 type interactiveService struct {
@@ -32,6 +32,10 @@ func NewInteractiveService(repo repository.InteractiveRepo, cache cache.RedisInt
 		repo:  repo,
 		cache: cache,
 	}
+}
+
+func (i *interactiveService) GetByIds(ctx context.Context, biz string, ids []int64) (map[int64]domain.Interactive, error) {
+	panic("")
 }
 
 func (i *interactiveService) IncrReadCnt(ctx context.Context, biz string, id int64) error {
