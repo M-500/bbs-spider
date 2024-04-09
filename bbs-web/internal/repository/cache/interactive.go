@@ -63,8 +63,8 @@ func (r *redisInteractiveCache) Get(ctx context.Context, biz string, bizId int64
 	// 判空
 	if len(result) == 0 {
 		// 缓存不存在
-		//return domain.Interactive{}, ErrKeyNotExist
-		return domain.Interactive{}, nil
+		return domain.Interactive{}, ErrKeyNotExist
+		//return domain.Interactive{}, nil
 	}
 	var res domain.Interactive
 	res.CollectCnt, _ = strconv.ParseInt(result[fieldCollectionCnt], 10, 64)
