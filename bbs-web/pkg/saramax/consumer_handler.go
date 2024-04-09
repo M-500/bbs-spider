@@ -42,6 +42,7 @@ func (h *Handler[T]) ConsumeClaim(session sarama.ConsumerGroupSession, claim sar
 				logger.Int64("Offset", msg.Offset),
 				logger.Int32("Partition", msg.Partition),
 				logger.String("Topic", msg.Topic),
+				logger.String("Value", string(msg.Value)),
 			)
 			continue
 		}
@@ -56,6 +57,7 @@ func (h *Handler[T]) ConsumeClaim(session sarama.ConsumerGroupSession, claim sar
 				logger.Int64("Offset", msg.Offset),
 				logger.Int32("Partition", msg.Partition),
 				logger.String("Topic", msg.Topic),
+				logger.String("Value", string(msg.Value)),
 			)
 		}
 		if err != nil {

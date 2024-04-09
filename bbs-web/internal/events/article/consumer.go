@@ -46,7 +46,7 @@ func (c *KafkaConsumer) Start() error {
 		return err
 	}
 	go func() {
-		err := client.Consume(context.Background(), []string{"article_read"}, saramax.NewHandler[ReadEvent](c.l, c.Consume))
+		err := client.Consume(context.Background(), []string{TopicString}, saramax.NewHandler[ReadEvent](c.l, c.Consume))
 		if err != nil {
 			c.l.Error("退出消费循环异常", logger.Error(err))
 		}

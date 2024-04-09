@@ -49,7 +49,7 @@ func NewArticleServiceV1(writeRepo article.ArtWriterRepo, readRepo article.Artic
 }
 
 func NewArticleServiceV2(repo article.ArticleRepository, l logger.Logger, writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository, producer event.Producer) IArticleService {
-	ch := make(chan readInfo, batchSize) // 创建一个10容量的通道
+	ch := make(chan readInfo, batchSize) // 创建一个10容量的通道  TODO: 要暴露一个关闭通道的方法！
 	go func() {
 		for {
 			uids := make([]int64, 0, batchSize)
@@ -58,7 +58,10 @@ func NewArticleServiceV2(repo article.ArticleRepository, l logger.Logger, writeR
 
 			for i := 0; i < batchSize; i++ {
 				select {
-				case info := <-ch:
+				case info, ok := <-ch:
+					if !ok {
+						// 要不要通知？
+					}
 					uids = append(uids, info.Uid)
 					aids = append(aids, info.Aid)
 				case <-ctx.Done():
@@ -170,12 +173,12 @@ func (svc *articleService) GetPublishedById(ctx context.Context, id, uid int64) 
 			}
 		}()
 		// 生产者也用批量做法，装逼写法
-		go func() {
-			svc.ch <- readInfo{
-				Uid: uid,
-				Aid: art.Id,
-			}
-		}()
+		//go func() {
+		//	svc.ch <- readInfo{
+		//		Uid: uid,
+		//		Aid: art.Id,
+		//	}
+		//}()
 	}
 	return art, err
 	//// 组装User

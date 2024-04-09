@@ -37,7 +37,7 @@ func (c *InteractiveReadEventBatchConsumer) Start() error {
 		return err
 	}
 	go func() {
-		err := client.Consume(context.Background(), []string{"article_read"}, saramax.NewBatchHandler[ReadEvent](c.l, c.BatchConsume))
+		err := client.Consume(context.Background(), []string{TopicString}, saramax.NewBatchHandler[ReadEvent](c.l, c.BatchConsume))
 		if err != nil {
 			c.l.Error("退出消费循环异常", logger.Error(err))
 		}

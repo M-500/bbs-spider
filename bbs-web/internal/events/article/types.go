@@ -11,6 +11,8 @@ type Producer interface {
 	ProduceReadEvent(ctx context.Context, evt ReadEvent) error
 }
 
+const TopicString = "read_article"
+
 type ReadEvent struct {
 	Uid int64 // 用户ID
 	Aid int64 // 文章id

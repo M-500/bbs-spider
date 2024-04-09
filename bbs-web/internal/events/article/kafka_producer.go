@@ -27,7 +27,7 @@ func (k *KafkaProducer) ProduceReadEvent(ctx context.Context, evt ReadEvent) err
 		return err
 	}
 	_, _, err = k.producer.SendMessage(&sarama.ProducerMessage{
-		Topic: "read_article",
+		Topic: TopicString,
 		Value: sarama.ByteEncoder(data),
 	})
 

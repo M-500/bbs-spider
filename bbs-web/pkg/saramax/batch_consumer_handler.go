@@ -34,11 +34,9 @@ func (b *BatchHandler[T]) Cleanup(session sarama.ConsumerGroupSession) error {
 
 func (b *BatchHandler[T]) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	// 批量消费
-
 	const batchSize = 10
 	msgs := claim.Messages()
 	for {
-		//log.Println("一个批次开始")
 		batch := make([]*sarama.ConsumerMessage, 0, batchSize)
 		ts := make([]T, 0, batchSize)
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -54,9 +52,9 @@ func (b *BatchHandler[T]) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 					cancel()
 					return nil
 				}
-				batch = append(batch, msg) // 追加到数组
+				//batch = append(batch, msg) // 追加到数组
 				var t T
-				err := json.Unmarshal(msg.Value, t)
+				err := json.Unmarshal(msg.Value, &t)
 				if err != nil {
 					b.l.Error("反序列化失败", logger.Error(err),
 						logger.String("topic", msg.Topic),
