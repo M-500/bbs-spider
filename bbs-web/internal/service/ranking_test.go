@@ -35,6 +35,7 @@ func TestBatchRankingService_TopN(t *testing.T) {
 						domain.Article{Id: 2, Utime: nw, Ctime: nw},
 						domain.Article{Id: 3, Utime: nw, Ctime: nw},
 					}, nil)
+				artSvc.EXPECT().ListPub(gomock.Any(), nw, 3, 3).Return([]domain.Article{}, nil)
 				intrSvc.EXPECT().GetByIds(gomock.Any(), "article", []int64{
 					1, 2, 3,
 				}).Return(map[int64]domain.Interactive{
@@ -42,6 +43,7 @@ func TestBatchRankingService_TopN(t *testing.T) {
 					2: {BizId: 2, LikeCnt: 2},
 					3: {BizId: 3, LikeCnt: 3},
 				}, nil)
+				intrSvc.EXPECT().GetByIds(gomock.Any(), "article", []int64{}).Return(map[int64]domain.Interactive{})
 				return artSvc, intrSvc
 			},
 			wantData: []domain.Article{

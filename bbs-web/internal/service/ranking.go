@@ -58,6 +58,7 @@ func (svc *batchRankingService) topN(ctx context.Context) ([]domain.Article, err
 	var (
 		offset = 0
 	)
+	now := time.Now()
 	type Score struct {
 		art   domain.Article
 		score float64
@@ -72,7 +73,6 @@ func (svc *batchRankingService) topN(ctx context.Context) ([]domain.Article, err
 	})
 
 	for {
-		now := time.Now()
 		// 1. 先拿一批数据
 		arts, err := svc.artSvc.ListPub(ctx, now, offset, svc.batchSize)
 		if err != nil {
