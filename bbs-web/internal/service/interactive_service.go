@@ -12,7 +12,7 @@ import (
 // @Author 代码小学生王木木
 // @Date 2024-04-07 19:13
 
-//go:generate mockgen -source=E:\workspace\github.com\bbs-spider\bbs-web\internal\service\interactive_service.go -package=svcmocks -destination=E:\workspace\github.com\bbs-spider\bbs-web\internal\service\svcmocks\interactive.mock.go
+//go:generate mockgen -source=./interactive_service.go -package=svcmocks -destination=./svcmocks/interactive.mock.go
 type InteractiveService interface {
 	IncrReadCnt(ctx context.Context, biz string, id int64) error
 	Like(ctx context.Context, biz string, id int64, id2 int64) error
