@@ -38,6 +38,35 @@ func NewArticleHandler(svc article.IArticleService,
 	}
 }
 
+func (h *ArticleHandler) PubAuthorArtList(ctx *gin.Context) (ginplus.Result, error) {
+	idStr := ctx.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		return ginplus.Result{
+			Msg: "参数错误",
+		}, err
+	}
+	var (
+		eg   errgroup.Group
+		arts []domain.Article
+	)
+
+	eg.Go(func() error {
+		var err error
+		arts, err = h.svc.List(ctx, id, 1, 15)
+		return err
+	})
+
+	er := eg.Wait()
+	if er != nil {
+		return ginplus.Result{
+			Msg: "系统错误",
+		}, err
+	}
+	// 组装内容
+	return ginplus.Result{Data: arts}, nil
+}
+
 // Edit
 //
 //	@Description: 编辑文章
@@ -237,7 +266,7 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 	}
 	// 异步增加阅读计数
 	go func() {
-		// 阅读数+1
+		// 阅读数+1  最好集成kafka来异步处理，减轻MySQL的压力
 		err1 := h.interSvc.IncrReadCnt(ctx, h.biz, article.Id)
 		if err1 != nil {
 			h.log.Error("增加文章阅读数失败", logger.Error(err1), logger.Int64("Article_ID", article.Id))

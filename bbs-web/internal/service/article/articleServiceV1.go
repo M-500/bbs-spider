@@ -1,6 +1,7 @@
 package article
 
 import (
+	event "bbs-web/internal/events/article"
 	"bbs-web/internal/repository/article"
 	"bbs-web/pkg/logger"
 	"context"
@@ -19,6 +20,8 @@ type articleService struct {
 	writeRepo article.ArtWriterRepo
 	readRepo  article.ArticleReaderRepository
 	//userSvc   service.IUserService
+
+	producer event.Producer
 }
 
 func NewArticleService(repo article.ArticleRepository, l logger.Logger, writeRepo article.ArtWriterRepo, readRepo article.ArticleReaderRepository) IArticleService {
@@ -106,8 +109,19 @@ func (svc *articleService) GetById(ctx context.Context, id int64) (domain.Articl
 
 func (svc *articleService) GetPublishedById(ctx context.Context, id, uid int64) (domain.Article, error) {
 	art, err := svc.repo.GetPublishedById(ctx, id, uid)
-	if err != nil {
-		return domain.Article{}, err
+	if err == nil {
+		go func() {
+			err2 := svc.producer.ProduceReadEvent(ctx, event.ReadEvent{
+				// 就算kafka消费者要用article的其他字段，让他通过id去查，你不要带过去，因为你带过去的数据，在他使用过程中可能会被修改！
+				Uid: uid,
+				Aid: art.Id,
+			})
+			if err2 != nil {
+				svc.l.Error("发送读者阅读事件失败", logger.Error(err),
+					logger.Int64("articleId", art.Id),
+					logger.Int64("userId", uid))
+			}
+		}()
 	}
 	return art, err
 	//// 组装User
@@ -140,3 +154,8 @@ func (svc *articleService) GetByIds(ctx context.Context, biz string, ids []int64
 	//TODO implement me
 	panic("implement me")
 }
+
+//func (svc *articleService) ListPubArtsByAuthId(ctx context.Context, uid int64) ([]domain.Article, error) {
+//	//TODO implement me
+//	panic("implement me")
+//}

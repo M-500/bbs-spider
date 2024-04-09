@@ -44,6 +44,7 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 
 	pub := engine.Group("/pub") // 读者关注的接口
 	{
+		pub.GET("/list/:id", gp.Wrap(r.artHdl.PubAuthorArtList))                                    //  用户查看某个作者的所有文章
 		pub.GET("/:id", gp.WrapToken[jwtx.UserClaims](r.artHdl.PubDetail))                          // 读取文章详情
 		pub.POST("/like", gp.WrapBodyAndToken[vo.LikeReq, jwtx.UserClaims](r.artHdl.Like))          // 点赞/取消点赞某一篇文章
 		pub.POST("/collect", gp.WrapBodyAndToken[vo.CollectReq, jwtx.UserClaims](r.artHdl.Collect)) // 收藏/取消收藏 某一篇文章

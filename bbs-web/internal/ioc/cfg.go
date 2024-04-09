@@ -18,6 +18,7 @@ type Config struct {
 	Database       DatabaseConfig `mapstructure:"database"`
 	Redis          RedisConfig    `mapstructure:"redis"`
 	MongoCfg       MongoDBConfig  `mapstructure:"mongodb"`
+	KafkaCfg       KafkaConfig    `mapstructure:"kakfa"`
 	OTELCfg        OtelConfig     `mapstructure:"otel"`
 }
 
@@ -39,6 +40,11 @@ type RedisConfig struct {
 type MongoDBConfig struct {
 	DSN string `mapstructure:"dsn"`
 }
+
+type KafkaConfig struct {
+	Brokers []string `mapstructure:"borkers"`
+}
+
 type OtelConfig struct {
 	Url string `mapstructure:"url"`
 }

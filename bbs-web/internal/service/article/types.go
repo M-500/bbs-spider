@@ -19,4 +19,5 @@ type IArticleService interface {
 	GetById(ctx context.Context, id int64) (domain.Article, error)
 	GetByIds(ctx context.Context, biz string, ids []int64) ([]domain.Article, error)
 	GetPublishedById(ctx context.Context, id, uid int64) (domain.Article, error)
+	//ListPubArtsByAuthId(ctx context.Context, uid int64) ([]domain.Article, error)
 }

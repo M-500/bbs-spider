@@ -89,6 +89,31 @@ func (a *gormArticleDao) GetByAuthor(ctx context.Context, author int64, offset, 
 	return arts, err
 }
 
+// GetByAuthorV1
+//
+//	@Description: 需要文章表和用户表进行关联，获取所有的文章和用户的信息
+func (a *gormArticleDao) GetByAuthorV1(ctx context.Context, author int64, offset, limit int) ([]dao.ArticleModel, error) {
+	var arts []dao.ArticleModel
+	// 涉及order by的时候 一定要让order by 条件命中索引，因为索引天然有序
+	// SQL优化案例 早起的order by 没有命中索引，所以内存排序很慢，优化这个查询
+	err := a.db.WithContext(ctx).Model(&dao.ArticleModel{}).
+		Where("author_id = ?", author).
+		Offset(offset).
+		Limit(limit).
+		// 方式一 :
+		Order("updated_at DESC, created_at ASC").
+		// 方式二:
+		//Order(clause.OrderBy{
+		//	Columns: []clause.OrderByColumn{
+		//		{Column: clause.Column{Name: "update_at"}, Desc: true},
+		//		{Column: clause.Column{Name: "create_at"}, Desc: false},
+		//	},
+		//	Expression: nil,
+		//}).
+		Find(&arts).Error
+	return arts, err
+}
+
 func (a *gormArticleDao) GetById(ctx context.Context, id int64) (dao.ArticleModel, error) {
 	var art dao.ArticleModel
 	err := a.db.WithContext(ctx).Model(&dao.ArticleModel{}).Where("id = ?", id).First(&art).Error

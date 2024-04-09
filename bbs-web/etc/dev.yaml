@@ -18,5 +18,9 @@ redis:
 mongodb:
   dsn: "mongodb://root:example@localhost:27017"
 
+kakfa:
+  borkers:
+    - 192.168.1.52:9092
+
 otel:
   url: "http://192.168.1.52:14268/api/traces"
