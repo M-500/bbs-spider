@@ -22,15 +22,15 @@ func NewHandler[T any](l logger.Logger, fn func(msg *sarama.ConsumerMessage, t T
 	}
 }
 
-func (h Handler[T]) Setup(session sarama.ConsumerGroupSession) error {
+func (h *Handler[T]) Setup(session sarama.ConsumerGroupSession) error {
 	return nil
 }
 
-func (h Handler[T]) Cleanup(session sarama.ConsumerGroupSession) error {
+func (h *Handler[T]) Cleanup(session sarama.ConsumerGroupSession) error {
 	return nil
 }
 
-func (h Handler[T]) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+func (h *Handler[T]) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	var barchSize = 3
 	msgs := claim.Messages()
 	for msg := range msgs {

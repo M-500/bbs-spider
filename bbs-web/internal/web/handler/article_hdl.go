@@ -267,15 +267,15 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 		}, err
 	}
 	// 异步增加阅读计数
-	//go func() {
-	//	// 阅读数+1  最好集成kafka来异步处理，减轻MySQL的压力 因为这里会回写MySQL以新增阅读量
-	//	// 1. 如果你想摆脱原本主链路的超时控制，你就创建一个新的
-	//	// 2. 如果你不想，你就用 ctx
-	//	err1 := h.interSvc.IncrReadCnt(ctx, h.biz, article.Id)
-	//	if err1 != nil {
-	//		h.log.Error("增加文章阅读数失败", logger.Error(err1), logger.Int64("Article_ID", article.Id))
-	//	}
-	//}()
+	go func() {
+		// 阅读数+1  最好集成kafka来异步处理，减轻MySQL的压力 因为这里会回写MySQL以新增阅读量
+		// 1. 如果你想摆脱原本主链路的超时控制，你就创建一个新的
+		// 2. 如果你不想，你就用 ctx
+		err1 := h.interSvc.IncrReadCnt(ctx, h.biz, article.Id)
+		if err1 != nil {
+			h.log.Error("增加文章阅读数失败", logger.Error(err1), logger.Int64("Article_ID", article.Id))
+		}
+	}()
 
 	return ginplus.Result{Data: resp.ArticleResp{
 		Id:          article.Id,

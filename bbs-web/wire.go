@@ -63,7 +63,7 @@ func InitWebServer(path string) *App {
 
 		ioc.InitMiddleware,
 		ioc.InitGin,
-
+		// wire.Struct 组装目标结构体的所有字段
 		wire.Struct(new(App), "*"),
 	)
 	return new(App)

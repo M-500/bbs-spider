@@ -17,6 +17,7 @@ var (
 
 type InteractiveDao interface {
 	IncrReadCnt(ctx context.Context, biz string, bizId int64) error
+	BatchIncrReadCnt(ctx context.Context, bizs []string, bizIds []int64) error
 	IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error
 	DelLikeInfo(ctx context.Context, biz string, bizId int64, uid int64) error
 	IncrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error
@@ -61,6 +62,19 @@ func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId in
 			}).Error
 	})
 	return err
+}
+
+func (dao *interactiveDao) BatchIncrReadCnt(ctx context.Context, bizs []string, bizIds []int64) error {
+	return dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		txDao := NewInteractiveDao(tx)
+		for i := 0; i < len(bizs); i++ {
+			err := txDao.IncrReadCnt(ctx, bizs[i], bizIds[i])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 // IncrLikeInfo

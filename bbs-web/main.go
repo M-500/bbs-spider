@@ -20,6 +20,7 @@ func main() {
 	initPrometheus()
 	ioc.SetUpOTEL(ioc.AppConfig)
 
+	// 启动kafka消费者，
 	for _, consumer := range app.consumers {
 		err := consumer.Start()
 		if err != nil {

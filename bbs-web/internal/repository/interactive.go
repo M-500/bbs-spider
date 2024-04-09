@@ -14,12 +14,14 @@ import (
 
 type InteractiveRepo interface {
 	IncrReadCnt(ctx context.Context, biz string, bizId int64) error
+	// BatchIncrReadCnt biz 和 bizId 长度必须一致
+	BatchIncrReadCnt(ctx context.Context, biz []string, bizId []int64) error
 	IncrLike(ctx context.Context, biz string, id int64, uid int64) error
 	DecrLike(ctx context.Context, biz string, id int64, uid int64) error
-
-	Get(ctx context.Context, biz string, bizId int64) (domain.Interactive, error)
-	Liked(ctx context.Context, biz string, bizId int64, uid int64) (bool, error)
-	Collected(ctx context.Context, biz string, bizId int64, uid int64) (bool, error)
+	AddCollectionItem(ctx context.Context, biz string, id int64, cid int64, uid int64) error
+	Get(ctx context.Context, biz string, id int64) (domain.Interactive, error)
+	Liked(ctx context.Context, biz string, id int64, uid int64) (bool, error)
+	Collected(ctx context.Context, biz string, id int64, uid int64) (bool, error)
 }
 
 type interactiveRepo struct {
@@ -44,6 +46,15 @@ func (repo *interactiveRepo) toDomain(model dao.InteractiveModel) domain.Interac
 		CommentCnt: model.CommentCnt,
 	}
 
+}
+func (repo *interactiveRepo) AddCollectionItem(ctx context.Context, biz string, id int64, cid int64, uid int64) error {
+	panic("")
+}
+func (repo *interactiveRepo) BatchIncrReadCnt(ctx context.Context, biz []string, bizId []int64) error {
+	// 要不要检测 biz 和 bizId的长度是否相等
+	err := repo.dao.BatchIncrReadCnt(ctx, biz, bizId)
+
+	return err
 }
 func (repo *interactiveRepo) Get(ctx context.Context, biz string, bizId int64) (domain.Interactive, error) {
 	// 要从缓存中拿出阅读数量 点赞 收藏 评论等
