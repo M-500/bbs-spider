@@ -45,8 +45,7 @@ func (svc *interactiveService) Like(ctx context.Context, biz string, id int64, u
 }
 
 func (svc *interactiveService) CancelLike(ctx context.Context, biz string, id int64, id2 int64) error {
-	//TODO implement me
-	panic("implement me")
+	return svc.repo.DecrLike(ctx, biz, id, id2)
 }
 
 func (svc *interactiveService) CollectArt(ctx context.Context, biz string, bizId int64, uId int64, cId int64) error {
