@@ -5,10 +5,6 @@ import (
 	"log"
 )
 
-// @Description
-// @Author 代码小学生王木木
-// @Date 2024-04-10 17:03
-
 var AppConfig *Config
 
 type Config struct {

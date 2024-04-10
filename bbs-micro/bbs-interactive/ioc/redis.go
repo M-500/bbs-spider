@@ -4,7 +4,7 @@ import "github.com/redis/go-redis/v9"
 
 // @Description
 // @Author 代码小学生王木木
-// @Date 2024-04-10 17:01
+// @Date 2024-03-26 11:44
 
 func InitRedis(cfg *Config) redis.Cmdable {
 	addr := cfg.Redis.DSN

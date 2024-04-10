@@ -1,5 +1,9 @@
 package ioc
 
+// @Description
+// @Author 代码小学生王木木
+// @Date 2024-03-26 11:44
+
 import (
 	"bbs-micro/bbs-interactive/repository/dao"
 	promsdk "github.com/prometheus/client_golang/prometheus"
@@ -11,10 +15,6 @@ import (
 	"gorm.io/plugin/prometheus"
 	"time"
 )
-
-// @Description
-// @Author 代码小学生王木木
-// @Date 2024-04-10 17:00
 
 func InitDatabase(cfg *Config) *gorm.DB {
 	config := &gorm.Config{
