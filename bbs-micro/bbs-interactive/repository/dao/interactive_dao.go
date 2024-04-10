@@ -35,16 +35,16 @@ func NewInteractiveDao(db *gorm.DB) InteractiveDao {
 
 func (dao *interactiveDao) IncrReadCnt(ctx context.Context, biz string, bizId int64) error {
 	// 查看是否有点赞记录，如果有就将read_cnt字段+1 ，否则就创建一行记录，并将read_cnt 设置为 1 注意并发问题
-	err := dao.db.WithContext(ctx).Model(&UserLikeBizModel{}).
+	err := dao.db.WithContext(ctx).Model(&InteractiveModel{}).
 		Clauses(clause.OnConflict{
 			DoUpdates: clause.Assignments(map[string]interface{}{
-				"read_cnt": gorm.Expr("`read_cnt` + 1"),
+				"read_cnt": gorm.Expr("read_cnt + 1"),
 			}),
 		}).
-		Create(&UserCollectBizModel{
-			BizId: bizId,
-			Biz:   biz,
-			Uid:   1,
+		Create(&InteractiveModel{
+			BizId:   bizId,
+			Biz:     biz,
+			ReadCnt: 1,
 		}).Error
 	return err
 }

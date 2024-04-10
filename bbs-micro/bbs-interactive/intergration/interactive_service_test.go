@@ -8,6 +8,7 @@ import (
 	"context"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
 	"testing"
@@ -52,6 +53,7 @@ func (s *InteractiveTestSuite) TearDownTest() {
 }
 
 func (s *InteractiveTestSuite) TestIncrReadCnt() {
+	//now := time.Now()
 	testCases := []struct {
 		name   string
 		before func(t *testing.T)
@@ -85,13 +87,13 @@ func (s *InteractiveTestSuite) TestIncrReadCnt() {
 				ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 				defer cancel()
 				var data dao.InteractiveModel
-				err := s.db.Where("id = ?", 2).First(&data).Error
-				assert.NoError(t, err)
+				err := s.db.Model(&dao.InteractiveModel{}).Where("id = ?", 1).First(&data).Error
+				require.NoError(t, err)
 				assert.True(t, data.CreatedAt.Before(data.UpdatedAt)) // 因为无法确定这个更新时间一定大于当前时间 不好测试，所以用这个方式
 				data.CreatedAt = time.Time{}
 				data.UpdatedAt = time.Time{}
 				assert.Equal(t, dao.InteractiveModel{
-					Model:   gorm.Model{ID: 1},
+					Model:   gorm.Model{ID: 1, CreatedAt: time.Time{}, UpdatedAt: time.Time{}},
 					BizId:   2,
 					Biz:     "test",
 					ReadCnt: 4,
@@ -123,4 +125,8 @@ func (s *InteractiveTestSuite) TestIncrReadCnt() {
 			tc.after(t)
 		})
 	}
+}
+
+func TestInteractiveService(t *testing.T) {
+	suite.Run(t, &InteractiveTestSuite{})
 }
