@@ -3,6 +3,7 @@ package service
 import (
 	"bbs-micro/bbs-interactive/domain"
 	"bbs-micro/bbs-interactive/repository"
+	"bbs-micro/pkg/logger"
 	"context"
 )
 
@@ -25,11 +26,13 @@ type InteractiveService interface {
 
 type interactiveService struct {
 	repo repository.InteractiveRepo
+	l    logger.Logger
 }
 
-func NewInteractiveService(r repository.InteractiveRepo) InteractiveService {
+func NewInteractiveService(r repository.InteractiveRepo, log logger.Logger) InteractiveService {
 	return &interactiveService{
 		repo: r,
+		l:    log,
 	}
 }
 

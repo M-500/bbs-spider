@@ -4,6 +4,7 @@ import (
 	"bbs-micro/bbs-interactive/domain"
 	"bbs-micro/bbs-interactive/repository/cache"
 	"bbs-micro/bbs-interactive/repository/dao"
+	"bbs-micro/pkg/logger"
 	"context"
 )
 
@@ -25,12 +26,14 @@ type InteractiveRepo interface {
 }
 
 type interactiveRepo struct {
+	l     logger.Logger
 	dao   dao.InteractiveDao
 	cache cache.RedisInteractiveCache
 }
 
-func NewInteractiveRepo(d dao.InteractiveDao, c cache.RedisInteractiveCache) InteractiveRepo {
+func NewInteractiveRepo(log logger.Logger, d dao.InteractiveDao, c cache.RedisInteractiveCache) InteractiveRepo {
 	return &interactiveRepo{
+		l:     log,
 		dao:   d,
 		cache: c,
 	}

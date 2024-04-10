@@ -1,3 +1,5 @@
+//go:build wireinject
+
 package dep_setup
 
 import (
@@ -13,12 +15,12 @@ import (
 // @Author 代码小学生王木木
 // @Date 2024-04-10 15:51
 
-var thirdProvider = wire.NewSet(InitTestDB)
+var thirdProvider = wire.NewSet(InitTestDB, InitRedis, InitLog)
 var interactiveSvcProvider = wire.NewSet(
-	service.NewInteractiveService,
 	dao.NewInteractiveDao,
 	cache.NewRedisInteractiveCache,
 	repository.NewInteractiveRepo,
+	service.NewInteractiveService,
 )
 
 func InitInteractiveGRPCServer() *grpc.InteractiveServiceServer {

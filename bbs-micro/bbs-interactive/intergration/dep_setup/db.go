@@ -19,7 +19,7 @@ var db *gorm.DB
 // InitTestDB 测试的话，不用控制并发。等遇到了并发问题再说
 func InitTestDB() *gorm.DB {
 	if db == nil {
-		dsn := "root:root@tcp(localhost:13316)/webook"
+		dsn := "admin:wulinlin@tcp(192.168.1.52:3306)/bbs-test"
 		sqlDB, err := sql.Open("mysql", dsn)
 		if err != nil {
 			panic(err)
