@@ -41,6 +41,8 @@ export default {
     <div class="top-bar">
       <div class="logo">
         <img :src="require('@/assets/logo.svg')" @click="toHome">
+        <div class="navbar-title">话题</div>
+        <div class="navbar-title">文章</div>
       </div>
     </div>
     <div class="show-login">
@@ -74,11 +76,17 @@ export default {
   align-items: center;
 }
 .logo {
+  display: flex;
   align-items: center;
   img {
     height: 30px;
     //max-width: 100%;
   }
+}
+.navbar-title{
+  font-weight: 700;
+  margin-left: 25px;
+  padding: 1.5rem .75rem;
 }
 .editBtn {
   background-color: #00bbc9;
