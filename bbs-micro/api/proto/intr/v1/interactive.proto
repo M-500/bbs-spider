@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package intr.v1;
 
-option go_package = "bbs-micro/api/proto/gen/interactive/v1;intrv1";
+option go_package = "interactive/v1;intrv1";
 // 生成的代码放到bbs-micro/api/proto/gen/interactive/v1 并取别名为 intrv1
 
 
