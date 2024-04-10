@@ -18,7 +18,7 @@ type InteractiveModel struct {
 }
 
 func (InteractiveModel) TableName() string {
-	return ""
+	return "interactive"
 }
 
 // UserLikeBizModel 用户点赞资源关联表
@@ -46,4 +46,14 @@ type UserCollectBizModel struct {
 
 func (UserCollectBizModel) TableName() string {
 	return "user_to_biz_collect"
+}
+
+type Collection struct {
+	gorm.Model
+	Name string `gorm:"comment:收藏夹名称;type:varchar(128)"`
+	Uid  int64  `gorm:"comment:用户ID;not null;"`
+}
+
+func (Collection) TableName() string {
+	return "collect"
 }

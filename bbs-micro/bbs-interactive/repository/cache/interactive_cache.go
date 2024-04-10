@@ -21,8 +21,10 @@ var (
 
 const (
 	readCntKey = "read_cnt"
+	likeCntKey = "like_cnt"
 )
 
+//go:generate mockgen -source=./interactive_cache.go -package=cachemocks -destination=./mocks/interactive_cache.mock.go RedisInteractiveCache
 type RedisInteractiveCache interface {
 	IncrReadCntIfPresent(ctx context.Context, biz string, bizId int64) error
 	IncrLikeCntIfPresent(ctx context.Context, biz string, bizId int64) error
@@ -53,13 +55,11 @@ func (r *redisInteractiveCache) key(biz string, bizId int64) string {
 //
 //	@Description: 如果redis存在对应的key 就对其进行+1 操作，核心 HINCRBY 命令(为了并发安全，使用lua脚本)
 func (r *redisInteractiveCache) IncrReadCntIfPresent(ctx context.Context, biz string, bizId int64) error {
-	return r.client.Eval(ctx, luaIncrCnt,
-		[]string{r.key(biz, bizId)}, readCntKey, 1).Err()
+	return r.client.Eval(ctx, luaIncrCnt, []string{r.key(biz, bizId)}, readCntKey, 1).Err()
 }
 
 func (r *redisInteractiveCache) IncrLikeCntIfPresent(ctx context.Context, biz string, bizId int64) error {
-	//TODO implement me
-	panic("implement me")
+	return r.client.Eval(ctx, luaIncrCnt, []string{r.key(biz, bizId)}, likeCntKey, 1).Err()
 }
 
 func (r *redisInteractiveCache) IncrCollCntIfPresent(ctx context.Context, biz string, bizId int64) error {

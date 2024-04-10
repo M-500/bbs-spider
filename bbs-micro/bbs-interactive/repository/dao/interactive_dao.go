@@ -4,6 +4,7 @@ import (
 	"context"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"time"
 )
 
 // @Description
@@ -54,8 +55,35 @@ func (dao *interactiveDao) BatchIncrReadCnt(ctx context.Context, bizs []string, 
 }
 
 func (dao *interactiveDao) IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error {
-	//TODO implement me
-	panic("implement me")
+	// 点赞涉及两张表 interactive 表和 user_to_biz_like  涉及到了事务
+	now := time.Now()
+	err := dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&UserLikeBizModel{}).Clauses(clause.OnConflict{
+			DoUpdates: clause.Assignments(map[string]interface{}{
+				"deleted_at": now,
+				"updated_at": now,
+			}),
+		}).Create(&UserLikeBizModel{
+			BizId: id,
+			Biz:   biz,
+			Uid:   uid,
+		}).Error
+
+		if err != nil {
+			return err
+		}
+		return tx.Model(&InteractiveModel{}).Clauses(clause.OnConflict{
+			DoUpdates: clause.Assignments(map[string]any{
+				"updated_at": now,
+				"like_cnt":   gorm.Expr("`like_cnt` + 1"),
+			}),
+		}).Create(&InteractiveModel{
+			BizId:   id,
+			Biz:     biz,
+			LikeCnt: 1,
+		}).Error
+	})
+	return err
 }
 
 func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId int64, uid int64) error {
@@ -64,7 +92,7 @@ func (dao *interactiveDao) DelLikeInfo(ctx context.Context, biz string, bizId in
 }
 
 func (dao *interactiveDao) IncrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error {
-	//TODO implement me
+
 	panic("implement me")
 }
 

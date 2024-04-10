@@ -37,9 +37,8 @@ func (svc *interactiveService) IncrReadCnt(ctx context.Context, biz string, id i
 	return svc.repo.IncrReadCnt(ctx, biz, id)
 }
 
-func (svc *interactiveService) Like(ctx context.Context, biz string, id int64, id2 int64) error {
-	//TODO implement me
-	panic("implement me")
+func (svc *interactiveService) Like(ctx context.Context, biz string, id int64, uid int64) error {
+	return svc.repo.IncrLike(ctx, biz, id, uid)
 }
 
 func (svc *interactiveService) CancelLike(ctx context.Context, biz string, id int64, id2 int64) error {

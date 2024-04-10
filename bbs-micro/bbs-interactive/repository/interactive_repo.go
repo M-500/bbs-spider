@@ -11,6 +11,7 @@ import (
 // @Author 代码小学生王木木
 // @Date 2024-04-10 12:50
 
+//go:generate mockgen -source=./interactive_repo.go -package=repomocks -destination=./mocks/interactive.mock.go InteractiveRepo
 type InteractiveRepo interface {
 	IncrReadCnt(ctx context.Context, biz string, bizId int64) error
 	// BatchIncrReadCnt biz 和 bizId 长度必须一致
@@ -38,7 +39,7 @@ func NewInteractiveRepo(d dao.InteractiveDao, c cache.RedisInteractiveCache) Int
 func (i *interactiveRepo) IncrReadCnt(ctx context.Context, biz string, bizId int64) error {
 	err := i.dao.IncrReadCnt(ctx, biz, bizId)
 	if err != nil {
-
+		return err
 	}
 	return i.cache.IncrReadCntIfPresent(ctx, biz, bizId)
 }
@@ -49,8 +50,11 @@ func (i *interactiveRepo) BatchIncrReadCnt(ctx context.Context, biz []string, bi
 }
 
 func (i *interactiveRepo) IncrLike(ctx context.Context, biz string, id int64, uid int64) error {
-	//TODO implement me
-	panic("implement me")
+	err := i.dao.IncrLikeInfo(ctx, biz, id, uid)
+	if err != nil {
+		return err
+	}
+	return i.cache.IncrLikeCntIfPresent(ctx, biz, id)
 }
 
 func (i *interactiveRepo) DecrLike(ctx context.Context, biz string, id int64, uid int64) error {
