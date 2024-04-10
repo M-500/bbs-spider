@@ -43,7 +43,8 @@ type redisInteractiveCache struct {
 
 func NewRedisInteractiveCache(c redis.Cmdable) RedisInteractiveCache {
 	return &redisInteractiveCache{
-		client: c,
+		client:  c,
+		baseKey: "interactive",
 	}
 }
 
