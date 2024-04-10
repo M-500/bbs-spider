@@ -1,6 +1,7 @@
 package ioc
 
 import (
+	"bbs-micro/bbs-interactive/events"
 	"github.com/IBM/sarama"
 )
 
@@ -24,4 +25,8 @@ func InitSyncProducer(c sarama.Client) sarama.SyncProducer {
 		panic(err)
 	}
 	return producer
+}
+
+func InitConsumer(c events.Consumer) []events.Consumer {
+	return []events.Consumer{c}
 }
