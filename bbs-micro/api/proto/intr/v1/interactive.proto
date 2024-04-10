@@ -61,7 +61,14 @@ message GetRequest{
 }
 
 message Interactive{
-
+  string biz = 1;
+  int64 biz_id = 2;
+  int64 read_cnt = 3;
+  int64 like_cnt = 4;
+  int64 collect_cnt = 5;
+  int64 comment_cnt = 6;
+  bool liked = 7;
+  bool collected = 8;
 }
 message GetResponse{
   Interactive intr = 1;
