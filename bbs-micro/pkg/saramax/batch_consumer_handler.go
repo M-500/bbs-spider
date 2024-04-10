@@ -1,7 +1,7 @@
 package saramax
 
 import (
-	"bbs-web/pkg/logger"
+	"bbs-micro/pkg/logger"
 	"context"
 	"encoding/json"
 	"github.com/IBM/sarama"

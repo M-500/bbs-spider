@@ -144,7 +144,16 @@ func Test_redisInteractiveCache_IncrLikeCntIfPresent(t *testing.T) {
 		// 输出
 		wantErr error
 	}{
-		{},
+		{
+			//name: "点赞信息不存在，不新增",
+			//mock: func(ctrl *gomock.Controller) redis.Cmdable {
+			//	cmd := redismocks.NewMockCmdable(ctrl)
+			//	res := redis.NewCmd(context.Background())
+			//
+			//	cmd.EXPECT().Eval(gomock.Any(), luaIncrCnt, []string{}, likeCntKey, 1)
+			//
+			//},
+		},
 	}
 	for _, tc := range testCase {
 		t.Run(tc.name, func(t *testing.T) {
