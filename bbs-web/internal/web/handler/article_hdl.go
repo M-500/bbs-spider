@@ -117,8 +117,8 @@ func (h *ArticleHandler) Withdraw(ctx *gin.Context, user jwtx.UserClaims) (ginpl
 //	@Description: 发布
 //	@receiver h
 //	@param ctx
-func (h *ArticleHandler) Publish(ctx *gin.Context, req vo.ArticleReq) (ginplus.Result, error) {
-	publish, err := h.svc.Publish(ctx, req.ToDomain(1))
+func (h *ArticleHandler) Publish(ctx *gin.Context, req vo.ArticleReq, user jwtx.UserClaims) (ginplus.Result, error) {
+	publish, err := h.svc.Publish(ctx, req.ToDomain(user.Id))
 	if err != nil {
 		return ginplus.Result{
 			Code: 510003,
