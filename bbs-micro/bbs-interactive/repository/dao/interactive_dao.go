@@ -1,6 +1,10 @@
 package dao
 
-import "context"
+import (
+	"context"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+)
 
 // @Description
 // @Author 代码小学生王木木
@@ -19,15 +23,29 @@ type InteractiveDao interface {
 }
 
 type interactiveDao struct {
+	db *gorm.DB
 }
 
-func NewInteractiveDao() InteractiveDao {
-	return &interactiveDao{}
+func NewInteractiveDao(db *gorm.DB) InteractiveDao {
+	return &interactiveDao{
+		db: db,
+	}
 }
 
 func (dao *interactiveDao) IncrReadCnt(ctx context.Context, biz string, bizId int64) error {
-	//TODO implement me
-	panic("implement me")
+	// 查看是否有点赞记录，如果有就将read_cnt字段+1 ，否则就创建一行记录，并将read_cnt 设置为 1 注意并发问题
+	err := dao.db.WithContext(ctx).Model(&UserLikeBizModel{}).
+		Clauses(clause.OnConflict{
+			DoUpdates: clause.Assignments(map[string]interface{}{
+				"read_cnt": gorm.Expr("`read_cnt` + 1"),
+			}),
+		}).
+		Create(&UserCollectBizModel{
+			BizId: bizId,
+			Biz:   biz,
+			Uid:   1,
+		}).Error
+	return err
 }
 
 func (dao *interactiveDao) BatchIncrReadCnt(ctx context.Context, bizs []string, bizIds []int64) error {

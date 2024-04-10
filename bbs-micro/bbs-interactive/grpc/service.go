@@ -35,8 +35,11 @@ func (i *InteractiveServiceServer) Like(ctx context.Context, request *intrv1.Lik
 }
 
 func (i *InteractiveServiceServer) CancelLike(ctx context.Context, request *intrv1.CancelLikeRequest) (*intrv1.CancelLikeResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	err := i.svc.CancelLike(ctx, request.GetBiz(), request.GetUid(), request.GetUid())
+	if err != nil {
+		return nil, err
+	}
+	return &intrv1.CancelLikeResponse{}, nil
 }
 
 func (i *InteractiveServiceServer) CollectArt(ctx context.Context, request *intrv1.CollectArtRequest) (*intrv1.CollectArtResponse, error) {
@@ -55,24 +58,15 @@ func (i *InteractiveServiceServer) Get(ctx context.Context, request *intrv1.GetR
 }
 
 func (i *InteractiveServiceServer) GetByIds(ctx context.Context, request *intrv1.GetByIdsRequest) (*intrv1.GetByIdsResponse, error) {
-	//ids, err := i.svc.GetByIds(ctx, request.GetBiz(), request.GetIds())
-	//if err != nil {
-	//	return nil, err
-	//}
-	//res := &intrv1.GetByIdsResponse{
-	//	Intrs: make(map[string]intrv1.Interactive),
-	//}
-	//for i2, interactive := range ids {
-	//
-	//}
-	//return res, nil
-	//TODO implement me
-	panic("implement me")
-}
-
-func (i *InteractiveServiceServer) mustEmbedUnimplementedInteractiveServiceServer() {
-	//TODO implement me
-	panic("implement me")
+	ids, err := i.svc.GetByIds(ctx, request.GetBiz(), request.GetIds())
+	if err != nil {
+		return nil, err
+	}
+	m := make(map[int64]*intrv1.Interactive, len(ids))
+	for k, v := range ids {
+		m[k] = i.toDTO(v)
+	}
+	return &intrv1.GetByIdsResponse{Intrs: m}, nil
 }
 
 // toDTO
