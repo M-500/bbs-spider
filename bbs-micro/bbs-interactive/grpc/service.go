@@ -5,6 +5,7 @@ import (
 	"bbs-micro/bbs-interactive/domain"
 	"bbs-micro/bbs-interactive/service"
 	"context"
+	"google.golang.org/grpc"
 )
 
 // @Description
@@ -22,6 +23,10 @@ func NewInteractiveServiceServer(svc service.InteractiveService) *InteractiveSer
 	return &InteractiveServiceServer{
 		svc: svc,
 	}
+}
+
+func (i *InteractiveServiceServer) Register(server *grpc.Server) {
+	intrv1.RegisterInteractiveServiceServer(server, i)
 }
 
 func (i *InteractiveServiceServer) IncrReadCnt(ctx context.Context, request *intrv1.IncrReadCntRequest) (*intrv1.IncrReadCntResponse, error) {

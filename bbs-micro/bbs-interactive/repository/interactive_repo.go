@@ -48,8 +48,8 @@ func (i *interactiveRepo) IncrReadCnt(ctx context.Context, biz string, bizId int
 }
 
 func (i *interactiveRepo) BatchIncrReadCnt(ctx context.Context, biz []string, bizId []int64) error {
-	//TODO implement me
-	panic("implement me")
+	// 批量增加阅读数量
+	return i.dao.BatchIncrReadCnt(ctx, biz, bizId)
 }
 
 func (i *interactiveRepo) IncrLike(ctx context.Context, biz string, id int64, uid int64) error {

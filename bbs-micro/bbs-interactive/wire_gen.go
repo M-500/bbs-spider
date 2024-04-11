@@ -7,6 +7,7 @@
 package main
 
 import (
+	"bbs-micro/bbs-interactive/events"
 	"bbs-micro/bbs-interactive/grpc"
 	"bbs-micro/bbs-interactive/ioc"
 	"bbs-micro/bbs-interactive/repository"
@@ -18,9 +19,9 @@ import (
 
 // Injectors from wire.go:
 
-func InitApp(path string) *grpc.InteractiveServiceServer {
-	logger := ioc.InitLogger()
+func InitApp(path string) *App {
 	config := ioc.InitConfig(path)
+	logger := ioc.InitLogger()
 	db := ioc.InitDatabase(config)
 	interactiveDao := dao.NewInteractiveDao(db)
 	cmdable := ioc.InitRedis(config)
@@ -28,11 +29,19 @@ func InitApp(path string) *grpc.InteractiveServiceServer {
 	interactiveRepo := repository.NewInteractiveRepo(logger, interactiveDao, redisInteractiveCache)
 	interactiveService := service.NewInteractiveService(interactiveRepo, logger)
 	interactiveServiceServer := grpc.NewInteractiveServiceServer(interactiveService)
-	return interactiveServiceServer
+	serverX := ioc.InitGRPCXServer(config, interactiveServiceServer)
+	client := ioc.InitSaramaClient(config)
+	consumer := events.NewInteractiveReadEventBatchConsumer(client, logger, interactiveRepo)
+	v := ioc.InitConsumer(consumer)
+	app := &App{
+		server:   serverX,
+		consumer: v,
+	}
+	return app
 }
 
 // wire.go:
 
-var thirdPartySet = wire.NewSet(ioc.InitConfig, ioc.InitLogger, ioc.InitRedis, ioc.InitDatabase)
+var thirdPartySet = wire.NewSet(ioc.InitConfig, ioc.InitLogger, ioc.InitRedis, ioc.InitDatabase, ioc.InitSaramaClient, ioc.InitConsumer, ioc.InitGRPCXServer, events.NewInteractiveReadEventBatchConsumer)
 
 var interactiveSvcProvider = wire.NewSet(dao.NewInteractiveDao, cache.NewRedisInteractiveCache, repository.NewInteractiveRepo, service.NewInteractiveService)

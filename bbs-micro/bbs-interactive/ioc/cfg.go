@@ -20,6 +20,7 @@ type Config struct {
 	MongoCfg       MongoDBConfig  `mapstructure:"mongodb"`
 	KafkaCfg       KafkaConfig    `mapstructure:"kakfa"`
 	OTELCfg        OtelConfig     `mapstructure:"otel"`
+	GRPCCfg        GRPCConfig     `mapstructure:"grpc"`
 }
 
 type ServerConfig struct {
@@ -47,6 +48,9 @@ type KafkaConfig struct {
 
 type OtelConfig struct {
 	Url string `mapstructure:"url"`
+}
+type GRPCConfig struct {
+	Addr string `mapstructure:"addr"`
 }
 
 func InitConfig(path string) *Config {

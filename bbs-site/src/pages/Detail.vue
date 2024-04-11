@@ -15,7 +15,9 @@
             <div class="Title">{{article.summary}}</div>
           </div>
           <div v-if="isLoading">Loading</div>
-          <div v-else><div v-html="article.content" class="markdown-body" style="text-align:left;margin-bottom:50px"></div></div>
+          <div v-else>
+            <div v-html="article.content" class="markdown-body" style="text-align:left;margin-bottom:50px"></div>
+          </div>
 
           <div class="pageBottom">
             <div class="pageBottomBox">
@@ -39,11 +41,8 @@
           <Comment :entityType=1 :entityId=2 :commentsPage={} :commentCount=12></Comment>
         </div>
 
-
       </div>
-<!--      <div class="commentContent">-->
-<!--       -->
-<!--      </div>-->
+
     </div>
     <div class="pageRight">
       <div class="userCard">
@@ -60,44 +59,33 @@
             <div class="length-num">93</div>
           </a>
           <a href="/tags/">
-          <div class="headline">标签</div>
-          <div class="length-num">17</div>
-        </a>
+            <div class="headline">标签</div>
+            <div class="length-num">17</div>
+          </a>
           <a href="/categories/">
-          <div class="headline">分类</div>
+            <div class="headline">分类</div>
             <div class="length-num">34</div>
-          </a></div>
+          </a>
+        </div>
       </div>
     </div>
-
-    <el-dialog
-      title="添加到收藏夹"
-      :visible.sync="dialogVisible"
-      width="30%"
-      center
-      :before-close="handleClose">
-<!--      <span><el-checkbox v-model="checked3" label="备选项1" border size="medium"></el-checkbox>-->
-<!--        </span>-->
-<!--      <span><el-checkbox v-model="checked4" label="备选项2" border size="medium"></el-checkbox></span>-->
-<!--        <span slot="footer" class="dialog-footer">-->
-
-<!--        <el-button size="mini" type="primary" @click="dialogVisible = false">确 定</el-button>-->
-<!--      </span>-->
-    </el-dialog>
+    <!-- 收藏夹弹窗 -->
+    <CollectDailog :dialogVisible="dialogVisible"></CollectDailog>
   </div>
 </template>
 
 
 <script>
 import Comment from "../components/comment/Comment.vue";
-import { PubArticleDetailAPI,ArticleLikeDetailAPI } from "@/api/article/reader";
+import CollectDailog from "../components/Collect/CollectDailog.vue";
+import { PubArticleDetailAPI, ArticleLikeDetailAPI } from "@/api/article/reader";
 import article from "./edit/Article.vue";
 import 'mavon-editor/dist/css/index.css'
-import {marked} from "marked";
+import { marked } from "marked";
 export default ({
   name: 'detail',
-  components:{
-    Comment
+  components: {
+    Comment, CollectDailog
   },
   data() {
     return {
@@ -106,7 +94,7 @@ export default ({
       markdownOption: {
         bold: true, // 粗体
       },
-      likeForm:{
+      likeForm: {
         id: parseInt(this.$route.params.id),
         like: true,
       },
@@ -114,28 +102,28 @@ export default ({
       article: {
         id: "",
         title: "",
-        summary:"",
+        summary: "",
         content: "",
-        readCnt:0,
-        likeCnt:0,
-        collectCnt:0,
+        readCnt: 0,
+        likeCnt: 0,
+        collectCnt: 0,
       },
       comments: [
       ]
     }
   },
   methods: {
-    handleClose(){
+    handleClose() {
       this.dialogVisible = false
     },
-    doCollect(){
+    doCollect() {
       this.dialogVisible = true
     },
-    doLike(){
+    doLike() {
       this.likeForm.like = true
       console.log(this.likeForm)
-      ArticleLikeDetailAPI(this.likeForm).then( (res) =>{
-        console.log(res,"点赞结果")
+      ArticleLikeDetailAPI(this.likeForm).then((res) => {
+        console.log(res, "点赞结果")
       }).catch((e) => {
         this.$message({
           message: e.msg,
@@ -143,11 +131,11 @@ export default ({
         });
       });
     },
-    articleContent(){
+    articleContent() {
       PubArticleDetailAPI(this.id).then((res) => {
         article.id = res.id;
         article.title = res.title;
-        article.content= marked(res.content);
+        article.content = marked(res.content);
 
       }).catch((e) => {
         this.$message({
@@ -162,7 +150,7 @@ export default ({
       this.article.id = res.id;
       this.article.title = res.title;
       this.article.summary = res.summary;
-      this.article.content= marked(res.content);
+      this.article.content = marked(res.content);
       this.article.likeCnt = res.likeCnt
       this.article.readCnt = res.readCnt
       this.article.collectCnt = res.collectCnt
@@ -221,16 +209,15 @@ export default ({
   padding: 10px 24px 25px;
   border-radius: 2px;
 }
-.pageBottom{
+.pageBottom {
   display: flex;
   justify-content: space-around;
-
 }
-.pageBottomBox{
+.pageBottomBox {
   display: flex;
   justify-content: flex-start;
   align-items: center; /* 在交叉轴上居中 */
-  img{
+  img {
     height: 20px;
     transition: transform 0.2s ease;
     margin-right: 5px;
@@ -240,36 +227,42 @@ export default ({
     animation: shake 0.2s ease-in-out;
   }
   @keyframes shake {
-    0% { transform: translateX(-2px); }
-    50% { transform: translateX(2px); }
-    100% { transform: translateX(-2px); }
+    0% {
+      transform: translateX(-2px);
+    }
+    50% {
+      transform: translateX(2px);
+    }
+    100% {
+      transform: translateX(-2px);
+    }
   }
 }
-.pageAuthor{
+.pageAuthor {
   display: flex;
   justify-content: flex-start;
   margin-bottom: 10px;
 }
-.pageAuthorInfo{
+.pageAuthorInfo {
   margin-left: 10px;
   display: flex;
   justify-content: space-between;
   flex-direction: column; /* 设置主轴方向为垂直 */
-  .username{
+  .username {
     font-size: 13px;
   }
-  .aretDate{
+  .aretDate {
     font-size: 11px;
     color: #3e606f;
   }
 }
 
-.userCard{
+.userCard {
   padding: 20px 24px;
   border-radius: 8px;
-  background: #fff;;
+  background: #fff;
 }
-.isCenter{
+.isCenter {
   width: 100%;
 }
 .author-info__name {
@@ -284,10 +277,10 @@ export default ({
   justify-content: center;
   margin-top: 10px;
 }
-.avatarImg{
+.avatarImg {
   display: flex;
   justify-content: center;
-  img{
+  img {
     border-radius: 50%;
     height: 100px;
     overflow-clip-margin: content-box;
@@ -299,7 +292,7 @@ export default ({
   display: flex;
   justify-content: space-around;
 }
-.card-info-data a{
+.card-info-data a {
   text-decoration: none; /* 去掉下划线 */
   color: #99a9bf;
   display: flex;
@@ -307,17 +300,17 @@ export default ({
   align-content: center;
 }
 
-.card-info-data a .length-num{
+.card-info-data a .length-num {
   margin-top: 0.32em;
   color: #1f2d3d;
   font-size: 1.4em;
 }
-.spanNum{
+.spanNum {
   margin-left: 5px;
   color: #1f2d3d;
   font-size: 14px;
 }
-.custom-hr{
+.custom-hr {
   position: relative;
   margin: 40px auto;
   border: 2px dashed #d2ebfd;
@@ -343,7 +336,7 @@ export default ({
   -ms-transition: all 1s ease-in-out;
   transition: all 1s ease-in-out;
 }
-hr{
+hr {
   box-sizing: content-box;
   height: 0;
   overflow: visible;
