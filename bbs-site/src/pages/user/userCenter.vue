@@ -9,8 +9,8 @@
         <div class="leftContet">
           左边的东西
         </div>
-        <div class="leftContet">
-          右边边的东西
+        <div class="rightContet">
+          傻逼吗这不是
         </div>
       </div>
     </div>
@@ -41,5 +41,16 @@ export default {
 }
 .mainPage{
   width: 80%;
+}
+.content{
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+.leftContet{
+  width: 30%;
+}
+.rightContet{
+  width: 70%;
 }
 </style>
