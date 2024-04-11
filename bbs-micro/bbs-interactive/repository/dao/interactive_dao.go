@@ -97,8 +97,19 @@ func (dao *interactiveDao) IncrLikeCnt(ctx context.Context, biz string, id int64
 }
 
 func (dao *interactiveDao) DecrLikeCnt(ctx context.Context, biz string, id int64, uid int64) error {
-	//TODO implement me
-	panic("implement me")
+	now := time.Now()
+	return dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&InteractiveModel{}).Where("biz = ? AND biz_id = ?", biz, id).Updates(map[string]any{
+			"like_cnt":   gorm.Expr("like_cnt - 1"),
+			"updated_at": now,
+		}).Error
+		if err != nil {
+			return err
+		}
+		return tx.Model(&UserLikeBizModel{}).Where("biz = ? AND biz_id = ? AND uid = ?", biz, id, uid).Updates(map[string]any{
+			"deleted_at": now,
+		}).Error
+	})
 }
 
 func (dao *interactiveDao) Get(ctx context.Context, biz string, id int64) (InteractiveModel, error) {

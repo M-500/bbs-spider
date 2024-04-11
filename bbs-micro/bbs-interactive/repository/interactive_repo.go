@@ -61,8 +61,11 @@ func (i *interactiveRepo) IncrLike(ctx context.Context, biz string, id int64, ui
 }
 
 func (i *interactiveRepo) DecrLike(ctx context.Context, biz string, id int64, uid int64) error {
-	//TODO implement me
-	panic("implement me")
+	err := i.dao.DecrLikeCnt(ctx, biz, id, uid)
+	if err != nil {
+		return err
+	}
+	return i.cache.DecrLikeCntIfPresent(ctx, biz, id)
 }
 
 func (i *interactiveRepo) AddCollectionItem(ctx context.Context, biz string, id int64, cid int64, uid int64) error {

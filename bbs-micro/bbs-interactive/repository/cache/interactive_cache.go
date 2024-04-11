@@ -69,8 +69,7 @@ func (r *redisInteractiveCache) IncrCollCntIfPresent(ctx context.Context, biz st
 }
 
 func (r *redisInteractiveCache) DecrLikeCntIfPresent(ctx context.Context, biz string, bizId int64) error {
-	//TODO implement me
-	panic("implement me")
+	return r.client.Eval(ctx, luaIncrCnt, []string{r.key(biz, bizId)}, likeCntKey, -1).Err()
 }
 
 func (r *redisInteractiveCache) Get(ctx context.Context, biz string, bizId int64) (domain.Interactive, error) {
