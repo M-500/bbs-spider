@@ -5,11 +5,6 @@ package events
 // @Date 2024-04-10 18:45
 import "context"
 
-type Consumer interface {
-	// ConsumerReadEvent()
-	Start() error
-}
-
 type Producer interface {
 	// 阅读事件(领域事件)
 	ProduceReadEvent(ctx context.Context, evt ReadEvent) error

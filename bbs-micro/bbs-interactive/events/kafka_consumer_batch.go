@@ -22,7 +22,7 @@ type InteractiveReadEventBatchConsumer struct {
 
 func NewInteractiveReadEventBatchConsumer(client sarama.Client,
 	l logger.Logger,
-	repo repository.InteractiveRepo) Consumer {
+	repo repository.InteractiveRepo) saramax.Consumer {
 	return &InteractiveReadEventBatchConsumer{
 		client: client,
 		l:      l,
