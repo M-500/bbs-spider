@@ -6,94 +6,26 @@
       </div>
       <div class="comment-item-main">
         <div class="comment-meta">
-          <a href="/user/10024" class="comment-nickname" >cityben</a>
-          <div class="comment-meta-right" >
-            <time class="comment-time" >17天前</time>
+          <a href="/user/10024" class="comment-nickname">cityben</a>
+          <div class="comment-meta-right">
+            <time class="comment-time">17天前</time>
           </div>
         </div>
-        <div class="comment-content-wrapper" >
-          <div class="comment-content content" >怎么安装的？需要什么环境？</div>
+        <div class="comment-content-wrapper">
+          <div class="comment-content content">怎么安装的？需要什么环境？</div>
         </div>
-        <div class="comment-actions" >
+        <div class="comment-actions">
           <div class="comment-action-item">
             <i class="iconfont icon-like"></i>
             <span>点赞</span>
             <span>1</span>
           </div>
-          <div class="comment-action-item" >
-            <i class="iconfont icon-comment" ></i>
-            <span >回复</span>
+          <div class="comment-action-item">
+            <i class="iconfont icon-comment"></i>
+            <span>回复</span>
             <span>1</span>
           </div>
         </div>
-<!--        <div class="replies" >-->
-<!--          <div class="comment" >-->
-<!--            <div class="comment-item-left" >-->
-<!--              <a href="/user/10051" rel="noopener noreferrer" target="_blank" class="avatar-a avatar-size-30" style="" >-->
-<!--                <img loading="lazy" src="https://mlog.club/images/avatars/67.png" class="avatar avatar-size-30 round has-border" alt="jace">-->
-<!--              </a>-->
-<!--            </div>-->
-<!--            <div class="comment-item-main">-->
-<!--              <div class="comment-meta" >-->
-<!--                <div>-->
-<!--                  <a href="/user/10051" class="comment-nickname">jace</a>-->
-<!--                </div>-->
-<!--                <time class="comment-time">10天前</time>-->
-<!--              </div>-->
-<!--              <div class="comment-content-wrapper">-->
-<!--                <div class="comment-content content">-->
-<!--                  <div>test</div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="comment-actions">-->
-<!--                <div class="comment-action-item active">-->
-<!--                  <i class="iconfont icon-like"></i>-->
-<!--                  <span>已赞</span>-->
-<!--                  <span>1</span>-->
-<!--                </div>-->
-<!--                <div class="comment-action-item">-->
-<!--                  <i class="iconfont icon-comment"></i>-->
-<!--                  <span>评论</span>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="comment">-->
-<!--            <div class="comment-item-left">-->
-<!--              <a data-v-c4b41d08="" href="/user/10044" rel="noopener noreferrer" target="_blank" class="avatar-a avatar-size-30">-->
-<!--                <img data-v-c4b41d08="" loading="lazy" src="https://mlog.club/images/avatars/60.png" class="avatar avatar-size-30 round has-border" alt="damn bro 名利"></a>-->
-<!--            </div>-->
-<!--            <div class="comment-item-main">-->
-<!--              <div class="comment-meta">-->
-<!--                <div>-->
-<!--                  <a href="/user/10044" class="comment-nickname">damn bro 名利</a>-->
-<!--                  <span>回复</span>-->
-<!--                  <a href="/user/10051" class="comment-nickname">jace</a>-->
-<!--                </div>-->
-<!--                <time class="comment-time">刚刚</time>-->
-<!--              </div>-->
-<!--              <div class="comment-content-wrapper">-->
-<!--                <div class="comment-content content">-->
-<!--                  <div>test+1</div>-->
-<!--                </div>-->
-<!--                <div class="comment-quote">-->
-<!--                  <div class="comment-quote-content content">test</div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="comment-actions">-->
-<!--                <div class="comment-action-item">-->
-<!--                  <i class="iconfont icon-like"></i>-->
-<!--                  <span>点赞</span>-->
-<!--                </div>-->
-<!--                <div class="comment-action-item">-->
-<!--                  <i class="iconfont icon-comment"></i>-->
-<!--                  <span>评论</span>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-
       </div>
     </div>
   </div>
