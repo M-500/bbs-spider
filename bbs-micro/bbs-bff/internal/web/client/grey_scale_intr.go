@@ -21,6 +21,14 @@ type GreyScaleInteractiveServiceClient struct {
 	threshold *atomicx.Value[int32] // 一个阈值
 }
 
+func NewGreyScaleInteractiveServiceClient(remote intrv1.InteractiveServiceClient, local intrv1.InteractiveServiceClient) *GreyScaleInteractiveServiceClient {
+	return &GreyScaleInteractiveServiceClient{
+		remote:    remote,
+		local:     local,
+		threshold: atomicx.NewValue[int32](),
+	}
+}
+
 func (g GreyScaleInteractiveServiceClient) IncrReadCnt(ctx context.Context, in *intrv1.IncrReadCntRequest, opts ...grpc.CallOption) (*intrv1.IncrReadCntResponse, error) {
 	return g.client().IncrReadCnt(ctx, in, opts...)
 }
@@ -50,8 +58,9 @@ func (g GreyScaleInteractiveServiceClient) UpdateThreshold(newThreshold int32) {
 func (g GreyScaleInteractiveServiceClient) client() intrv1.InteractiveServiceClient {
 	threshold := g.threshold.Load()
 	num := rand.Int31n(100) // 生成一个 0-100的随机数
-	if num <= threshold {
+	if num < threshold {
 		return g.remote
 	}
+	// 默认值 threshold = 0 所以会永远走本地！~ mi a a a a a a o o o ! 啊
 	return g.local
 }

@@ -62,6 +62,7 @@ func InitWebServer(path string) *App {
 
 		web.NewRouter,
 
+		ioc.InitInterGRPCClient,
 		ioc.InitMiddleware,
 		ioc.InitGin,
 		// wire.Struct 组装目标结构体的所有字段

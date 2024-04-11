@@ -24,12 +24,12 @@ type ArticleHandler struct {
 	svc article.IArticleService
 	log logger.Logger
 	//interSvc service.InteractiveService // 调用本地方法
-	interSvc intrv1.InteractiveServiceServer // 改为RPC调用
+	interSvc intrv1.InteractiveServiceClient // 改为RPC调用
 	biz      string                          // 业务ID
 }
 
 func NewArticleHandler(svc article.IArticleService,
-	intrSvc intrv1.InteractiveServiceServer,
+	intrSvc intrv1.InteractiveServiceClient,
 	l logger.Logger) *ArticleHandler {
 	return &ArticleHandler{
 		svc:      svc,

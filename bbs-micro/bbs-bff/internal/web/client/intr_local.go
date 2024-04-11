@@ -20,6 +20,10 @@ type InteractiveServiceAdapter struct {
 	svc service.InteractiveService
 }
 
+func NewInteractiveServiceAdapter(svc service.InteractiveService) *InteractiveServiceAdapter {
+	return &InteractiveServiceAdapter{svc: svc}
+}
+
 func (i *InteractiveServiceAdapter) IncrReadCnt(ctx context.Context, in *intrv1.IncrReadCntRequest, opts ...grpc.CallOption) (*intrv1.IncrReadCntResponse, error) {
 	err := i.svc.IncrReadCnt(ctx, in.GetBiz(), in.GetBizId())
 	return &intrv1.IncrReadCntResponse{}, err
