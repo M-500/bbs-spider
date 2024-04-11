@@ -20,7 +20,6 @@ type Router struct {
 
 func NewRouter(artHdl *handler.ArticleHandler, codeHdl *handler.CaptchaHandler, userHdl *handler.UserHandler) *Router {
 	return &Router{
-		//userHdl: userHdl,
 		artHdl:  artHdl,
 		codeHdl: codeHdl,
 		userHdl: userHdl,
