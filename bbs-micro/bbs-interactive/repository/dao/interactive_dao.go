@@ -50,8 +50,16 @@ func (dao *interactiveDao) IncrReadCnt(ctx context.Context, biz string, bizId in
 }
 
 func (dao *interactiveDao) BatchIncrReadCnt(ctx context.Context, bizs []string, bizIds []int64) error {
-	//TODO implement me
-	panic("implement me")
+	return dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		txDao := NewInteractiveDao(tx)
+		for i := 0; i < len(bizs); i++ {
+			err := txDao.IncrReadCnt(ctx, bizs[i], bizIds[i])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (dao *interactiveDao) IncrLikeInfo(ctx context.Context, biz string, id int64, uid int64) error {
