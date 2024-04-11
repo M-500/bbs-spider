@@ -1,8 +1,8 @@
 package handler
 
 import (
+	intrv1 "bbs-micro/api/proto/gen/proto/intr/v1"
 	"bbs-micro/bbs-bff/internal/domain"
-	"bbs-micro/bbs-bff/internal/service"
 	"bbs-micro/bbs-bff/internal/service/article"
 	"bbs-micro/bbs-bff/internal/web/jwtx"
 	"bbs-micro/bbs-bff/internal/web/resp"
@@ -21,14 +21,15 @@ import (
 // @Date 2024-03-26 15:47
 
 type ArticleHandler struct {
-	svc      article.IArticleService
-	log      logger.Logger
-	interSvc service.InteractiveService
-	biz      string // 业务ID
+	svc article.IArticleService
+	log logger.Logger
+	//interSvc service.InteractiveService // 调用本地方法
+	interSvc intrv1.InteractiveServiceServer // 改为RPC调用
+	biz      string                          // 业务ID
 }
 
 func NewArticleHandler(svc article.IArticleService,
-	intrSvc service.InteractiveService,
+	intrSvc intrv1.InteractiveServiceServer,
 	l logger.Logger) *ArticleHandler {
 	return &ArticleHandler{
 		svc:      svc,
@@ -208,9 +209,17 @@ func (h *ArticleHandler) Detail(ctx *gin.Context, user jwtx.UserClaims) (ginplus
 func (h *ArticleHandler) Like(ctx *gin.Context, req vo.LikeReq, c jwtx.UserClaims) (ginplus.Result, error) {
 	var err error
 	if req.Like {
-		err = h.interSvc.Like(ctx, h.biz, req.Id, c.Id)
+		_, err = h.interSvc.Like(ctx, &intrv1.LikeRequest{
+			Biz:   h.biz,
+			BizId: req.Id,
+			Uid:   c.Id,
+		})
 	} else {
-		err = h.interSvc.CancelLike(ctx, h.biz, req.Id, c.Id)
+		_, err = h.interSvc.CancelLike(ctx, &intrv1.CancelLikeRequest{
+			Biz:   h.biz,
+			BizId: req.Id,
+			Uid:   c.Id,
+		})
 	}
 	if err != nil {
 		return ginplus.Result{
@@ -247,7 +256,7 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 	}
 	var eg errgroup.Group
 	var article domain.Article
-	var intr domain.Interactive
+	var intr *intrv1.GetResponse
 
 	// 这里异步获取文章的点赞数 收藏数 评论数等信息
 	eg.Go(func() error {
@@ -255,7 +264,11 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 		return err
 	})
 	eg.Go(func() error {
-		intr, err = h.interSvc.Get(ctx, h.biz, id, user.Id)
+		intr, err = h.interSvc.Get(ctx, &intrv1.GetRequest{
+			Biz:   h.biz,
+			BizId: id,
+			Uid:   user.Id,
+		})
 		return err
 	})
 	err = eg.Wait() // 任何一个地方返回的err 都会被捕捉到
@@ -285,10 +298,10 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 		Status:      article.Status.String(),
 		Summary:     article.Summary,
 		Content:     article.Content,
-		LikeCnt:     intr.LikeCnt,
-		ReadCnt:     intr.ReadCnt,
-		CommentCnt:  intr.CommentCnt,
-		CollectCnt:  intr.CollectCnt,
+		LikeCnt:     intr.GetIntr().LikeCnt,
+		ReadCnt:     intr.GetIntr().ReadCnt,
+		CommentCnt:  intr.GetIntr().CommentCnt,
+		CollectCnt:  intr.GetIntr().CollectCnt,
 		ContentType: article.ContentType,
 		Cover:       article.Cover,
 		Ctime:       article.Ctime,
