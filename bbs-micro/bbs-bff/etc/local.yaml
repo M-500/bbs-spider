@@ -1,0 +1,18 @@
+
+service_name: "bbs_spider"
+service_env: "dev"
+service_id: 1
+service_port: ":8002"
+service_version: "v0.0.1"
+prometheus_port: ":8001"
+
+database:
+  dsn: "admin:123456@tcp(127.0.0.1:13316)/bbs-gin?charset=utf8mb4&parseTime=True&loc=Local"
+  max_idle_conn: 10  # 最大空闲连接数
+  max_open_conn: 10  # 最大连接数
+
+redis:
+  dsn: "127.0.0.1:6399"
+
+otel:
+  url: "http://127.0.0.1:14268/api/traces"
