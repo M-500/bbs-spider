@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bbs-micro/bbs-bff/internal/ioc"
 	"flag"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
@@ -13,7 +12,7 @@ func main() {
 	app := InitWebServer(*configFile)
 	engine := app.server
 	initPrometheus()
-	ioc.SetUpOTEL(ioc.AppConfig)
+	//ioc.SetUpOTEL(ioc.AppConfig)
 
 	// 启动kafka消费者，
 	for _, consumer := range app.consumers {
