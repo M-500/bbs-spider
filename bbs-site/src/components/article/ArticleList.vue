@@ -7,8 +7,7 @@
     >
       <div class="article-item-main">
         <div class="article-info">
-          <a href="">{{ article.title }}</a>
-
+          <a href="" class="article-title">{{ article.title }}丢了</a>
           <div class="article-summary">
             {{ article.summary }}
           </div>
@@ -93,7 +92,6 @@ export default {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-
       .article-info {
         .article-title {
           font-size: 18px;
@@ -102,7 +100,7 @@ export default {
           color: #ffffff;
           overflow: hidden;
           text-overflow: ellipsis;
-        }
+        },
 
         .article-summary {
           font-size: 14px;
