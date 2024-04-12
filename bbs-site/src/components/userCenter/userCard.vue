@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="action-btns">
-        <followBtn />
+        <followBtn :userId="1" :followed="false"/>
       </div>
     </div>
   </div>
