@@ -9,7 +9,7 @@
           <i class="el-icon-lock" v-if="!item.is_pub"></i>
         </div>
         <div class="mark">{{item.comment_num}}条内容</div>
-        <el-button class="col_btn" size="mini">收藏</el-button>
+        <el-button class="col_btn" size="mini" @click="collectClick(item.id)">收藏{{ item.id }}</el-button>
       </div>
     </div>
 
@@ -52,12 +52,17 @@
 
 <script>
 import {createCollectAPI,getCollectListAPI} from "../../api/article/collect";
-import curUser from "../../utils/cur-user";
+import { collectEntityAPI } from "../../api/article/collect";
+import curUser from "@/utils/cur-user";
 export default {
   props: {
     dialogVisible: {
       type: Boolean,
       default: false
+    },
+    bizId:{
+      type: Number,
+      default: 0,
     }
   },
   data() {
@@ -76,6 +81,16 @@ export default {
     this.getCollectList()
   },
   methods:{
+    collectClick(cid){
+      collectEntityAPI(cid,this.bizId).then((res)=>{
+        console.log("哈哈哈",res)
+      }).catch((e) => {
+        this.$message({
+          message: e.msg,
+          type: "error",
+        });
+      });
+    },
     /**/
     getCollectList(){
       getCollectListAPI(this.uid,{}).then((res) =>{

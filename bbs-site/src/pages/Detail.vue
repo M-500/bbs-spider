@@ -70,7 +70,7 @@
       </div>
     </div>
     <!-- 收藏夹弹窗 -->
-    <CollectDailog @send-data="receiveDataFromChild" :dialogVisible="dialogVisible"></CollectDailog>
+    <CollectDailog @send-data="receiveDataFromChild" :bizId="id" :dialogVisible="dialogVisible"></CollectDailog>
   </div>
 </template>
 
@@ -78,7 +78,7 @@
 <script>
 import Comment from "../components/comment/Comment.vue";
 import CollectDailog from "../components/Collect/CollectDailog.vue";
-import { PubArticleDetailAPI, ArticleLikeDetailAPI } from "@/api/article/reader";
+import { PubArticleDetailAPI, ArticleLikeDetailAPI,collectEntityAPI } from "@/api/article/reader";
 import article from "./edit/Article.vue";
 import 'mavon-editor/dist/css/index.css'
 import { marked } from "marked";
@@ -99,6 +99,7 @@ export default ({
         like: true,
       },
       id: this.$route.params.id,
+    
       article: {
         id: "",
         title: "",
@@ -113,6 +114,16 @@ export default ({
     }
   },
   methods: {
+    collectClick(){
+      collectEntityAPI().then((res)=>{
+
+      }).catch((e) => {
+        this.$message({
+          message: e.msg,
+          type: "error",
+        });
+      });
+    },
     handleClose() {
       this.dialogVisible = false
     },
@@ -151,6 +162,7 @@ export default ({
     }
   },
   mounted() {
+    
     PubArticleDetailAPI(this.id).then((res) => {
       this.article.id = res.id;
       this.article.title = res.title;

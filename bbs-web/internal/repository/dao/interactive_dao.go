@@ -226,8 +226,8 @@ func (dao *interactiveDao) InsertCollectInfo(ctx context.Context, biz string, ui
 		return tx.WithContext(ctx).Clauses(
 			clause.OnConflict{
 				DoUpdates: clause.Assignments(map[string]any{
-					"like_cnt":   gorm.Expr("like_cnt + 1"),
-					"updated_at": time.Now(),
+					"collect_cnt": gorm.Expr("collect_cnt + 1"),
+					"updated_at":  time.Now(),
 				}),
 			}).Create(&InteractiveModel{
 			Biz:        biz,
