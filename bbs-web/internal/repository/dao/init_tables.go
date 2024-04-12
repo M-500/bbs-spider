@@ -13,7 +13,7 @@ func InitTable(db *gorm.DB) error {
 		&PublishArticleModels{},
 		&InteractiveModel{},
 		&UserLikeBizModel{},
-		&Collection{},
+		&CollectionModle{},
 		&UserCollectBizModel{},
 	)
 }

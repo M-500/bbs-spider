@@ -2,6 +2,8 @@ package dao
 
 import (
 	"context"
+	"errors"
+	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"time"
@@ -12,7 +14,8 @@ import (
 // @Date 2024-04-07 19:32
 
 var (
-	ErrRecordNotFound = gorm.ErrRecordNotFound
+	ErrRecordNotFound   = gorm.ErrRecordNotFound
+	ErrCollectDuplicate = errors.New("收藏夹名字冲突")
 )
 
 type InteractiveDao interface {
@@ -26,6 +29,11 @@ type InteractiveDao interface {
 	Get(ctx context.Context, biz string, id int64) (InteractiveModel, error)
 	GetLikeInfo(ctx context.Context, biz string, id int64, uid int64) (UserLikeBizModel, error)
 	GetCollectInfo(ctx context.Context, biz string, id int64, uid int64) (UserCollectBizModel, error)
+	QueryCollectList(ctx context.Context, uid, limit, offset int64) ([]CollectionModle, error)
+
+	InsertCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error)
+
+	InsertCollectToBiz(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error)
 }
 
 type interactiveDao struct {
@@ -165,4 +173,42 @@ func (dao *interactiveDao) GetCollectInfo(ctx context.Context, biz string, id in
 		Where("biz_id = ? AND biz = ? AND uid = ?", id, biz, uid).
 		First(&res).Error
 	return res, err
+}
+
+func (dao *interactiveDao) QueryCollectList(ctx context.Context, uid, limit, offset int64) ([]CollectionModle, error) {
+	var collectList []CollectionModle
+	err := dao.db.WithContext(ctx).Model(&CollectionModle{}).Where("user_id = ?", uid).Find(&collectList).Error
+	return collectList, err
+}
+
+func (dao *interactiveDao) InsertCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error) {
+	// upsert 语义 ? 还是依赖唯一索引的冲突？？？
+	data := CollectionModle{
+		UserId:      uid,
+		CName:       cname,
+		Description: desc,
+		IsPub:       isPub,
+	}
+	//dao.db.WithContext(ctx).Where("user_id = ? AND c_name = ?", uid, cname)
+	err := dao.db.WithContext(ctx).Create(&data).Error
+	if sqlError, ok := err.(*mysql.MySQLError); ok {
+		const uniqueConflictsErrNo uint16 = 1062
+		if sqlError.Number == uniqueConflictsErrNo {
+			// 邮箱冲突 or 手机号码冲突
+			return 0, ErrCollectDuplicate
+		}
+	}
+	if err != nil {
+		return 0, err
+	}
+	return int64(data.ID), nil
+}
+
+func (dao *interactiveDao) InsertCollectToBiz(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error) {
+	// upsert语义 并且操作两张表
+	//dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	//	newDao := NewCollectDao(tx)
+	//
+	//})
+	return 0, nil
 }

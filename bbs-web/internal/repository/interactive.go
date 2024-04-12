@@ -5,6 +5,7 @@ import (
 	"bbs-web/internal/repository/cache"
 	"bbs-web/internal/repository/dao"
 	"bbs-web/pkg/logger"
+	"bbs-web/pkg/utils/zifo/slice"
 	"context"
 )
 
@@ -22,6 +23,9 @@ type InteractiveRepo interface {
 	Get(ctx context.Context, biz string, id int64) (domain.Interactive, error)
 	Liked(ctx context.Context, biz string, id int64, uid int64) (bool, error)
 	Collected(ctx context.Context, biz string, id int64, uid int64) (bool, error)
+	GetCollectListByID(ctx context.Context, uid, limit, offset int64) ([]domain.Collect, error)
+	CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error)
+	CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error)
 }
 
 type interactiveRepo struct {
@@ -126,4 +130,38 @@ func (repo *interactiveRepo) DecrLike(ctx context.Context, biz string, id int64,
 	}
 	// 同步缓存
 	return repo.cache.DecrLikeCntIfPresent(ctx, biz, id)
+}
+
+func (repo *interactiveRepo) GetCollectListByID(ctx context.Context, uid, limit, offset int64) ([]domain.Collect, error) {
+	// 操作缓存 因为缓存中缓存了第一页的数据 有必要吗？
+
+	// 操作数据库 并且回写缓存
+	list, err := repo.dao.QueryCollectList(ctx, uid, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	return slice.Map[dao.CollectionModle, domain.Collect](list, func(idx int, src dao.CollectionModle) domain.Collect {
+		return repo.toDomainColl(src)
+	}), nil
+}
+func (repo *interactiveRepo) CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error) {
+	return repo.dao.InsertCollect(ctx, uid, cname, desc, isPub)
+}
+func (repo *interactiveRepo) CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error) {
+	// 要不要操作缓存
+	return repo.dao.InsertCollectToBiz(ctx, biz, uid, cid, bizId)
+}
+
+func (repo *interactiveRepo) toDomainColl(item dao.CollectionModle) domain.Collect {
+	return domain.Collect{
+		UserId:      item.UserId,
+		CName:       item.CName,
+		Description: item.Description,
+		Sort:        item.Sort,
+		ResourceNum: item.ResourceNum,
+		IsPub:       item.IsPub,
+		CommentNum:  item.CommentNum,
+		CreateTime:  item.CreatedAt,
+		UpdateTime:  item.UpdatedAt,
+	}
 }

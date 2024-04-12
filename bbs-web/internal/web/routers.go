@@ -50,4 +50,12 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 		pub.POST("/collect", gp.WrapBodyAndToken[vo.CollectReq, jwtx.UserClaims](r.artHdl.Collect)) // 收藏/取消收藏 某一篇文章
 		pub.POST("/reward", r.artHdl.Reward)
 	}
+
+	collectGroup := engine.Group("/collect") // 收藏夹相关的
+	{
+		collectGroup.GET("/:id/list", gp.Wrap(r.artHdl.GetCollectById))                                                 // 通过用户id获取对应收藏夹列表
+		collectGroup.POST("/create", gp.WrapBodyAndToken[vo.CreateCollectReq, jwtx.UserClaims](r.artHdl.CreateCollect)) // 用户新增收藏夹
+		//collectGroup.POST("/:id/del")                                                                                       // 用户删除某个收藏夹
+		collectGroup.POST("/:cid/entity/:bid", gp.WrapToken[jwtx.UserClaims](r.artHdl.CollectEntityByID)) // 用户收藏某个资源（命名是程序员一生的死敌）
+	}
 }

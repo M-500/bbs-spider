@@ -20,6 +20,9 @@ type InteractiveService interface {
 	CollectArt(ctx context.Context, biz string, bizId int64, uId int64, cId int64) error
 	Get(ctx context.Context, biz string, id int64, uid int64) (domain.Interactive, error)
 	GetByIds(ctx context.Context, biz string, ids []int64) (map[int64]domain.Interactive, error)
+	GetByUid(ctx context.Context, uid, limit, offset int64) ([]domain.Collect, error)
+	CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error)
+	CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error)
 }
 
 type interactiveService struct {
@@ -90,4 +93,15 @@ func (i *interactiveService) Get(ctx context.Context, biz string, id int64, uid 
 
 func (i *interactiveService) CollectArt(ctx context.Context, biz string, bizId int64, uId int64, cId int64) error {
 	return nil
+}
+
+func (i *interactiveService) GetByUid(ctx context.Context, uid, limit, offset int64) ([]domain.Collect, error) {
+	return i.repo.GetCollectListByID(ctx, uid, limit, offset)
+}
+
+func (i *interactiveService) CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error) {
+	return i.repo.CreateCollect(ctx, uid, cname, desc, isPub)
+}
+func (i *interactiveService) CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error) {
+	return i.repo.CollectEntity(ctx, biz, uid, cid, bizId)
 }

@@ -304,3 +304,65 @@ func (h *ArticleHandler) PubDetail(ctx *gin.Context, user jwtx.UserClaims) (ginp
 func (h *ArticleHandler) Reward(ctx *gin.Context) {
 
 }
+
+func (h *ArticleHandler) CreateCollect(ctx *gin.Context, req vo.CreateCollectReq, user jwtx.UserClaims) (ginplus.Result, error) {
+	collect, err := h.interSvc.CreateCollect(ctx, user.Id, req.CollectName, req.Desc, req.IsPublic)
+	if err != nil {
+		return ginplus.Result{
+			Code: 5003402,
+			Msg:  "创建失败",
+		}, err
+	}
+	return ginplus.Result{
+		Data: collect,
+		Msg:  "OK",
+	}, nil
+}
+
+func (h *ArticleHandler) GetCollectById(ctx *gin.Context) (ginplus.Result, error) {
+	idStr := ctx.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		return ginplus.Result{
+			Code: 503401,
+			Msg:  "参数错误",
+		}, nil
+	}
+	collects, err := h.interSvc.GetByUid(ctx, id, 0, 1)
+	if err != nil {
+		return ginplus.Result{
+			Code: 503001,
+			Msg:  "系统错误",
+		}, nil
+	}
+	return ginplus.Result{
+		Data: collects,
+	}, nil
+}
+
+func (h *ArticleHandler) CollectEntityByID(ctx *gin.Context, user jwtx.UserClaims) (ginplus.Result, error) {
+	cidStr := ctx.Param("cid")
+	bidStr := ctx.Param("bid")
+	cid, err := strconv.ParseInt(cidStr, 10, 64)
+	if err != nil {
+		return ginplus.Result{
+			Code: 503401,
+			Msg:  "参数错误",
+		}, nil
+	}
+	bid, err := strconv.ParseInt(bidStr, 10, 64)
+	if err != nil {
+		return ginplus.Result{
+			Code: 503401,
+			Msg:  "参数错误",
+		}, nil
+	}
+	entity, err := h.interSvc.CollectEntity(ctx, h.biz, user.Id, cid, bid)
+	if err != nil {
+
+	}
+
+	return ginplus.Result{
+		Data: entity,
+	}, nil
+}

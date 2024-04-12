@@ -78,15 +78,21 @@ func (UserLikeBizModel) TableName() string {
 	return "user_to_biz_like"
 }
 
-// Collection
+// CollectionModle
 // @Description: 收藏夹
-type Collection struct {
+type CollectionModle struct {
 	gorm.Model
-	CName string `gorm:"comment:收藏夹名称;type:varchar(32);column:c_name"`
-	Sort  int64  `gorm:"comment:收藏夹排序;default:0;type:int;column:sort"`
+	// 用户id和收藏夹的联合索引
+	UserId      int64  `gorm:"用户ID;not null;column:user_id;uniqueIndex:uni_uid_cname"`
+	CName       string `gorm:"comment:收藏夹名称;type:varchar(32);not null;column:c_name;uniqueIndex:uni_uid_cname"`
+	Description string `gorm:"comment:收藏夹描述(可选);type:varchar(1024);column:description"`
+	Sort        int64  `gorm:"comment:收藏夹排序;default:0;type:int;column:sort"`
+	ResourceNum int64  `gorm:"comment:收藏夹内资源的数量;not null;default:0;column:resource_num"`
+	IsPub       bool   `gorm:"comment:是否公开;column:is_pub"`
+	CommentNum  int64  `gorm:"comment:收藏夹评论数量;not null;default:0;column:comment_num"`
 }
 
-func (Collection) TableName() string {
+func (CollectionModle) TableName() string {
 	return "collect"
 }
 
