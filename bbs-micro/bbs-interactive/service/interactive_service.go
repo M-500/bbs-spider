@@ -49,13 +49,16 @@ func (svc *interactiveService) CancelLike(ctx context.Context, biz string, id in
 }
 
 func (svc *interactiveService) CollectArt(ctx context.Context, biz string, bizId int64, uId int64, cId int64) error {
-	//TODO implement me
-	panic("implement me")
+	//svc.repo.C(ctx,biz,bizId,uId,cId)
+	return nil
 }
 
 func (svc *interactiveService) Get(ctx context.Context, biz string, id int64, uid int64) (domain.Interactive, error) {
-	//TODO implement me
-	panic("implement me")
+	get, err := svc.repo.Get(ctx, biz, id)
+	if err != nil {
+		return domain.Interactive{}, err
+	}
+	return get, nil
 }
 
 func (svc *interactiveService) GetByIds(ctx context.Context, biz string, ids []int64) (map[int64]domain.Interactive, error) {
