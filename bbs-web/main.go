@@ -12,7 +12,7 @@ import (
 github https://github.com/mlogclub/bbs-go
 */
 
-var configFile = flag.String("config", "etc/dev.yaml", "配置文件路径")
+var configFile = flag.String("config", "etc/local.yaml", "配置文件路径")
 
 func main() {
 	app := InitWebServer(*configFile)

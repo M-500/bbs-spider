@@ -7,42 +7,27 @@
       </div>
       <div class="content">
         <div class="leftContet">
-          <div class="widget">
-            <div class="widget-header">
-              <span>个人成就</span>
-            </div>
-            <div class="widget-content extra-info">
-              <ul>
-                <li>
-                  <span>积分</span>
-                  <br>
-                  <a href="">12</a>
-                </li>
-              </ul>
-              <ul>
-                <li>
-                  <span>话题</span>
-                  <br>
-                  <a href="">1</a>
-                </li>
-              </ul>
-              <ul>
-                <li>
-                  <span>评论</span>
-                  <br>
-                  <a href="">12</a>
-                </li>
-              </ul>
-              <ul>
-                <li>
-                  <span>收藏</span>
-                  <br>
-                  <a href="">12</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
+          <el-tabs v-model="activeTabName" @tab-click="handleClick">
+            <el-tab-pane label="话题" name="topic">
+              <span slot="label">话题 <span class="tab-num">1</span></span>
+              话题
+            </el-tab-pane>
+            <el-tab-pane label="文章" name="article">
+              <span slot="label">文章<span class="tab-num">1</span></span>
+              <article-list :articles="articleList"></article-list>
+            </el-tab-pane>
+            <el-tab-pane label="收藏" name="collect">
+              <span slot="label">收藏<span class="tab-num">1</span></span>
+              <article-list :articles="articleList"></article-list>
+            </el-tab-pane>
+            <el-tab-pane label="关注" name="follow">
+              <span slot="label">关注<span class="tab-num">1</span></span>
+              <article-list :articles="articleList"></article-list>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+        <div class="rightContet">
+          
           <div class="widget">
             <div class="widget-header">
               <span>个人资料</span>
@@ -74,19 +59,7 @@
               </div>
             </div>
           </div>
-
-        </div>
-        <div class="rightContet">
-          <el-tabs v-model="activeTabName" @tab-click="handleClick">
-            <el-tab-pane label="话题" name="topic">
-              <span slot="label"><i class="el-icon-chat-line-square"></i> 话题</span>
-              话题
-            </el-tab-pane>
-            <el-tab-pane label="文章" name="article">
-              <span slot="label"><i class="el-icon-tickets"></i> 文章</span>
-              <article-list :articles="articleList"></article-list>
-            </el-tab-pane>
-          </el-tabs>
+          
         </div>
       </div>
     </div>
@@ -150,13 +123,15 @@ export default {
   width: 100%;
 }
 .leftContet{
-  width: 30%;
-  margin-right: 10px;
-}
-.rightContet{
   width: 70%;
   background-color: #fff;
   padding: 0 10px 10px;
+  border-radius: calc(.25rem - 1px);
+  height: 100%;
+}
+.rightContet{
+  width: 30%;
+  padding: 0 0 10px 10px;
   border-radius: calc(.25rem - 1px);
   height: 100%;
   .tabs {
@@ -166,14 +141,15 @@ export default {
 .tabs-warp {
 }
 // 伪类选择器，去除第一个元素的样式
-.leftContet .widget:not(:first-child){
+.rightContet .widget:not(:first-child){
   margin-top: 10px;
 }
 .widget{
   background-color: #ffffff;
   border-radius: calc(.25rem - 1px);
   padding: 0 12px;
-  margin-top: 10px;
+  margin-bottom: 10px;
+  /* margin-top: 10px; */
 }
 
 .widget-header{
@@ -189,33 +165,6 @@ export default {
 .widget-content{
   padding: 8px 0;
   //word-break: break-all;
-}
-.extra-info{
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-  ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column; /* 纵向排列 */
-    justify-content: center;
-    text-align: center;
-    li {
-
-      text-align: center;
-      width: 100%;
-      span {
-        font-weight: 400;
-        font-size: 13px;
-        color: #70727c;;
-      }
-      a{
-        color: #485fc7;
-        cursor: pointer;
-        text-decoration: none;
-      }
-    }
-  }
 }
 .stable .str:not(:last-child){
   border-bottom: 1px solid #e9e9e9;
@@ -237,4 +186,20 @@ export default {
   word-break: break-all;
 }
 
+/deep/ .el-tabs__item span {
+  color: #191b1f;
+    /* display: inline-block; */
+    font-size: 16px;
+    line-height: 22px;
+    padding: 14px 0;
+    position: relative;
+    text-align: center;
+}
+.tab-num{
+  color: #9196a1;
+  font-size: 14px;
+    font-weight: 300;
+    line-height: 20px;
+    margin-left: 6px;
+}
 </style>
