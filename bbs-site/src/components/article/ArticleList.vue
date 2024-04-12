@@ -7,12 +7,7 @@
     >
       <div class="article-item-main">
         <div class="article-info">
-<!--          <nuxt-link-->
-<!--            class="article-title"-->
-<!--            :to="'/article/' + article.articleId"-->
-<!--          >{{ article.title }}</nuxt-link-->
-          {{ article.title }}
-          >
+          <a href="">{{ article.title }}</a>
 
           <div class="article-summary">
             {{ article.summary }}

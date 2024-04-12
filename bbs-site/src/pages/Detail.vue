@@ -78,7 +78,7 @@
 <script>
 import Comment from "../components/comment/Comment.vue";
 import CollectDailog from "../components/Collect/CollectDailog.vue";
-import { PubArticleDetailAPI, ArticleLikeDetailAPI,collectEntityAPI } from "@/api/article/reader";
+import { PubArticleDetailAPI, ArticleLikeDetailAP } from "@/api/article/reader";
 import article from "./edit/Article.vue";
 import 'mavon-editor/dist/css/index.css'
 import { marked } from "marked";
@@ -114,16 +114,7 @@ export default ({
     }
   },
   methods: {
-    collectClick(){
-      collectEntityAPI().then((res)=>{
-
-      }).catch((e) => {
-        this.$message({
-          message: e.msg,
-          type: "error",
-        });
-      });
-    },
+    
     handleClose() {
       this.dialogVisible = false
     },
