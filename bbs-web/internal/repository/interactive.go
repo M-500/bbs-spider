@@ -25,7 +25,7 @@ type InteractiveRepo interface {
 	Collected(ctx context.Context, biz string, id int64, uid int64) (bool, error)
 	GetCollectListByID(ctx context.Context, uid, limit, offset int64) ([]domain.Collect, error)
 	CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error)
-	CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error)
+	CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) error
 }
 
 type interactiveRepo struct {
@@ -147,13 +147,14 @@ func (repo *interactiveRepo) GetCollectListByID(ctx context.Context, uid, limit,
 func (repo *interactiveRepo) CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error) {
 	return repo.dao.InsertCollect(ctx, uid, cname, desc, isPub)
 }
-func (repo *interactiveRepo) CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error) {
+func (repo *interactiveRepo) CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) error {
 	// 要不要操作缓存
-	return repo.dao.InsertCollectToBiz(ctx, biz, uid, cid, bizId)
+	return repo.dao.InsertCollectInfo(ctx, biz, uid, cid, bizId)
 }
 
 func (repo *interactiveRepo) toDomainColl(item dao.CollectionModle) domain.Collect {
 	return domain.Collect{
+		ID:          int64(item.ID),
 		UserId:      item.UserId,
 		CName:       item.CName,
 		Description: item.Description,

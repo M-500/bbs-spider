@@ -357,12 +357,14 @@ func (h *ArticleHandler) CollectEntityByID(ctx *gin.Context, user jwtx.UserClaim
 			Msg:  "参数错误",
 		}, nil
 	}
-	entity, err := h.interSvc.CollectEntity(ctx, h.biz, user.Id, cid, bid)
+	err = h.interSvc.CollectEntity(ctx, h.biz, user.Id, cid, bid)
 	if err != nil {
-
+		return ginplus.Result{
+			Msg: "系统错误",
+		}, err
 	}
 
 	return ginplus.Result{
-		Data: entity,
+		Msg: "OK",
 	}, nil
 }

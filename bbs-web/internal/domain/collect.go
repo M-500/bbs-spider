@@ -7,6 +7,7 @@ import "time"
 // @Date 2024-04-12 11:38
 
 type Collect struct {
+	ID          int64     `json:"id"`
 	UserId      int64     `json:"user_id"`
 	CName       string    `json:"c_name"`
 	Description string    `json:"description"`

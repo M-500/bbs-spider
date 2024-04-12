@@ -33,7 +33,7 @@ type InteractiveDao interface {
 
 	InsertCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error)
 
-	InsertCollectToBiz(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error)
+	InsertCollectInfo(ctx context.Context, biz string, uid, cid, bizId int64) error
 }
 
 type interactiveDao struct {
@@ -204,11 +204,37 @@ func (dao *interactiveDao) InsertCollect(ctx context.Context, uid int64, cname s
 	return int64(data.ID), nil
 }
 
-func (dao *interactiveDao) InsertCollectToBiz(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error) {
-	// upsert语义 并且操作两张表
-	//dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-	//	newDao := NewCollectDao(tx)
-	//
-	//})
-	return 0, nil
+func (dao *interactiveDao) InsertCollectInfo(ctx context.Context, biz string, uid, cid, bizId int64) error {
+	now := time.Now()
+	err := dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// 是否需要校验重复点赞的问题？不用
+		err := tx.Model(&UserCollectBizModel{}).Clauses(
+			clause.OnConflict{
+				DoUpdates: clause.Assignments(map[string]any{
+					"updated_at": now,
+				}),
+			}).Create(&UserCollectBizModel{
+			BizId: bizId,
+			Biz:   biz,
+			Uid:   uid,
+			Cid:   cid,
+		}).Error
+		if err != nil {
+			return err
+		}
+		// 更新收藏总数
+		return tx.WithContext(ctx).Clauses(
+			clause.OnConflict{
+				DoUpdates: clause.Assignments(map[string]any{
+					"like_cnt":   gorm.Expr("like_cnt + 1"),
+					"updated_at": time.Now(),
+				}),
+			}).Create(&InteractiveModel{
+			Biz:        biz,
+			BizId:      bizId,
+			CollectCnt: 1,
+		}).Error
+	})
+	//return err
+	return err
 }
