@@ -24,7 +24,7 @@ func NewBbsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BbsLogic {
 }
 
 func (l *BbsLogic) Bbs(req *types.Request) (resp *types.Response, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	return &types.Response{
+		Message: "傻逼",
+	}, nil
 }

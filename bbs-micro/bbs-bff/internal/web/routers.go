@@ -49,4 +49,9 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 		pub.POST("/collect", gp.WrapBodyAndToken[vo.CollectReq, jwtx.UserClaims](r.artHdl.Collect)) // 收藏/取消收藏 某一篇文章
 		pub.POST("/reward", r.artHdl.Reward)
 	}
+
+	userCenterGroup := engine.Group("/users") // 用户中心相关的接口
+	{
+		userCenterGroup.GET("")
+	}
 }

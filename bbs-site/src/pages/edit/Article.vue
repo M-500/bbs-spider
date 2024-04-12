@@ -17,9 +17,6 @@ export default {
     }
   },
   methods: {
-    changeString (value, html) {
-      this.form.content = html
-    },
     handleAvatarSuccess(res, file) {
       this.form.cover = URL.createObjectURL(file.raw);
     },
@@ -53,7 +50,7 @@ export default {
 <template>
   <div class="main-container">
     <div class="edit-container">
-      <div class="title">编辑文章</div>
+      <div class="title">发文章</div>
       <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="文章标题">
           <el-input v-model="form.title" :autosize="{ minRows: 1, maxRows: 2}"></el-input>
@@ -62,7 +59,8 @@ export default {
           <el-input type="textarea" v-model="form.summary" :autosize="{ minRows: 2, maxRows: 4}"></el-input>
         </el-form-item>
         <el-form-item label="文章内容">
-          <mavon-editor v-model="form.content" @change="changeString"/>
+          <mavon-editor v-model="form.content" />
+          <!-- <el-input type="textarea" v-model="form.desc" :autosize="{ minRows: 4, maxRows: 10}"></el-input> -->
         </el-form-item>
         <el-form-item label="文章图片">
           <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
@@ -71,9 +69,8 @@ export default {
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <el-button class="pubBtn" size="small" @click="onSubmit">直接发布</el-button>
-          <el-button class="storeBtn" size="small" @click="onSubmit">暂存草稿箱</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button type="primary" @click="onSubmit">发布</el-button>
+          <el-button>取消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -83,7 +80,6 @@ export default {
 <style scoped>
 .main-container {
   width: 100%;
-  /* height: 100%; */
   display: flex;
   justify-content: center;
 }
@@ -125,15 +121,5 @@ export default {
 }
 .el-icon-plus {
   border: #d9d9d9 1px solid;
-}
-.pubBtn {
-  background-color: #00bbc9;
-  border: #00bbc9 1px solid;
-  color: #f9f9f9;
-}
-.storeBtn {
-  background-color: #00747c;
-  border: #00747c 1px solid;
-  color: #f9f9f9;
 }
 </style>

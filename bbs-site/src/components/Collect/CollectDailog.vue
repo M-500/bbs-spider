@@ -111,12 +111,12 @@
           <el-form-item>
             <el-radio-group v-model="collForm.isPublic">
               <el-radio>
-                <span>公开</span>
-                <span>有其他人关注此收藏夹时不可设置为私密</span>
+                <span class="radio-title">公开</span>
+                <span class="radio-mark">有其他人关注此收藏夹时不可设置为私密</span>
               </el-radio>
               <el-radio>
-                <span>私密</span>
-                <span>只有你自己可以查看这个收藏夹</span>
+                <span class="radio-title">私密</span>
+                <span class="radio-mark">只有你自己可以查看这个收藏夹</span>
               </el-radio>
             </el-radio-group>
           </el-form-item>
@@ -157,6 +157,7 @@ export default {
   padding: 10px 5px 10px;
 }
 .dialogPage {
+  border-radius: 8px;
 }
 .coll-body {
   height: 450px;
@@ -178,5 +179,9 @@ export default {
   font-weight: bold;
   color: #333;
   padding-bottom: 10px;
+}
+
+.radio-mark{
+  color: grey;
 }
 </style>
