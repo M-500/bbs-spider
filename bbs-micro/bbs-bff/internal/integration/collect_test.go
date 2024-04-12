@@ -2,9 +2,15 @@ package integration
 
 import (
 	"bbs-micro/bbs-bff/internal/web/vo"
+	"bytes"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -53,6 +59,24 @@ func (c *CollectTestSuite) TestCreate() {
 		t.Run(tc.name, func(t *testing.T) {
 			tc.before(t)
 
+			// 构造gin
+			reqBody, err := json.Marshal(tc.collect)
+			assert.NoError(t, err)
+			req, err := http.NewRequest(http.MethodPost, "/collect/create", bytes.NewBuffer(reqBody))
+			assert.NoError(t, err)
+			req.Header.Set("Content-Type", "application/json")
+			// 这里你就可以继续使用 req
+			resp := httptest.NewRecorder()
+
+			c.server.ServeHTTP(resp, req) // 使用测试套件里的Server对象
+			assert.Equal(t, tc.wantCode, resp.Code)
+			if resp.Code != 200 {
+				return
+			}
+			require.NoError(t, err)
+			var webRes Result[int64]
+			err = json.NewDecoder(resp.Body).Decode(&webRes)
+			assert.Equal(t, tc.wantRes, webRes)
 			tc.after(t)
 		})
 	}
