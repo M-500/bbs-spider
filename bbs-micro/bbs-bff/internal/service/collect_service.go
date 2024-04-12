@@ -13,6 +13,7 @@ import (
 type ICollectService interface {
 	GetByUid(ctx context.Context, uid, limit, offset int64) ([]domain.Collect, error)
 	CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error)
+	CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error)
 }
 
 type collectService struct {
@@ -29,4 +30,7 @@ func (c *collectService) GetByUid(ctx context.Context, uid, limit, offset int64)
 
 func (c *collectService) CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error) {
 	return c.repo.CreateCollect(ctx, uid, cname, desc, isPub)
+}
+func (c *collectService) CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error) {
+	return c.repo.CollectEntity(ctx, biz, uid, cid, bizId)
 }

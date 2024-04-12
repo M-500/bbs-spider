@@ -3,93 +3,12 @@
 <template>
   <el-dialog class="dialogPage" title="添加收藏" :before-close="closeAll" :visible.sync="dialogVisible" :closeOnClickModal="false" width="30%" center>
     <div class="coll-body">
-      <div class="item">
+      <div class="item"  v-for="(item,index) in collectList" :key="index">
         <div class="title">
-          <span>我的收藏</span>
-          <i class="el-icon-lock"></i>
+          <span>{{item.c_name}}</span>
+          <i class="el-icon-lock" v-if="!item.is_pub"></i>
         </div>
-        <div class="mark">108条内容</div>
-        <el-button class="col_btn" size="mini">收藏</el-button>
-      </div>
-
-      <div class="item">
-        <div class="title">
-          <span>我的收藏</span>
-          <i class="el-icon-lock"></i>
-        </div>
-        <div class="mark">108条内容</div>
-        <el-button class="col_btn" size="mini">收藏</el-button>
-      </div>
-
-      <div class="item">
-        <div class="title">
-          <span>我的收藏</span>
-          <i class="el-icon-lock"></i>
-        </div>
-        <div class="mark">108条内容</div>
-        <el-button class="col_btn" size="mini">收藏</el-button>
-      </div>
-
-      <div class="item">
-        <div class="title">
-          <span>我的收藏</span>
-          <i class="el-icon-lock"></i>
-        </div>
-        <div class="mark">108条内容</div>
-        <el-button class="col_btn" size="mini">收藏</el-button>
-      </div>
-
-      <div class="item">
-        <div class="title">
-          <span>我的收藏</span>
-          <i class="el-icon-lock"></i>
-        </div>
-        <div class="mark">108条内容</div>
-        <el-button class="col_btn" size="mini">收藏</el-button>
-      </div>
-
-      <div class="item">
-        <div class="title">
-          <span>我的收藏</span>
-          <i class="el-icon-lock"></i>
-        </div>
-        <div class="mark">108条内容</div>
-        <el-button class="col_btn" size="mini">收藏</el-button>
-      </div>
-
-      <div class="item">
-        <div class="title">
-          <span>我的收藏</span>
-          <i class="el-icon-lock"></i>
-        </div>
-        <div class="mark">108条内容</div>
-        <el-button class="col_btn" size="mini">收藏</el-button>
-      </div>
-
-      <div class="item">
-        <div class="title">
-          <span>我的收藏</span>
-          <i class="el-icon-lock"></i>
-        </div>
-        <div class="mark">108条内容</div>
-        <el-button class="col_btn" size="mini">收藏</el-button>
-      </div>
-
-      <div class="item">
-        <div class="title">
-          <span>我的收藏</span>
-          <i class="el-icon-lock"></i>
-        </div>
-        <div class="mark">108条内容</div>
-        <el-button class="col_btn" size="mini">收藏</el-button>
-      </div>
-
-      <div class="item">
-        <div class="title">
-          <span>我的收藏</span>
-          <i class="el-icon-lock"></i>
-        </div>
-        <div class="mark">108条内容</div>
+        <div class="mark">{{item.comment_num}}条内容</div>
         <el-button class="col_btn" size="mini">收藏</el-button>
       </div>
     </div>
@@ -132,7 +51,8 @@
 </template>
 
 <script>
-import {createCollectAPI} from "../../api/article/collect";
+import {createCollectAPI,getCollectListAPI} from "../../api/article/collect";
+import curUser from "../../utils/cur-user";
 export default {
   props: {
     dialogVisible: {
@@ -142,7 +62,9 @@ export default {
   },
   data() {
     return {
+      uid: curUser.getUserId(),
       innerVisible: false,
+      collectList:[],
       collForm: {
         collect_name: "",
         desc: "",
@@ -150,9 +72,23 @@ export default {
       }
     }
   },
+  created() {
+    this.getCollectList()
+  },
   methods:{
-    createCollect (){
+    /**/
+    getCollectList(){
+      getCollectListAPI(this.uid,{}).then((res) =>{
+        this.collectList = res
+      }).catch((e) => {
+        this.$message({
+          message: e.msg,
+          type: "error",
+        });
+      });
 
+    },
+    createCollect (){
       createCollectAPI(this.collForm).then((res) =>{
         this.$message({
           message: "创建成功！",

@@ -14,6 +14,7 @@ import (
 type ICollectRepo interface {
 	GetCollectListByID(ctx context.Context, uid, limit, offset int64) ([]domain.Collect, error)
 	CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error)
+	CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error)
 }
 
 type collectRepo struct {
@@ -25,6 +26,9 @@ func NewCollectRepo(dao dao.ICollectDAO) ICollectRepo {
 }
 
 func (c *collectRepo) GetCollectListByID(ctx context.Context, uid, limit, offset int64) ([]domain.Collect, error) {
+	// 操作缓存 因为缓存中缓存了第一页的数据 有必要吗？
+
+	// 操作数据库 并且回写缓存
 	list, err := c.dao.QueryCollectList(ctx, uid, limit, offset)
 	if err != nil {
 		return nil, err
@@ -35,6 +39,10 @@ func (c *collectRepo) GetCollectListByID(ctx context.Context, uid, limit, offset
 }
 func (c *collectRepo) CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error) {
 	return c.dao.InsertCollect(ctx, uid, cname, desc, isPub)
+}
+func (c *collectRepo) CollectEntity(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error) {
+	// 要不要操作缓存
+	return c.dao.InsertCollectToBiz(ctx, biz, uid, cid, bizId)
 }
 
 func (c *collectRepo) toDomain(item dao.CollectionModle) domain.Collect {

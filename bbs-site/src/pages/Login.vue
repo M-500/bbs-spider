@@ -77,7 +77,7 @@ export default {
     setUserStorage(res){
       curUser.setToken(res.token);
       curUser.setUserName(res.userName);
-      curUser.setUserId(res.id);
+      curUser.setUserId(res.userId);
       curUser.setUserAvatar(res.cover);
     },
     resetForm(form) {

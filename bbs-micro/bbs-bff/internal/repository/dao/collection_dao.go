@@ -19,6 +19,8 @@ type ICollectDAO interface {
 	QueryCollectList(ctx context.Context, uid, limit, offset int64) ([]CollectionModle, error)
 
 	InsertCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error)
+
+	InsertCollectToBiz(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error)
 }
 
 type collectDao struct {
@@ -56,4 +58,13 @@ func (dao *collectDao) InsertCollect(ctx context.Context, uid int64, cname strin
 		return 0, err
 	}
 	return int64(data.ID), nil
+}
+
+func (dao *collectDao) InsertCollectToBiz(ctx context.Context, biz string, uid, cid, bizId int64) (int64, error) {
+	// upsert语义 并且操作两张表
+	//dao.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	//	newDao := NewCollectDao(tx)
+	//
+	//})
+	return 0, nil
 }
