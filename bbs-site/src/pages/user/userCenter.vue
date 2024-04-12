@@ -42,11 +42,36 @@
               </ul>
             </div>
           </div>
+
           <div class="widget">
             <div class="widget-header">
               <span>个人资料</span>
             </div>
             <div class="widget-content stable">
+              <div class="str">
+                <div class="slabel">昵称</div>
+                <div class="svalue">damn bro 名利</div>
+              </div>
+              <div class="str">
+                <div class="slabel">签名</div>
+                <div class="svalue">古希腊掌管bug的神</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="widget">
+            <div class="widget-header">
+              <span>粉丝</span>
+            </div>
+            <div class="widget-content stable">
+              <div class="str">
+                <div class="slabel">昵称</div>
+                <div class="svalue">damn bro 名利</div>
+              </div>
+              <div class="str">
+                <div class="slabel">签名</div>
+                <div class="svalue">古希腊掌管bug的神</div>
+              </div>
             </div>
           </div>
 
@@ -140,17 +165,17 @@ export default {
 }
 .tabs-warp {
 }
-
+// 伪类选择器，去除第一个元素的样式
+.leftContet .widget:not(:first-child){
+  margin-top: 10px;
+}
 .widget{
   background-color: #ffffff;
   border-radius: calc(.25rem - 1px);
   padding: 0 12px;
-
-}
-// 伪类选择器，去除第一个元素的样式
-.widget:not(:first-child){
   margin-top: 10px;
 }
+
 .widget-header{
   align-items: center;
   border-bottom: 1px solid #e9e9e9;
@@ -163,13 +188,12 @@ export default {
 
 .widget-content{
   padding: 8px 0;
-  word-break: break-all;
+  //word-break: break-all;
+}
+.extra-info{
   display: flex;
   justify-content: space-around;
   width: 100%;
-
-}
-.extra-info{
   ul {
     list-style: none;
     display: flex;
@@ -193,4 +217,24 @@ export default {
     }
   }
 }
+.stable .str:not(:last-child){
+  border-bottom: 1px solid #e9e9e9;
+}
+.stable .str {
+  align-items: center;
+  display: flex;
+  font-size: 14px;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.stable .str .svalue {
+  color: #333;
+  margin-left: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-all;
+}
+
 </style>
