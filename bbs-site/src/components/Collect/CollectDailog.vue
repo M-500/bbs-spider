@@ -1,7 +1,7 @@
 
 
 <template>
-  <el-dialog class="dialogPage" title="添加收藏" :visible.sync="dialogVisible" closeOnClickModal="false" width="30%" center>
+  <el-dialog class="dialogPage" title="添加收藏" :before-close="closeAll" :visible.sync="dialogVisible" :closeOnClickModal="false" width="30%" center>
     <div class="coll-body">
       <div class="item">
         <div class="title">
@@ -147,6 +147,13 @@ export default {
         desc: "",
         isPublic: false
       }
+    }
+  },
+  methods:{
+    closeAll(){
+      console.log("关闭所有")
+      this.dialogVisible = false
+      this.$emit('send-data', false);
     }
   }
 }

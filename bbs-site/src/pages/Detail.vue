@@ -38,7 +38,7 @@
             </div>
           </div>
           <hr class="custom-hr">
-          <Comment :entityType=1 :entityId=2 :commentsPage={} :commentCount=12></Comment>
+          <Comment :entityType="1" :entityId="2" :commentsPage={} :commentCount=12></Comment>
         </div>
 
       </div>
@@ -70,7 +70,7 @@
       </div>
     </div>
     <!-- 收藏夹弹窗 -->
-    <CollectDailog :dialogVisible="dialogVisible"></CollectDailog>
+    <CollectDailog @send-data="receiveDataFromChild" :dialogVisible="dialogVisible"></CollectDailog>
   </div>
 </template>
 
@@ -118,6 +118,11 @@ export default ({
     },
     doCollect() {
       this.dialogVisible = true
+    },
+    receiveDataFromChild(data) {
+      // 接收子组件传递的数据
+      console.log("草尼玛的",data)
+      this.dialogVisible = data;
     },
     doLike() {
       this.likeForm.like = true
