@@ -24,8 +24,8 @@ type RankingService interface {
 }
 
 type batchRankingService struct {
-	artSvc    article.IArticleService
-	intrSvc   InteractiveService
+	artSvc    article.IArticleService // 获取文章
+	intrSvc   InteractiveService      // 用来获取点赞数
 	batchSize int
 	queueCap  int
 
@@ -98,7 +98,6 @@ func (svc *batchRankingService) topN(ctx context.Context) ([]domain.Article, err
 			score := svc.scoreFn(art.Utime, intr.LikeCnt+2) // +2 为了规避负数问题
 
 			// 从小根堆中拿到热度最低的
-
 			// 坑一: 堆中的元素要是不满100个，就有bug，因为不存在插入，一直在替换
 			//dequeue, err := topQueue.Dequeue()
 			//if err != nil {
@@ -112,6 +111,7 @@ func (svc *batchRankingService) topN(ctx context.Context) ([]domain.Article, err
 			//		score: score,
 			//	})
 			//}
+
 			// 已经满了
 			if topQueue.Len() == svc.queueCap {
 				dequeue, err := topQueue.Dequeue()
