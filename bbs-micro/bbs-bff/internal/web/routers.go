@@ -13,16 +13,18 @@ import (
 // @Date 2024-03-26 15:28
 
 type Router struct {
-	userHdl *handler.UserHandler
-	artHdl  *handler.ArticleHandler
-	codeHdl *handler.CaptchaHandler
+	userHdl    *handler.UserHandler
+	artHdl     *handler.ArticleHandler
+	codeHdl    *handler.CaptchaHandler
+	collectHdl *handler.CollectHandler
 }
 
-func NewRouter(artHdl *handler.ArticleHandler, codeHdl *handler.CaptchaHandler, userHdl *handler.UserHandler) *Router {
+func NewRouter(artHdl *handler.ArticleHandler, codeHdl *handler.CaptchaHandler, userHdl *handler.UserHandler, collectHdl *handler.CollectHandler) *Router {
 	return &Router{
-		artHdl:  artHdl,
-		codeHdl: codeHdl,
-		userHdl: userHdl,
+		artHdl:     artHdl,
+		codeHdl:    codeHdl,
+		userHdl:    userHdl,
+		collectHdl: collectHdl,
 	}
 }
 
@@ -48,6 +50,13 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 		pub.POST("/like", gp.WrapBodyAndToken[vo.LikeReq, jwtx.UserClaims](r.artHdl.Like))          // 点赞/取消点赞某一篇文章
 		pub.POST("/collect", gp.WrapBodyAndToken[vo.CollectReq, jwtx.UserClaims](r.artHdl.Collect)) // 收藏/取消收藏 某一篇文章
 		pub.POST("/reward", r.artHdl.Reward)
+	}
+
+	collectGroup := engine.Group("/collect") // 收藏夹相关的
+	{
+		collectGroup.GET("/:id/list", gp.Wrap(r.collectHdl.GetCollectById))                                                 // 通过用户id获取对应收藏夹列表
+		collectGroup.POST("/create", gp.WrapBodyAndToken[vo.CreateCollectReq, jwtx.UserClaims](r.collectHdl.CreateCollect)) // 用户新增收藏夹
+		collectGroup.POST("/:id/del")                                                                                       // 用户删除某个收藏夹
 	}
 
 	userCenterGroup := engine.Group("/users") // 用户中心相关的接口

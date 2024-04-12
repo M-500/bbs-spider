@@ -3,6 +3,7 @@ package ioc
 import (
 	"bbs-micro/bbs-bff/internal/web"
 	"bbs-micro/bbs-bff/internal/web/jwtx"
+	"bbs-micro/bbs-bff/internal/web/middlewares"
 	"bbs-micro/pkg/ginplus/middlewares/cors"
 	"bbs-micro/pkg/ginplus/middlewares/metric"
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,7 @@ func InitGin(r *web.Router, mdls []gin.HandlerFunc) *gin.Engine {
 func InitMiddleware(cfg *Config, j jwtx.JwtHandler) []gin.HandlerFunc {
 	return []gin.HandlerFunc{
 		cors.CorsMiddleWare(),
+		middlewares.PaginationMiddleware(), // 分页中间件
 		jwtx.NewLoginJWTMiddlewareBuilder(j).
 			IgnorePaths("/sign-up").
 			IgnorePaths("/pwd-login").
