@@ -24,8 +24,7 @@ func NewCollectService(repo repository.ICollectRepo) ICollectService {
 }
 
 func (c *collectService) GetByUid(ctx context.Context, uid, limit, offset int64) ([]domain.Collect, error) {
-	//TODO implement me
-	panic("implement me")
+	return c.repo.GetCollectListByID(ctx, uid, limit, offset)
 }
 
 func (c *collectService) CreateCollect(ctx context.Context, uid int64, cname string, desc string, isPub bool) (int64, error) {

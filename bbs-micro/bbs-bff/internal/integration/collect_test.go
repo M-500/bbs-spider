@@ -135,3 +135,101 @@ func (c *CollectTestSuite) TestCreate() {
 		})
 	}
 }
+
+//
+//func (c *CollectTestSuite) TestGetCollectById() {
+//	t := c.T()
+//	testCase := []struct {
+//		name string
+//
+//		before func(t *testing.T)
+//		after  func(t *testing.T)
+//
+//		collect vo.CreateCollectReq
+//
+//		wantCode int
+//
+//		wantRes Result[[]domain.Collect] // 新建成功后返回对应的ID
+//
+//		wantErr error
+//	}{
+//		{
+//			name: "获取列表成功",
+//			before: func(t *testing.T) {
+//				err := c.db.Exec("TRUNCATE TABLE collect").Error
+//				assert.NoError(t, err)
+//				c.db.Model(&dao.CollectionModle{}).Create(dao.CollectionModle{
+//					UserId:      3,
+//					CName:       "测试",
+//					Description: "测试吧1",
+//					IsPub:       false,
+//				})
+//			},
+//			after: func(t *testing.T) {
+//				// 验证数据库
+//				var col dao.CollectionModle
+//				err := c.db.Where("user_id = ?", 3).First(&col).Error
+//				assert.NoError(t, err)
+//
+//				// 比对数据
+//				assert.True(t, !col.CreatedAt.IsZero())
+//				assert.True(t, !col.UpdatedAt.IsZero())
+//				col.CreatedAt = time.Time{}
+//				col.UpdatedAt = time.Time{}
+//				assert.Equal(t, dao.CollectionModle{
+//					Model: gorm.Model{
+//						ID: 1,
+//					},
+//					UserId:      3,
+//					CName:       "测试",
+//					Description: "测试吧1",
+//					IsPub:       false,
+//				}, col)
+//			},
+//			collect: vo.CreateCollectReq{
+//				CollectName: "篮球",
+//				Desc:        "关于篮球的好文章",
+//				IsPublic:    true,
+//			},
+//			wantCode: 200,
+//			wantErr:  nil,
+//			wantRes: Result[[]domain.Collect]{
+//				Code: 0,
+//				Msg:  "OK",
+//				Data: []domain.Collect{
+//					{
+//						UserId:      1,
+//						CName:       "测试",
+//						Description: "测试吧1",
+//						IsPub:       false,
+//					},
+//				},
+//			},
+//		},
+//	}
+//	for _, tc := range testCase {
+//		t.Run(tc.name, func(t *testing.T) {
+//			tc.before(t)
+//			// 构造gin
+//			reqBody, err := json.Marshal(tc.collect)
+//			assert.NoError(t, err)
+//			req, err := http.NewRequest(http.MethodPost, "/collect/3/list", bytes.NewBuffer(reqBody))
+//			assert.NoError(t, err)
+//			req.Header.Set("Content-Type", "application/json")
+//			req.Header.Set("Authorization", "\nBearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTI5ODg5MjcsIklkIjozLCJVc2VyQWdlbnQiOiIifQ.gaK2o7hHlbgJD6wOogG_rBbkbXCzCnqTOQXpjfVuJ1Rnz-tBI5y8QAbKGb8TzeEQDANXYyB1u66u4svzmm5IIA")
+//			// 这里你就可以继续使用 req
+//			resp := httptest.NewRecorder()
+//
+//			c.server.ServeHTTP(resp, req) // 使用测试套件里的Server对象
+//			assert.Equal(t, tc.wantCode, resp.Code)
+//			if resp.Code != 200 {
+//				return
+//			}
+//			require.NoError(t, err)
+//			var webRes Result[int64]
+//			err = json.NewDecoder(resp.Body).Decode(&webRes)
+//			assert.Equal(t, tc.wantRes, webRes)
+//			tc.after(t)
+//		})
+//	}
+//}
