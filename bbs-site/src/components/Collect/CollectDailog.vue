@@ -9,7 +9,7 @@
           <i class="el-icon-lock" v-if="!item.is_pub"></i>
         </div>
         <div class="mark">{{item.comment_num}}条内容</div>
-        <el-button class="col_btn" size="mini" @click="collectClick(item.id)">收藏{{ item.id }}</el-button>
+        <el-button class="col_btn" size="mini" @click="collectClick(item.id)">收藏</el-button>
       </div>
     </div>
 

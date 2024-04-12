@@ -7,6 +7,7 @@ import (
 	"bbs-web/pkg/logger"
 	"bbs-web/pkg/utils/zifo/slice"
 	"context"
+	"fmt"
 )
 
 // @Description
@@ -140,6 +141,7 @@ func (repo *interactiveRepo) GetCollectListByID(ctx context.Context, uid, limit,
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("妈的", list)
 	return slice.Map[dao.CollectionModle, domain.Collect](list, func(idx int, src dao.CollectionModle) domain.Collect {
 		return repo.toDomainColl(src)
 	}), nil

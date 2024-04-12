@@ -328,7 +328,7 @@ func (h *ArticleHandler) GetCollectById(ctx *gin.Context) (ginplus.Result, error
 			Msg:  "参数错误",
 		}, nil
 	}
-	collects, err := h.interSvc.GetByUid(ctx, id, 0, 1)
+	collects, err := h.interSvc.GetByUid(ctx, id, 100, 1)
 	if err != nil {
 		return ginplus.Result{
 			Code: 503001,

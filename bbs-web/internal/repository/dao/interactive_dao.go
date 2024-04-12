@@ -222,6 +222,17 @@ func (dao *interactiveDao) InsertCollectInfo(ctx context.Context, biz string, ui
 		if err != nil {
 			return err
 		}
+		// 更新收藏计数
+		err = tx.Model(&UserCollectBizModel{}).Clauses(
+			clause.OnConflict{
+				DoUpdates: clause.Assignments(map[string]any{
+					"updated_at":  now,
+					"comment_num": gorm.Expr("collect_cnt + 1"),
+				}),
+			}).Error
+		if err != nil {
+			return err
+		}
 		// 更新收藏总数
 		return tx.WithContext(ctx).Clauses(
 			clause.OnConflict{
