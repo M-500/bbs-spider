@@ -43,22 +43,27 @@ func InitWebServer(path string) *App {
 		article_dao.NewWriteDAO,
 		dao.NewUserDao,
 		dao.NewInteractiveDao,
+		dao.NewCollectDao,
 
 		article.NewArticleRepo,
 		article.NewArticleReaderRepo,
 		article.NewArtWriterRepo,
+
+		cache.NewRedisInteractiveCache,
 		repository.NewUserRepo,
 		repository.NewInteractiveRepo,
-		cache.NewRedisInteractiveCache,
+		repository.NewCollectRepo,
 
 		article2.NewArticleService,
 		service.NewCaptchaService,
 		service.NewUserService,
 		service.NewInteractiveService,
+		service.NewCollectService,
 
 		handler.NewArticleHandler,
 		handler.NewCaptchaHandler,
 		handler.NewUserHandler,
+		handler.NewCollectHandler,
 
 		web.NewRouter,
 

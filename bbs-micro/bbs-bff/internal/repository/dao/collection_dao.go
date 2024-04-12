@@ -25,6 +25,10 @@ type collectDao struct {
 	db *gorm.DB
 }
 
+func NewCollectDao(db *gorm.DB) ICollectDAO {
+	return &collectDao{db: db}
+}
+
 func (dao *collectDao) QueryCollectList(ctx context.Context, uid, limit, offset int64) ([]CollectionModle, error) {
 	var collectList []CollectionModle
 	err := dao.db.WithContext(ctx).Model(&CollectionModle{}).Where("user_id = ?", uid).Find(&collectList).Error
