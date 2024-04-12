@@ -22,7 +22,7 @@ import (
 // @Author 代码小学生王木木
 // @Date 2024-03-29 16:25
 
-func InitArticleWebServer(path string) *gin.Engine {
+func InitTestWebServer(path string) *gin.Engine {
 	config := ioc.InitConfig(path)
 	db := ioc.InitDatabase(config)
 	articleDAO := article_dao.NewGormArticleDao(db)

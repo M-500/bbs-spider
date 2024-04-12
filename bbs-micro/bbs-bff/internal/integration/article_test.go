@@ -34,7 +34,7 @@ type ArticleTestSuite struct {
 func (s *ArticleTestSuite) SetupSuite() {
 	// 在所有测试开始之前，做一些事情
 	var configFile = flag.String("config", "../../etc/dev.yaml", "配置文件路径")
-	s.server = startup.InitArticleWebServer(*configFile)
+	s.server = startup.InitTestWebServer(*configFile)
 	config := ioc.InitConfig(*configFile)
 	s.db = startup.InitTestDB(config)
 

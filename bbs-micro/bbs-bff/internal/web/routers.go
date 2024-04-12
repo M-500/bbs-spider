@@ -56,12 +56,12 @@ func (r *Router) RegisterURL(engine *gin.Engine) {
 	{
 		collectGroup.GET("/:id/list", gp.Wrap(r.collectHdl.GetCollectById))                                                 // 通过用户id获取对应收藏夹列表
 		collectGroup.POST("/create", gp.WrapBodyAndToken[vo.CreateCollectReq, jwtx.UserClaims](r.collectHdl.CreateCollect)) // 用户新增收藏夹
-		collectGroup.POST("/:id/del")                                                                                       // 用户删除某个收藏夹
-		collectGroup.POST("/:cid/entity/:eid")                                                                              // 用户收藏某个资源（命名是程序员一生的死敌）
+		//collectGroup.POST("/:id/del")                                                                                       // 用户删除某个收藏夹
+		//collectGroup.POST("/:cid/entity/:eid")                                                                              // 用户收藏某个资源（命名是程序员一生的死敌）
 	}
 
-	userCenterGroup := engine.Group("/users") // 用户中心相关的接口
-	{
-		userCenterGroup.GET("")
-	}
+	//userCenterGroup := engine.Group("/users") // 用户中心相关的接口
+	//{
+	//	userCenterGroup.GET("")
+	//}
 }
