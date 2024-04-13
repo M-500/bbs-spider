@@ -78,9 +78,10 @@ export default {
   .article-item {
     padding: 12px 12px;
     transition: background 0.5s;
-    border-radius: 3px;
+    /* border-radius: 3px; */
     background: #fff;
     line-height: 24px;
+    border-bottom: #8c939d 1px solid;
 
     &:not(:last-child) {
       margin-bottom: 10px;
@@ -97,10 +98,10 @@ export default {
           font-size: 18px;
           line-height: 30px;
           font-weight: 500;
-          color: #ffffff;
+          color: #3e606f;
           overflow: hidden;
           text-overflow: ellipsis;
-        },
+        }
 
         .article-summary {
           font-size: 14px;
@@ -185,5 +186,9 @@ export default {
       }
     }
   }
+}
+
+/deep/ .el-tabs__nav-scroll{
+  padding-bottom: 10px;
 }
 </style>
