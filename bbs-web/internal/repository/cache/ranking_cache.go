@@ -17,7 +17,7 @@ type RankinCache interface {
 	GetRankingCache(ctx context.Context) ([]domain.Article, error)
 }
 
-const TOPN_REDIS_KEY = "articles:top"
+const TOPN_REDIS_KEY = "articles:ranking"
 
 type rankingCache struct {
 	client redis.Cmdable

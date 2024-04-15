@@ -5,6 +5,7 @@ import (
 	"flag"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
+	"time"
 )
 
 /*
@@ -19,7 +20,8 @@ func main() {
 	engine := app.server
 	initPrometheus()
 	ioc.SetUpOTEL(ioc.AppConfig)
-
+	// 启动定时任务
+	app.cron.Start()
 	// 启动kafka消费者，
 	for _, consumer := range app.consumers {
 		err := consumer.Start()
@@ -28,6 +30,15 @@ func main() {
 		}
 	}
 	engine.Run(":8181")
+
+	// 退出
+	ctx := app.cron.Stop()
+	tm := time.NewTimer(time.Minute * 10)
+	select {
+	case <-tm.C:
+	case <-ctx.Done(): // 可以考虑超时强制退出 防止有些任务执行特别长的时间
+	}
+
 }
 func initPrometheus() {
 	go func() {

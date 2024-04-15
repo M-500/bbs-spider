@@ -3,6 +3,7 @@ package main
 import (
 	event "bbs-web/internal/events/article"
 	"github.com/gin-gonic/gin"
+	"github.com/robfig/cron/v3"
 )
 
 // @Description
@@ -12,4 +13,5 @@ import (
 type App struct {
 	server    *gin.Engine
 	consumers []event.Consumer
+	cron      *cron.Cron
 }

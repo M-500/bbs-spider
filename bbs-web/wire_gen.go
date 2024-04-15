@@ -19,6 +19,7 @@ import (
 	"bbs-web/internal/web"
 	"bbs-web/internal/web/handler"
 	"bbs-web/internal/web/jwtx"
+	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
@@ -56,9 +57,19 @@ func InitWebServer(path string) *App {
 	engine := ioc.InitGin(router, v)
 	consumer := article2.NewInteractiveReadEventBatchConsumer(client, logger, interactiveRepo)
 	v2 := ioc.InitConsumer(consumer)
+	rankinCache := cache.NewRankingCache(cmdable)
+	rankingRepository := repository.NewRankingRepository(rankinCache)
+	rankingService := service.NewBatchRankingService(iArticleService, interactiveService, rankingRepository)
+	rankingJob := ioc.InitRankingJob(rankingService)
+	cron := ioc.InitCronJobs(logger, rankingJob)
 	app := &App{
 		server:    engine,
 		consumers: v2,
+		cron:      cron,
 	}
 	return app
 }
+
+// wire.go:
+
+var rankingServiceSet = wire.NewSet(repository.NewRankingRepository, cache.NewRankingCache, service.NewBatchRankingService)

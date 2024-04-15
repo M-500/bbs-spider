@@ -22,6 +22,12 @@ import (
 // @Author 代码小学生王木木
 // @Date 2024-03-26 15:57
 
+var rankingServiceSet = wire.NewSet(
+	repository.NewRankingRepository,
+	cache.NewRankingCache,
+	service.NewBatchRankingService,
+)
+
 func InitWebServer(path string) *App {
 	wire.Build(
 		ioc.InitConfig,
@@ -33,6 +39,11 @@ func InitWebServer(path string) *App {
 		ioc.InitConsumer,
 		ioc.InitSyncProducer,
 		article3.NewProducer,
+
+		// 任务调度
+		rankingServiceSet,
+		ioc.InitCronJobs,
+		ioc.InitRankingJob,
 
 		//article3.NewKafkaConsumer,
 		article3.NewInteractiveReadEventBatchConsumer,

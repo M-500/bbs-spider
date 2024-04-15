@@ -31,7 +31,7 @@ type batchRankingService struct {
 	scoreFn    func(t time.Time, likeCnt int64) float64 // 要求不能返回负数
 }
 
-func NewBatchRankingService(artSvc article.IArticleService, intrSvc InteractiveService, rankinRepo repository.RankingRepository) *batchRankingService {
+func NewBatchRankingService(artSvc article.IArticleService, intrSvc InteractiveService, rankinRepo repository.RankingRepository) RankingService {
 	return &batchRankingService{
 		artSvc:     artSvc,
 		intrSvc:    intrSvc,
