@@ -28,11 +28,11 @@ func NewRankingRepository(ch cache.RankinCache) RankingRepository {
 }
 
 func (o *onlyCacheRankinRepo) ReplaceTopN(ctx context.Context, arts []domain.Article) error {
-	return o.cache.SetRankingCache(ctx, arts)
+	return o.cache.SetrankingRedisCache(ctx, arts)
 }
 
 func (o *onlyCacheRankinRepo) GetTopN(ctx context.Context) ([]domain.Article, error) {
-	return o.cache.GetRankingCache(ctx)
+	return o.cache.GetrankingRedisCache(ctx)
 }
 
 type cacheRankingRepo struct {
