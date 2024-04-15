@@ -34,3 +34,18 @@ func (o *onlyCacheRankinRepo) ReplaceTopN(ctx context.Context, arts []domain.Art
 func (o *onlyCacheRankinRepo) GetTopN(ctx context.Context) ([]domain.Article, error) {
 	return o.cache.GetRankingCache(ctx)
 }
+
+type cacheRankingRepo struct {
+	redis cache.RankinCache
+	local cache.RankinCache
+}
+
+func (c cacheRankingRepo) ReplaceTopN(ctx context.Context, arts []domain.Article) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c cacheRankingRepo) GetTopN(ctx context.Context) ([]domain.Article, error) {
+	//TODO implement me
+	panic("implement me")
+}

@@ -13,22 +13,22 @@ import (
 // @Date 2024-04-15 15:03
 
 type RankinCache interface {
-	SetRankingCache(ctx context.Context, articles []domain.Article) error
-	GetRankingCache(ctx context.Context) ([]domain.Article, error)
+	SetrankingRedisCache(ctx context.Context, articles []domain.Article) error
+	GetrankingRedisCache(ctx context.Context) ([]domain.Article, error)
 }
 
 const TOPN_REDIS_KEY = "articles:ranking"
 
-type rankingCache struct {
+type rankingRedisCache struct {
 	client redis.Cmdable
 }
 
-func NewRankingCache(rds redis.Cmdable) RankinCache {
-	return &rankingCache{
+func NewRankinCache(rds redis.Cmdable) RankinCache {
+	return &rankingRedisCache{
 		client: rds,
 	}
 }
-func (r *rankingCache) SetRankingCache(ctx context.Context, articles []domain.Article) error {
+func (r *rankingRedisCache) SetrankingRedisCache(ctx context.Context, articles []domain.Article) error {
 	// 这个过期时间应当适当长一点，并且超过一次热榜计算任务的总时间  甚至可以用不过期
 	for _, art := range articles {
 		// 剔除一些不需要的大字段
@@ -42,7 +42,7 @@ func (r *rankingCache) SetRankingCache(ctx context.Context, articles []domain.Ar
 	return r.client.Set(ctx, TOPN_REDIS_KEY, marshalArt, time.Minute*10).Err()
 }
 
-func (r *rankingCache) GetRankingCache(ctx context.Context) ([]domain.Article, error) {
+func (r *rankingRedisCache) GetrankingRedisCache(ctx context.Context) ([]domain.Article, error) {
 	bytes, err := r.client.Get(ctx, TOPN_REDIS_KEY).Bytes()
 	if err != nil {
 		return nil, err
@@ -53,6 +53,6 @@ func (r *rankingCache) GetRankingCache(ctx context.Context) ([]domain.Article, e
 	return res, err
 }
 
-//func (r *rankingCache) key() string {
+//func (r *rankingRedisCache) key() string {
 //	return fmt.Sprintf("%s",TOPN_REDIS_KEY)
 //}
