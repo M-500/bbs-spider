@@ -2,6 +2,7 @@ package repository
 
 import (
 	"bbs-web/internal/domain"
+	"bbs-web/internal/repository/dao"
 	"context"
 )
 
@@ -14,9 +15,13 @@ type JobRepository interface {
 }
 
 type jobRepository struct {
+	dao dao.JobDAO
 }
 
 func (j *jobRepository) Preempt(ctx context.Context) (domain.Job, error) {
-	//TODO implement me
-	panic("implement me")
+	jb, err := j.dao.Preempt(ctx)
+	if err != nil {
+
+	}
+	return domain.Job{}, err
 }

@@ -5,4 +5,5 @@ package domain
 // @Date 2024-04-15 21:11
 
 type Job struct {
+	Cfg string
 }

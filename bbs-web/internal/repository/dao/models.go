@@ -109,3 +109,22 @@ type UserCollectBizModel struct {
 func (UserCollectBizModel) TableName() string {
 	return "user_to_biz_collect"
 }
+
+type JobModel struct {
+	gorm.Model
+
+	Cfg    string `gorm:"comment:;"`
+	Status int    // 用来表示状态
+
+	NextExecTime int64 // 定时任务的下一次执行的时间
+
+	Version int //MySQL乐观锁 实现并发安全
+
+}
+
+const (
+	jobStatusWaiting = iota
+	jobStatusRunning // 已经被抢占了
+	jobStatusPaused  // 暂停了的 不会被调度的
+
+)

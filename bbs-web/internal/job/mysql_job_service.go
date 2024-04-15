@@ -17,14 +17,16 @@ type Schedule struct {
 	lg  logger.Logger
 }
 
+// Schedule
+//
+//	@Description: 这里是一个调度器
 func (s *Schedule) Schedule(ctx context.Context) error {
 	for {
 		j, err := s.svc.Preempt(ctx)
 		if err != nil {
-
 			// 不能return 你要机选下一轮继续
 			s.lg.Error("抢占任务失败", logger.Error(err))
 		}
-		// 执行
+		// 执行 怎么执行？谁来执行？
 	}
 }
