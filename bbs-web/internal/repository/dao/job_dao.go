@@ -8,7 +8,6 @@ package dao
 
 import (
 	"context"
-	"errors"
 	"gorm.io/gorm"
 	"time"
 )
@@ -29,26 +28,31 @@ type gormJobDAO struct {
 }
 
 func (g *gormJobDAO) Preempt(ctx context.Context) (JobModel, error) {
-	now := time.Now()
-	var res JobModel
-	err := g.db.WithContext(ctx).
-		Where("status = ? AND next_exec_time < ?", jobStatusWaiting, now).
-		First(&res).Error
-	if err != nil {
-		// 这个处理有问题
-		return JobModel{}, err
+	for {
+		now := time.Now()
+		var res JobModel
+		err := g.db.WithContext(ctx).
+			Where("status = ? AND next_exec_time < ?", jobStatusWaiting, now).
+			First(&res).Error
+		if err != nil {
+			// 这个处理有问题
+			return JobModel{}, err
+		}
+		// 分布式任务调度系统
+		// 1. 一次拉一批 2. 随机从某一条开始，从后开始抢占  3. 随机偏移量+取模/第一轮没有查到，偏移量归零
+		ans := g.db.WithContext(ctx).Where("id = ? AND version = ?", res.ID, res.Version).
+			Updates(map[string]any{
+				"status":     jobStatusRunning,
+				"version":    res.Version + 1,
+				"updated_at": now,
+			})
+		if ans.Error != nil {
+			return JobModel{}, err
+		}
+		if ans.RowsAffected == 0 {
+			//return JobModel{}, errors.New("没有抢到")
+			continue
+		}
+		return res, err
 	}
-	ans := g.db.WithContext(ctx).Where("id = ? AND version = ?", res.ID, res.Version).
-		Updates(map[string]any{
-			"status":     jobStatusRunning,
-			"version":    res.Version + 1,
-			"updated_at": now,
-		})
-	if ans.Error != nil {
-		return JobModel{}, err
-	}
-	if ans.RowsAffected == 0 {
-		return JobModel{}, errors.New("没有抢到")
-	}
-	return res, err
 }
