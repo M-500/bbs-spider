@@ -2,13 +2,13 @@ package service
 
 import (
 	"bbs-web/internal/domain"
+	"bbs-web/internal/repository"
 	"bbs-web/internal/service/article"
 	"bbs-web/pkg/utils/zifo/slice"
 	"math"
 
 	"context"
 	"github.com/ecodeclub/ekit/queue"
-	"log"
 	"time"
 )
 
@@ -22,21 +22,22 @@ type RankingService interface {
 	//TopN(ctx context.Context, n int64) ([]any, error) // 后续写这个逻辑
 }
 
-type BatchRankingService struct {
-	artSvc    article.IArticleService
-	intrSvc   InteractiveService
-	batchSize int
-	queueCap  int
-
-	scoreFn func(t time.Time, likeCnt int64) float64 // 要求不能返回负数
+type batchRankingService struct {
+	artSvc     article.IArticleService
+	intrSvc    InteractiveService
+	rankinRepo repository.RankingRepository
+	batchSize  int
+	queueCap   int
+	scoreFn    func(t time.Time, likeCnt int64) float64 // 要求不能返回负数
 }
 
-func NewBatchRankingService(artSvc article.IArticleService, intrSvc InteractiveService) *BatchRankingService {
-	return &BatchRankingService{
-		artSvc:    artSvc,
-		intrSvc:   intrSvc,
-		batchSize: 100,
-		queueCap:  100,
+func NewBatchRankingService(artSvc article.IArticleService, intrSvc InteractiveService, rankinRepo repository.RankingRepository) *batchRankingService {
+	return &batchRankingService{
+		artSvc:     artSvc,
+		intrSvc:    intrSvc,
+		rankinRepo: rankinRepo,
+		batchSize:  100,
+		queueCap:   100,
 		scoreFn: func(utime time.Time, likeCnt int64) float64 {
 			// Hacknews的公式
 			duration := time.Since(utime).Seconds()
@@ -44,17 +45,16 @@ func NewBatchRankingService(artSvc article.IArticleService, intrSvc InteractiveS
 		},
 	}
 }
-func (svc *BatchRankingService) TopN(ctx context.Context) error {
-	n, err := svc.topN(ctx)
+func (svc *batchRankingService) TopN(ctx context.Context) error {
+	articles, err := svc.topN(ctx)
 	if err != nil {
 		return err
 	}
 	// 存起来
-	log.Println(n)
-	return err
+	return svc.rankinRepo.ReplaceTopN(ctx, articles)
 }
 
-func (svc *BatchRankingService) topN(ctx context.Context) ([]domain.Article, error) {
+func (svc *batchRankingService) topN(ctx context.Context) ([]domain.Article, error) {
 	var (
 		offset = 0
 		start  = time.Now()

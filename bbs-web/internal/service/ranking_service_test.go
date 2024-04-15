@@ -79,7 +79,7 @@ func TestBatchRankingService_TopN(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			artSvc, intrSvc := tt.mock(ctrl)
-			svc := &BatchRankingService{
+			svc := &batchRankingService{
 				artSvc:    artSvc,
 				intrSvc:   intrSvc,
 				batchSize: 2,
