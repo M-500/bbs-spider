@@ -19,7 +19,7 @@ func InitRankingJob(svc service.RankingService) *job.RankingJob {
 func InitCronJobs(l logger.Logger, rankingJob *job.RankingJob) *cron.Cron {
 	res := cron.New(cron.WithSeconds())
 	cdb := job.NewCronJonBuilder(l).Build(rankingJob)
-	_, err := res.AddJob("0 */3 * * *", cdb) // 每隔3分钟执行一次  参考文章: https://help.aliyun.com/document_detail/133509.html
+	_, err := res.AddJob("0 */3 * * * ?", cdb) // 每隔3分钟执行一次  参考文章: https://help.aliyun.com/document_detail/133509.html
 	if err != nil {
 		panic(err)
 	}
