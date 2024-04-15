@@ -28,5 +28,6 @@ func (s *Schedule) Schedule(ctx context.Context) error {
 			s.lg.Error("抢占任务失败", logger.Error(err))
 		}
 		// 执行 怎么执行？谁来执行？
+		j.CancleFunc()
 	}
 }

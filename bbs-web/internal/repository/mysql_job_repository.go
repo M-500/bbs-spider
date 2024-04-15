@@ -12,6 +12,7 @@ import (
 
 type JobRepository interface {
 	Preempt(ctx context.Context) (domain.Job, error)
+	Release(ctx context.Context, id int64) error
 }
 
 type jobRepository struct {
@@ -23,5 +24,23 @@ func (j *jobRepository) Preempt(ctx context.Context) (domain.Job, error) {
 	if err != nil {
 
 	}
-	return domain.Job{}, err
+
+	return j.toDomain(jb), err
+}
+
+func (j *jobRepository) Release(ctx context.Context, id int64) error {
+
+	return nil
+}
+
+func (j *jobRepository) toDomain(model dao.JobModel) domain.Job {
+	return domain.Job{
+		ID:           model.ID,
+		CreatedAt:    model.CreatedAt,
+		UpdatedAt:    model.UpdatedAt,
+		Cfg:          model.Cfg,
+		Status:       model.Status,
+		NextExecTime: model.NextExecTime,
+		Version:      model.Version,
+	}
 }

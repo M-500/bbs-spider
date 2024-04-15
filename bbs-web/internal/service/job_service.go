@@ -4,6 +4,7 @@ import (
 	"bbs-web/internal/domain"
 	"bbs-web/internal/repository"
 	"context"
+	"time"
 )
 
 // @Description
@@ -13,6 +14,9 @@ import (
 type JobService interface {
 	// Preempt 抢占
 	Preempt(ctx context.Context) (domain.Job, error)
+	PreemptWithCallback(ctx context.Context) (domain.Job, func() error, error)
+
+	Release(ctx context.Context, id int64) error
 }
 
 // preemptCronJobService
@@ -21,6 +25,36 @@ type preemptCronJobService struct {
 	repo repository.JobRepository
 }
 
+// 不带回掉方法
 func (p *preemptCronJobService) Preempt(ctx context.Context) (domain.Job, error) {
 	return p.repo.Preempt(ctx)
+}
+
+// 带有回掉方法
+func (p *preemptCronJobService) PreemptWithCallback(ctx context.Context) (domain.Job, func() error, error) {
+	j, err := p.repo.Preempt(ctx)
+	if err != nil {
+
+	}
+
+	j.CancleFunc = func() error {
+		// 这里用来释放锁
+		ctx1, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		return p.Release(ctx1, int64(j.ID))
+	}
+
+	// 是否一直抢占？是不是需要释放呢？暴漏release吗
+	return j, j.CancleFunc, err
+}
+
+// Release
+//
+//	@Description: 用于释放锁
+//	@receiver p
+//	@param ctx
+//	@param id
+//	@return error
+func (p *preemptCronJobService) Release(ctx context.Context, id int64) error {
+	return p.repo.Release(ctx, id)
 }

@@ -40,6 +40,8 @@ func (g *gormJobDAO) Preempt(ctx context.Context) (JobModel, error) {
 		}
 		// 分布式任务调度系统
 		// 1. 一次拉一批 2. 随机从某一条开始，从后开始抢占  3. 随机偏移量+取模/第一轮没有查到，偏移量归零
+
+		// 这里是乐观锁实现 CAS  Compare And Swap  常见的面试装逼 => 用乐观锁取代 for update   forupdate性能差，容易引起死锁问题。 性能优化的套路
 		ans := g.db.WithContext(ctx).Where("id = ? AND version = ?", res.ID, res.Version).
 			Updates(map[string]any{
 				"status":     jobStatusRunning,
