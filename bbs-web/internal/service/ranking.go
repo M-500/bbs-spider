@@ -4,6 +4,7 @@ import (
 	"bbs-web/internal/domain"
 	"bbs-web/internal/service/article"
 	"bbs-web/pkg/utils/zifo/slice"
+	"fmt"
 	"math"
 
 	"context"
@@ -29,7 +30,7 @@ type batchRankingService struct {
 	batchSize int
 	queueCap  int
 
-	scoreFn func(t time.Time, likeCnt int64) float64 // 要求不能返回负数
+	scoreFn func(t int64, likeCnt int64) float64 // 要求不能返回负数
 }
 
 func NewBatchRankingService(artSvc article.IArticleService, intrSvc InteractiveService) *batchRankingService {
@@ -38,7 +39,7 @@ func NewBatchRankingService(artSvc article.IArticleService, intrSvc InteractiveS
 		intrSvc:   intrSvc,
 		batchSize: 100,
 		queueCap:  100,
-		scoreFn: func(t time.Time, likeCnt int64) float64 {
+		scoreFn: func(t int64, likeCnt int64) float64 {
 			// Hacknews的公式
 			return float64(likeCnt-1) / math.Pow(float64(likeCnt+2), 1.5)
 		},
@@ -57,26 +58,35 @@ func (svc *batchRankingService) TopN(ctx context.Context) error {
 func (svc *batchRankingService) topN(ctx context.Context) ([]domain.Article, error) {
 	var (
 		offset = 0
+		start  = time.Now()
+		ddl    = start.Add(-7 * 24 * time.Hour)
 	)
 	now := time.Now()
 	type Score struct {
 		art   domain.Article
 		score float64
 	}
-	topQueue := queue.NewConcurrentPriorityQueue[Score](svc.queueCap, func(src Score, dst Score) int {
-		if src.score > dst.score {
-			return 1
-		} else if src.score == dst.score {
-			return 0
-		}
-		return -1
-	})
+
+	topQueue := queue.NewPriorityQueue[Score](svc.queueCap,
+		func(src Score, dst Score) int {
+			if src.score > dst.score {
+				return 1
+			} else if src.score == dst.score {
+				return 0
+			} else {
+				return -1
+			}
+		})
 
 	for {
-		// 1. 先拿一批数据
+		// 1. 拿一批数据
 		arts, err := svc.artSvc.ListPub(ctx, now, offset, svc.batchSize)
 		if err != nil {
 			return nil, err
+		}
+		// 没取到数据，或者获取的数据不够一个批次，或者这批数据的最大实践都超出了计算范围
+		if len(arts) < svc.batchSize || arts[len(arts)-1].Utime.Before(ddl) {
+			break
 		}
 		// 转换为ID数组
 		ids := slice.Map[domain.Article, int64](arts, func(idx int, src domain.Article) int64 {
@@ -95,52 +105,25 @@ func (svc *batchRankingService) topN(ctx context.Context) ([]domain.Article, err
 				// 没有点赞数据
 				continue
 			}
-			score := svc.scoreFn(art.Utime, intr.LikeCnt+2) // +2 为了规避负数问题
-
-			// 从小根堆中拿到热度最低的
-
-			// 坑一: 堆中的元素要是不满100个，就有bug，因为不存在插入，一直在替换
-			//dequeue, err := topQueue.Dequeue()
-			//if err != nil {
-			//	// 不管他 妈的！
-			//}
-			//if dequeue.s core > score {
-			//	topQueue.Enqueue(dequeue)
-			//} else {
-			//	topQueue.Enqueue(Score{
-			//		art:   art,
-			//		score: score,
-			//	})
-			//}
-			// 已经满了
-			if topQueue.Len() == svc.queueCap {
-				dequeue, err := topQueue.Dequeue()
-				if err != nil {
-					// 不管他 妈的！
-				}
-				if dequeue.score > score {
-					topQueue.Enqueue(dequeue)
-				} else {
-					topQueue.Enqueue(Score{
-						art:   art,
-						score: score,
-					})
-				}
-			}
-			// 没有满，无脑追加
-			err := topQueue.Enqueue(Score{
+			score := svc.scoreFn(art.Utime.Unix(), intr.LikeCnt+2) // +2 为了规避负数问题
+			fmt.Println("当前的分数", art.Id, score)
+			node := Score{
 				art:   art,
 				score: score,
-			})
-			if err != nil {
-				// 有可能堆满了，也有可能其他错误
+			}
+			err = topQueue.Enqueue(node)
+			// 如果堆满了
+			if err == queue.ErrOutOfCapacity {
+				minNode, _ := topQueue.Dequeue()
+				if minNode.score < score {
+					_ = topQueue.Enqueue(node)
+				} else {
+					_ = topQueue.Enqueue(minNode)
+				}
 			}
 		}
-		// 最后得出结果
-		if len(arts) < svc.batchSize {
-			// 如果一批不够最小批次，那么认为应该结束了
-			break
-		}
+		// 如果一批不够最小批次，那么认为应该结束了（只计算7天前的数据）
+
 		offset = offset + len(arts) // 否则就计算下一批
 	}
 	res := make([]domain.Article, 0, topQueue.Len())

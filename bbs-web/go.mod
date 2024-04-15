@@ -5,7 +5,7 @@ go 1.21.4
 require (
 	github.com/IBM/sarama v1.43.1
 	github.com/bwmarrin/snowflake v0.3.0
-	github.com/ecodeclub/ekit v0.0.8
+	github.com/ecodeclub/ekit v0.0.8-0.20231107102407-45c43657fd3c
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
@@ -98,7 +98,7 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
+	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
 	golang.org/x/image v0.13.0 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect

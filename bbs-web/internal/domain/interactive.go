@@ -13,4 +13,6 @@ type Interactive struct {
 	CommentCnt int64 `json:"comment_cnt"`
 	Liked      bool  `json:"liked"`
 	Collected  bool  `json:"collected"`
+	//Utime time.Time
+	//Ctime time.Time
 }

@@ -27,7 +27,7 @@
           </el-tabs>
         </div>
         <div class="rightContet">
-          
+
           <div class="widget">
             <div class="widget-header">
               <span>个人资料</span>
@@ -43,7 +43,6 @@
               </div>
             </div>
           </div>
-
           <div class="widget">
             <div class="widget-header">
               <span>粉丝</span>
@@ -59,7 +58,6 @@
               </div>
             </div>
           </div>
-          
         </div>
       </div>
     </div>
