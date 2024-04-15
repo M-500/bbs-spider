@@ -18,7 +18,7 @@ type Config struct {
 	Database       DatabaseConfig `mapstructure:"database"`
 	Redis          RedisConfig    `mapstructure:"redis"`
 	MongoCfg       MongoDBConfig  `mapstructure:"mongodb"`
-	KafkaCfg       KafkaConfig    `mapstructure:"kakfa"`
+	KafkaCfg       KafkaConfig    `mapstructure:"kafka"`
 	OTELCfg        OtelConfig     `mapstructure:"otel"`
 }
 
@@ -54,7 +54,7 @@ func InitConfig(path string) *Config {
 	viper.SetConfigFile(path)
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatalf("Failed to read config file: %v", err)
+		log.Fatalf("BBS: Failed to read config file: %v", err)
 		panic(err)
 	}
 
