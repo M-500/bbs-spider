@@ -214,6 +214,8 @@ func (a *gormArticleDao) SyncStatus(ctx context.Context, author, id int64, statu
 }
 
 func (a *gormArticleDao) ListPub(ctx context.Context, start time.Time, offset int, limit int) ([]dao.ArticleModel, error) {
-	//TODO implement me
-	panic("implement me")
+	var res []dao.ArticleModel
+	const ArticleStatusPublished = 2
+	err := a.db.WithContext(ctx).Where("updated_at < ? AND status = ?", start, ArticleStatusPublished).Offset(offset).Limit(limit).First(&res).Error
+	return res, err
 }

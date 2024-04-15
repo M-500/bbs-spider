@@ -306,6 +306,11 @@ func (repo *articleRepo) GetPublishedById(ctx context.Context, id, uid int64) (d
 }
 
 func (repo *articleRepo) ListPub(ctx context.Context, start time.Time, offset int, limit int) ([]domain.Article, error) {
-	//TODO implement me
-	panic("implement me")
+	arts, err := repo.artDao.ListPub(ctx, start, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+	return slice.Map[dao.ArticleModel, domain.Article](arts, func(idx int, src dao.ArticleModel) domain.Article {
+		return repo.toDomain(src)
+	}), nil
 }
