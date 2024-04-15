@@ -58,8 +58,12 @@ func (r *RankingJob) Run() error {
 			err2 := lock.AutoRefresh(r.timeout/2, time.Second)
 			if err2 != nil {
 				// 这里说明退出了续约机制 续约失败了怎么办？？ 不管他
+				r.lock = nil
 			}
-			r.lock = nil
+
+			//ctx1, cancel1 := context.WithTimeout(context.Background(), time.Second)
+			//defer cancel1()
+			//lock.Unlock(ctx1)
 		}()
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
@@ -81,4 +85,13 @@ func (r *RankingJob) Run() error {
 	//	}
 	//}()
 	return r.svc.TopN(ctx)
+}
+func (r *RankingJob) Close() error {
+	r.localLock.Lock()
+	lock := r.lock
+	r.lock = nil // 这一句很重要！！！！
+	r.localLock.Unlock()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	return lock.Unlock(ctx)
 }
