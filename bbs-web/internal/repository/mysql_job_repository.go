@@ -13,6 +13,7 @@ import (
 type JobRepository interface {
 	Preempt(ctx context.Context) (domain.Job, error)
 	Release(ctx context.Context, id int64) error
+	UpdateUpdateTime(ctx context.Context, id int64) error
 }
 
 type jobRepository struct {
@@ -32,6 +33,9 @@ func (j *jobRepository) Release(ctx context.Context, id int64) error {
 	return j.dao.Release(ctx, id)
 }
 
+func (j *jobRepository) UpdateUpdateTime(ctx context.Context, id int64) error {
+	return j.dao.UpdateChangeTime(ctx, id)
+}
 func (j *jobRepository) toDomain(model dao.JobModel) domain.Job {
 	return domain.Job{
 		ID:           model.ID,

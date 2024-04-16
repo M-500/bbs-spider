@@ -11,6 +11,13 @@ func String(key, val string) Field {
 	}
 }
 
+func Uint(key string, val uint) Field {
+	return Field{
+		Key:   key,
+		Value: val,
+	}
+}
+
 func Int32(key string, val int32) Field {
 	return Field{
 		Key:   key,

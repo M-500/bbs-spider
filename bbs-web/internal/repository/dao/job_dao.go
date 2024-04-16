@@ -15,6 +15,7 @@ import (
 type JobDAO interface {
 	Preempt(ctx context.Context) (JobModel, error)
 	Release(ctx context.Context, id int64) error
+	UpdateChangeTime(ctx context.Context, id int64) error
 }
 
 /**
@@ -67,6 +68,14 @@ func (g *gormJobDAO) Preempt(ctx context.Context) (JobModel, error) {
 }
 
 func (g *gormJobDAO) Release(ctx context.Context, id int64) error {
+	now := time.Now()
+	// TODO 防止释放掉别人 要做 ！
+	return g.db.WithContext(ctx).Where("id = ?", id).Updates(map[string]any{
+		"updated_at": now,
+		"status":     jobStatusWaiting,
+	}).Error
+}
 
+func (g *gormJobDAO) UpdateChangeTime(ctx context.Context, id int64) error {
 	return nil
 }
