@@ -16,6 +16,7 @@ type JobDAO interface {
 	Preempt(ctx context.Context) (JobModel, error)
 	Release(ctx context.Context, id int64) error
 	UpdateChangeTime(ctx context.Context, id int64) error
+	UpdateNextTime(ctx context.Context, id int64, t time.Time) error
 }
 
 /**
@@ -35,6 +36,13 @@ func NewJobDAO(db *gorm.DB) JobDAO {
 	}
 }
 
+func (g *gormJobDAO) UpdateNextTime(ctx context.Context, id int64, t time.Time) error {
+	now := time.Now()
+	return g.db.WithContext(ctx).Model(&JobModel{}).Where("id = ?", id).Updates(map[string]any{
+		"updated_at":     now,
+		"next_exec_time": now,
+	}).Error
+}
 func (g *gormJobDAO) Preempt(ctx context.Context) (JobModel, error) {
 	for {
 		now := time.Now()

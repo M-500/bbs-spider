@@ -18,6 +18,8 @@ type JobService interface {
 	//PreemptWithCallback(ctx context.Context) (domain.Job, func() error, error)
 
 	Release(ctx context.Context, id int64) error
+
+	ResetNextTime(ctx context.Context, j domain.Job) error
 }
 
 // preemptCronJobService
@@ -85,4 +87,9 @@ func (p *preemptCronJobService) refresh(id int64) {
 			logger.Error(err),
 			logger.Int64("job_id", id))
 	}
+}
+
+func (p *preemptCronJobService) ResetNextTime(ctx context.Context, j domain.Job) error {
+	now := time.Now()
+	return p.repo.UpdateNextTime(ctx, int64(j.ID), now)
 }

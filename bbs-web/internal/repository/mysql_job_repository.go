@@ -4,6 +4,7 @@ import (
 	"bbs-web/internal/domain"
 	"bbs-web/internal/repository/dao"
 	"context"
+	"time"
 )
 
 // @Description
@@ -14,6 +15,7 @@ type JobRepository interface {
 	Preempt(ctx context.Context) (domain.Job, error)
 	Release(ctx context.Context, id int64) error
 	UpdateUpdateTime(ctx context.Context, id int64) error
+	UpdateNextTime(ctx context.Context, id int64, time time.Time) error
 }
 
 type jobRepository struct {
@@ -36,6 +38,11 @@ func (j *jobRepository) Release(ctx context.Context, id int64) error {
 func (j *jobRepository) UpdateUpdateTime(ctx context.Context, id int64) error {
 	return j.dao.UpdateChangeTime(ctx, id)
 }
+
+func (j *jobRepository) UpdateNextTime(ctx context.Context, id int64, t time.Time) error {
+	return j.dao.UpdateNextTime(ctx, id, t)
+}
+
 func (j *jobRepository) toDomain(model dao.JobModel) domain.Job {
 	return domain.Job{
 		ID:           model.ID,

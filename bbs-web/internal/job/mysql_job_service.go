@@ -84,7 +84,8 @@ func (s *Schedule) Schedule(ctx context.Context) error {
 					logger.Error(err2),
 					logger.Int64("job_id", int64(j.ID)))
 			}
-
+			// 考虑下一次调度
+			s.svc.ResetNextTime(ctx, j)
 		}()
 
 	}
