@@ -29,8 +29,7 @@ func (j *jobRepository) Preempt(ctx context.Context) (domain.Job, error) {
 }
 
 func (j *jobRepository) Release(ctx context.Context, id int64) error {
-
-	return nil
+	return j.dao.Release(ctx, id)
 }
 
 func (j *jobRepository) toDomain(model dao.JobModel) domain.Job {

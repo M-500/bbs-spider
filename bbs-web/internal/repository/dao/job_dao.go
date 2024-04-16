@@ -14,6 +14,7 @@ import (
 
 type JobDAO interface {
 	Preempt(ctx context.Context) (JobModel, error)
+	Release(ctx context.Context, id int64) error
 }
 
 /**
@@ -25,6 +26,12 @@ type JobDAO interface {
 
 type gormJobDAO struct {
 	db *gorm.DB
+}
+
+func NewJobDAO(db *gorm.DB) JobDAO {
+	return &gormJobDAO{
+		db: db,
+	}
 }
 
 func (g *gormJobDAO) Preempt(ctx context.Context) (JobModel, error) {
@@ -57,4 +64,9 @@ func (g *gormJobDAO) Preempt(ctx context.Context) (JobModel, error) {
 		}
 		return res, err
 	}
+}
+
+func (g *gormJobDAO) Release(ctx context.Context, id int64) error {
+
+	return nil
 }

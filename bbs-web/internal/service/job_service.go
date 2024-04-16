@@ -25,18 +25,21 @@ type preemptCronJobService struct {
 	repo repository.JobRepository
 }
 
-// 不带回掉方法
+// Preempt
+//
+//	@Description: 抢占式调度，不返回回调函数
 func (p *preemptCronJobService) Preempt(ctx context.Context) (domain.Job, error) {
 	return p.repo.Preempt(ctx)
 }
 
-// 带有回掉方法
+// PreemptWithCallback
+//
+//	@Description: 抢占式调度，返回回调方法，用于释放
 func (p *preemptCronJobService) PreemptWithCallback(ctx context.Context) (domain.Job, func() error, error) {
 	j, err := p.repo.Preempt(ctx)
 	if err != nil {
-
+		// 抢占失败 还能咋整 妈的
 	}
-
 	j.CancleFunc = func() error {
 		// 这里用来释放锁
 		ctx1, cancel := context.WithTimeout(context.Background(), time.Second)
