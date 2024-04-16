@@ -16,6 +16,7 @@ type JobRepository interface {
 	Release(ctx context.Context, id int64) error
 	UpdateUpdateTime(ctx context.Context, id int64) error
 	UpdateNextTime(ctx context.Context, id int64, time time.Time) error
+	Stop(ctx context.Context, id int64) error
 }
 
 type jobRepository struct {
@@ -43,9 +44,13 @@ func (j *jobRepository) UpdateNextTime(ctx context.Context, id int64, t time.Tim
 	return j.dao.UpdateNextTime(ctx, id, t)
 }
 
+func (j *jobRepository) Stop(ctx context.Context, id int64) error {
+	return nil
+}
+
 func (j *jobRepository) toDomain(model dao.JobModel) domain.Job {
 	return domain.Job{
-		ID:           model.ID,
+		ID:           int64(model.ID),
 		CreatedAt:    model.CreatedAt,
 		UpdatedAt:    model.UpdatedAt,
 		Cfg:          model.Cfg,

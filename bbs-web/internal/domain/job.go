@@ -10,7 +10,7 @@ import (
 // @Date 2024-04-15 21:11
 
 type Job struct {
-	ID        uint
+	ID        int64
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Cfg       string
@@ -27,9 +27,14 @@ type Job struct {
 	CancleFunc func() error
 }
 
+// NextTime
+//
+//	@Description: 根据Cron表达式 获取下一次执行的时间
+//	@receiver j
+//	@return time.Time
 func (j Job) NextTime() time.Time {
 	c := cron.NewParser(cron.Second | cron.Minute | cron.Hour |
-		cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
+		cron.Dom | cron.Month | cron.Dow | cron.Descriptor) // 也可以做为包变量，只初始化一次
 	s, _ := c.Parse(j.Expression)
 	return s.Next(time.Now())
 }

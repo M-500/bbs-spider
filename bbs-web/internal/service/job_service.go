@@ -57,7 +57,7 @@ func (p *preemptCronJobService) Preempt(ctx context.Context) (domain.Job, error)
 		if err != nil {
 			p.lg.Error("释放 job 失败",
 				logger.Error(err),
-				logger.Uint("job_id", j.ID))
+				logger.Int64("job_id", j.ID))
 		}
 		return err
 	}
@@ -90,6 +90,10 @@ func (p *preemptCronJobService) refresh(id int64) {
 }
 
 func (p *preemptCronJobService) ResetNextTime(ctx context.Context, j domain.Job) error {
-	t := j.NextTime()
-	return p.repo.UpdateNextTime(ctx, int64(j.ID), t)
+	nextTime := j.NextTime()
+	if nextTime.IsZero() {
+		// 没有下一次了 要彻底暂停
+		return p.repo.Stop(ctx, j.ID)
+	}
+	return p.repo.UpdateNextTime(ctx, j.ID, nextTime)
 }
