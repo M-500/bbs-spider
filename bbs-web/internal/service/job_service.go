@@ -90,6 +90,6 @@ func (p *preemptCronJobService) refresh(id int64) {
 }
 
 func (p *preemptCronJobService) ResetNextTime(ctx context.Context, j domain.Job) error {
-	now := time.Now()
-	return p.repo.UpdateNextTime(ctx, int64(j.ID), now)
+	t := j.NextTime()
+	return p.repo.UpdateNextTime(ctx, int64(j.ID), t)
 }
