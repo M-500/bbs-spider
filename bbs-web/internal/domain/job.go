@@ -11,7 +11,10 @@ type Job struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Cfg       string
-	Status    int // 用来表示状态
+	Name      string // 任务名称
+
+	Exec   string
+	Status int // 用来表示状态
 
 	NextExecTime int64 // 定时任务的下一次执行的时间
 

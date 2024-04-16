@@ -48,6 +48,7 @@ func (p *preemptCronJobService) Preempt(ctx context.Context) (domain.Job, error)
 	// 是否一直抢占？是不是需要释放呢？暴漏release吗
 	j.CancleFunc = func() error {
 		// 这里用来释放锁
+		ticker.Stop()
 		ctx1, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
 		err = p.Release(ctx1, int64(j.ID))
@@ -79,6 +80,7 @@ func (p *preemptCronJobService) refresh(id int64) {
 	defer cancel()
 	err := p.repo.UpdateUpdateTime(ctx, id)
 	if err != nil {
+		// 续约失败 理论上要通知调用方 续约失败
 		p.lg.Error("续约失败",
 			logger.Error(err),
 			logger.Int64("job_id", id))

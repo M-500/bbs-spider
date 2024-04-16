@@ -50,7 +50,7 @@ func (g *gormJobDAO) Preempt(ctx context.Context) (JobModel, error) {
 		// 1. 一次拉一批 2. 随机从某一条开始，从后开始抢占  3. 随机偏移量+取模/第一轮没有查到，偏移量归零
 
 		// 这里是乐观锁实现 CAS  Compare And Swap  常见的面试装逼 => 用乐观锁取代 for update   forupdate性能差，容易引起死锁问题。 性能优化的套路
-		ans := g.db.WithContext(ctx).Where("id = ? AND version = ?", res.ID, res.Version).
+		ans := g.db.WithContext(ctx).Model(&JobModel{}).Where("id = ? AND version = ?", res.ID, res.Version).
 			Updates(map[string]any{
 				"status":     jobStatusRunning,
 				"version":    res.Version + 1,
@@ -70,12 +70,17 @@ func (g *gormJobDAO) Preempt(ctx context.Context) (JobModel, error) {
 func (g *gormJobDAO) Release(ctx context.Context, id int64) error {
 	now := time.Now()
 	// TODO 防止释放掉别人 要做 ！
-	return g.db.WithContext(ctx).Where("id = ?", id).Updates(map[string]any{
+	return g.db.WithContext(ctx).Model(&JobModel{}).Where("id = ?", id).Updates(map[string]any{
 		"updated_at": now,
 		"status":     jobStatusWaiting,
 	}).Error
 }
 
 func (g *gormJobDAO) UpdateChangeTime(ctx context.Context, id int64) error {
-	return nil
+	now := time.Now()
+	return g.db.WithContext(ctx).Model(&JobModel{}).
+		Where("id = ? AND status = ? ").
+		Updates(map[string]any{
+			"updated_at": now,
+		}).Error
 }
