@@ -36,6 +36,10 @@ type Validator[T migrator.Entity] struct {
 func (v *Validator[T]) Validate(ctx context.Context) {
 	offset := -1
 	for {
+		select {
+		case <-ctx.Done():
+			// 被人取消了
+		}
 		ctx1, cancel := context.WithTimeout(context.Background(), time.Second*5)
 		offset++ // 秒啊，进来就更新offset，比较好控制。因为后面有很多的continue和return
 		var src T
