@@ -204,8 +204,38 @@ func (d *DoubleWritePoolTx) Commit() error {
 }
 
 func (d *DoubleWritePoolTx) Rollback() error {
-	//TODO implement me
-	panic("implement me")
+	switch d.pattern {
+	case patternSrcOnly:
+		return d.src.Rollback()
+	case patternSrcFirst:
+		err := d.src.Rollback()
+		if err != nil {
+			// 源库的事务失败了， 目标库上的事务要不要rollback ? 可以尝试rollback
+			return err
+		}
+		if d.dst != nil {
+			err = d.dst.Rollback()
+			if err != nil {
+				// 吞掉错误，记录日志
+			}
+		}
+		return nil
+	case patternDstFirst:
+		err := d.dst.Rollback()
+		if err != nil {
+			return err
+		}
+		if d.src != nil {
+			err = d.src.Rollback()
+			if err != nil {
+				// 吞掉错误，记录日志
+			}
+		}
+		return nil
+	case patternDstOnly:
+		return d.dst.Rollback()
+	}
+	return errors.New("未知的双写模式")
 }
 
 func (d *DoubleWritePoolTx) PrepareContext(ctx context.Context, query string) (*sql.Stmt, error) {
