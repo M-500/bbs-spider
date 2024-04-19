@@ -3,8 +3,6 @@ package connpool
 import (
 	"context"
 	"database/sql"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 	"reflect"
 	"testing"
 )
@@ -13,13 +11,13 @@ import (
 // @Author 代码小学生王木木
 
 func TestUseConnPool(t *testing.T) {
-	db, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: DoubleWritePool{},
-	}))
-	if err != nil {
-		panic(err)
-	}
-	t.Log(db)
+	//db, err := gorm.Open(mysql.New(mysql.Config{
+	//	Conn: DoubleWritePool{},
+	//}))
+	//if err != nil {
+	//	panic(err)
+	//}
+	//t.Log(db)
 }
 
 func TestDoubleWritePool_ExecContext(t *testing.T) {

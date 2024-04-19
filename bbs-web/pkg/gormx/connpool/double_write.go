@@ -69,6 +69,7 @@ func (d *DoubleWritePool) ExecContext(ctx context.Context, query string, args ..
 		}
 		return res, nil
 	default:
+		panic("未知的双写模式")
 		return nil, errors.New("未知的双写模式")
 	}
 }
@@ -77,14 +78,29 @@ func (d *DoubleWritePool) ExecContext(ctx context.Context, query string, args ..
 //
 //	@Description: 查询语句会进来这里
 func (d *DoubleWritePool) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
-	//TODO implement me
-	panic("implement me")
+	switch d.pattern.Load() {
+	case patternSrcOnly, patternSrcFirst:
+		return d.src.QueryContext(ctx, query, args...)
+	case patternDstFirst, patternDstOnly:
+		return d.dst.QueryContext(ctx, query, args...)
+	default:
+		panic("未知的双写模式")
+		return nil, errors.New("未知的双写模式")
+	}
 }
 
 // QueryRowContext
 //
 //	@Description: 查询一行的语句会进来这里
 func (d *DoubleWritePool) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
-	//TODO implement me
-	panic("implement me")
+	switch d.pattern.Load() {
+	case patternSrcOnly, patternSrcFirst:
+		return d.src.QueryRowContext(ctx, query, args...)
+	case patternDstFirst, patternDstOnly:
+		return d.dst.QueryRowContext(ctx, query, args...)
+	default:
+		// 这里怎么返回一个error？ 没办法！只能panic
+		panic("未知的双写模式")
+		return &sql.Row{}
+	}
 }
