@@ -93,6 +93,9 @@ func (d *DoubleWritePool) ExecContext(ctx context.Context, query string, args ..
 			// 源表都没有写成功，写个屁的目标表啊 出了问题只能等校验与修复程序
 			return res, err
 		}
+		if d.dst == nil {
+			return res, err
+		}
 		res, err = d.dst.ExecContext(ctx, query, args...)
 		if err != nil {
 			// 这里要记录日志 因为写入目标表失败，不认为是一种失败，只需要记录日志就好了
@@ -106,6 +109,9 @@ func (d *DoubleWritePool) ExecContext(ctx context.Context, query string, args ..
 		res, err := d.dst.ExecContext(ctx, query, args...)
 		if err != nil {
 			// 源表都没有写成功，写个屁的目标表啊 出了问题只能等校验与修复程序
+			return res, err
+		}
+		if d.src == nil {
 			return res, err
 		}
 		res, err = d.src.ExecContext(ctx, query, args...)
