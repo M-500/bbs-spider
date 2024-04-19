@@ -94,8 +94,14 @@ func (d *DoubleWriteInteractiveDAO) DecrLikeCnt(ctx context.Context, biz string,
 }
 
 func (d *DoubleWriteInteractiveDAO) Get(ctx context.Context, biz string, id int64) (InteractiveModel, error) {
-	//TODO implement me
-	panic("implement me")
+	switch d.pattern.Load() {
+	case patternSrcOnly, patternSrcFirst:
+		return d.srcDao.Get(ctx, biz, id)
+	case patternDstOnly, patternDstFirst:
+		return d.dstDao.Get(ctx, biz, id)
+	default:
+		return InteractiveModel{}, errors.New("未知的双写模式")
+	}
 }
 
 func (d *DoubleWriteInteractiveDAO) GetLikeInfo(ctx context.Context, biz string, id int64, uid int64) (UserLikeBizModel, error) {
