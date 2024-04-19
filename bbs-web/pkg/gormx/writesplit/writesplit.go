@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// @Description 读写分离
+// @Description 读写分离（gorm内置实现了读写分离，可以去看看）
 // @Author 代码小学生王木木
 
 type WriteSplit struct {

@@ -11,6 +11,8 @@ import (
 // @Description 用装饰器模式
 // @Author 代码小学生王木木
 
+var ErrUnavailablePattern = errors.New("不合法的双写策略")
+
 const (
 	patternDstOnly  = "DST_ONLY"
 	patternSrcOnly  = "SRC_ONLY"
@@ -22,6 +24,14 @@ type DoubleWritePool struct {
 	src     gorm.ConnPool
 	dst     gorm.ConnPool
 	pattern *atomicx.Value[string]
+}
+
+func (d *DoubleWritePool) UpdatePattern(pattern string) error {
+	if pattern != patternSrcOnly && pattern != patternDstOnly && pattern != patternDstFirst && pattern != patternSrcFirst {
+		return ErrUnavailablePattern
+	}
+	d.pattern = atomicx.NewValueOf(pattern)
+	return nil
 }
 
 // BeginTx
@@ -72,7 +82,7 @@ func (d *DoubleWritePool) BeginTx(ctx context.Context, opts *sql.TxOptions) (gor
 			pattern: pattern,
 		}, err
 	}
-	return nil, errors.New("未知的双写模式")
+	return nil, ErrUnavailablePattern
 }
 
 // PrepareContext
@@ -127,7 +137,7 @@ func (d *DoubleWritePool) ExecContext(ctx context.Context, query string, args ..
 		return res, nil
 	default:
 		panic("未知的双写模式")
-		return nil, errors.New("未知的双写模式")
+		return nil, ErrUnavailablePattern
 	}
 }
 
@@ -142,7 +152,7 @@ func (d *DoubleWritePool) QueryContext(ctx context.Context, query string, args .
 		return d.dst.QueryContext(ctx, query, args...)
 	default:
 		panic("未知的双写模式")
-		return nil, errors.New("未知的双写模式")
+		return nil, ErrUnavailablePattern
 	}
 }
 
@@ -200,7 +210,7 @@ func (d *DoubleWritePoolTx) Commit() error {
 	case patternDstOnly:
 		return d.dst.Commit()
 	}
-	return errors.New("未知的双写模式")
+	return ErrUnavailablePattern
 }
 
 func (d *DoubleWritePoolTx) Rollback() error {
@@ -235,7 +245,7 @@ func (d *DoubleWritePoolTx) Rollback() error {
 	case patternDstOnly:
 		return d.dst.Rollback()
 	}
-	return errors.New("未知的双写模式")
+	return ErrUnavailablePattern
 }
 
 func (d *DoubleWritePoolTx) PrepareContext(ctx context.Context, query string) (*sql.Stmt, error) {
@@ -277,7 +287,7 @@ func (d *DoubleWritePoolTx) ExecContext(ctx context.Context, query string, args 
 		return res, nil
 	default:
 		panic("未知的双写模式")
-		return nil, errors.New("未知的双写模式")
+		return nil, ErrUnavailablePattern
 	}
 }
 
@@ -289,7 +299,7 @@ func (d *DoubleWritePoolTx) QueryContext(ctx context.Context, query string, args
 		return d.dst.QueryContext(ctx, query, args...)
 	default:
 		panic("未知的双写模式")
-		return nil, errors.New("未知的双写模式")
+		return nil, ErrUnavailablePattern
 	}
 }
 
