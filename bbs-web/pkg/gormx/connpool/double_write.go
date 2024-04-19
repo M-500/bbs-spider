@@ -27,6 +27,7 @@ type DoubleWritePool struct {
 }
 
 func (d *DoubleWritePool) UpdatePattern(pattern string) error {
+	// 能不能在已经开启事务未提交的时候 禁止修改pattern模式？ ==> 需要维持住开事务的计数，并且循环的检测  需要用锁
 	if pattern != patternSrcOnly && pattern != patternDstOnly && pattern != patternDstFirst && pattern != patternSrcFirst {
 		return ErrUnavailablePattern
 	}
@@ -191,7 +192,8 @@ func (d *DoubleWritePoolTx) Commit() error {
 		if d.dst != nil {
 			err = d.dst.Commit()
 			if err != nil {
-				// 吞掉错误，记录日志
+				// 吞掉错误，记录日志 也可以考虑回滚
+				//_ = d.src.Rollback()
 			}
 		}
 		return nil
