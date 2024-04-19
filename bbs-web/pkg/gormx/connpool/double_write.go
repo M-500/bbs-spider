@@ -29,7 +29,7 @@ type DoubleWritePool struct {
 //	@Description: Prepare的语句会进来这里  预编译语句
 func (d *DoubleWritePool) PrepareContext(ctx context.Context, query string) (*sql.Stmt, error) {
 	//TODO implement me
-	panic("implement me")
+	panic("不支持 PrepareContext")
 }
 
 // ExecContext

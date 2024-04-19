@@ -3,6 +3,10 @@ package connpool
 import (
 	"context"
 	"database/sql"
+	"github.com/ecodeclub/ekit/syncx/atomicx"
+	"github.com/stretchr/testify/assert"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 	"reflect"
 	"testing"
 )
@@ -10,14 +14,36 @@ import (
 // @Description
 // @Author 代码小学生王木木
 
+type User struct {
+	gorm.Model
+	Username string
+	Age      int
+}
+type UserV1 struct {
+	gorm.Model
+	Username string
+	Age      int
+}
+
 func TestUseConnPool(t *testing.T) {
-	//db, err := gorm.Open(mysql.New(mysql.Config{
-	//	Conn: DoubleWritePool{},
-	//}))
-	//if err != nil {
-	//	panic(err)
-	//}
-	//t.Log(db)
+	sourceDB, err := gorm.Open(mysql.Open("admin:123456@tcp(192.168.1.52:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"))
+	assert.NoError(t, err)
+	sourceDB.AutoMigrate(&User{})
+	dstDB, err := gorm.Open(mysql.Open("admin:123456@tcp(192.168.1.52:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"))
+	assert.NoError(t, err)
+	dstDB.AutoMigrate(&UserV1{})
+
+	pool, err := gorm.Open(mysql.New(mysql.Config{
+		Conn: &DoubleWritePool{
+			src:     sourceDB.ConnPool,
+			dst:     dstDB.ConnPool,
+			pattern: atomicx.NewValueOf(patternSrcFirst),
+		},
+	}))
+	if err != nil {
+		panic(err)
+	}
+	t.Log(pool)
 }
 
 func TestDoubleWritePool_ExecContext(t *testing.T) {
