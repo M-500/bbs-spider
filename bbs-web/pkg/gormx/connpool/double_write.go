@@ -160,11 +160,11 @@ func (d *DoubleWritePool) QueryRowContext(ctx context.Context, query string, arg
 type DoubleWritePoolTx struct {
 	src     *sql.Tx
 	dst     *sql.Tx
-	pattern *atomicx.Value[string]
+	pattern string
 }
 
 func (d *DoubleWritePoolTx) Commit() error {
-	switch d.pattern.Load() {
+	switch d.pattern {
 	case patternSrcOnly:
 		return d.src.Commit()
 	case patternSrcFirst:
@@ -208,7 +208,7 @@ func (d *DoubleWritePoolTx) PrepareContext(ctx context.Context, query string) (*
 }
 
 func (d *DoubleWritePoolTx) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
-	switch d.pattern.Load() {
+	switch d.pattern {
 	case patternSrcOnly:
 		// 只操作src源表
 		return d.src.ExecContext(ctx, query, args...)
@@ -247,7 +247,7 @@ func (d *DoubleWritePoolTx) ExecContext(ctx context.Context, query string, args 
 }
 
 func (d *DoubleWritePoolTx) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
-	switch d.pattern.Load() {
+	switch d.pattern {
 	case patternSrcOnly, patternSrcFirst:
 		return d.src.QueryContext(ctx, query, args...)
 	case patternDstFirst, patternDstOnly:
@@ -259,7 +259,7 @@ func (d *DoubleWritePoolTx) QueryContext(ctx context.Context, query string, args
 }
 
 func (d *DoubleWritePoolTx) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
-	switch d.pattern.Load() {
+	switch d.pattern {
 	case patternSrcOnly, patternSrcFirst:
 		return d.src.QueryRowContext(ctx, query, args...)
 	case patternDstFirst, patternDstOnly:
