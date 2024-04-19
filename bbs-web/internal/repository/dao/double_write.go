@@ -22,6 +22,18 @@ type DoubleWriteInteractiveDAO struct {
 	pattern *atomicx.Value[string]
 }
 
+//func NewDoubleWriteInteractiveDAOV1(srcDB *gorm.DB, dstDB *gorm.DB) *DoubleWriteInteractiveDAO {
+//	return &DoubleWriteInteractiveDAO{
+//		srcDao:  NewInteractiveDao(srcDB),
+//		dstDao:  NewInteractiveDao(dstDB),
+//		pattern: atomicx.NewValueOf(patternSrcFirst),
+//	}
+//}
+
+func NewDoubleWriteInteractiveDAO(srcDao InteractiveDao, dstDao interactiveDao) *DoubleWriteInteractiveDAO {
+	return &DoubleWriteInteractiveDAO{srcDao: srcDao, dstDao: dstDao, pattern: atomicx.NewValueOf(patternSrcFirst)}
+}
+
 // 暴露一个方法 用于修改双写策略
 func (d *DoubleWriteInteractiveDAO) UpdatePattern(path string) {
 	d.pattern.Store(path)
