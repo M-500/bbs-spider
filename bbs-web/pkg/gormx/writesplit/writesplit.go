@@ -14,6 +14,11 @@ type WriteSplit struct {
 	slaves []gorm.ConnPool
 }
 
+func (w *WriteSplit) BeginTx(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, error) {
+	// 开启事务只能开在master上，没有什么好说得
+	return w.master.(gorm.TxBeginner).BeginTx(ctx, opts)
+}
+
 func (w *WriteSplit) PrepareContext(ctx context.Context, query string) (*sql.Stmt, error) {
 	// 默认永远返回master的prepareContext  当然也可以默认返回slaves的数据 无所屌谓
 	return w.master.PrepareContext(ctx, query)
@@ -33,6 +38,9 @@ func (w *WriteSplit) QueryContext(ctx context.Context, query string, args ...int
 		return w.slaves[0].QueryContext(ctx, query, args...)
 	}
 	// 否则就要用负载均衡的方式去读取slave啦
+	/**
+	轮询，加权轮询，平滑的加权轮询，随机，加权随机，动态判定slaves的健康情况(永远挑最快响应的那个slave做处理)... 骚操作自己悟
+	*/
 	//TODO implement me
 	panic("implement me")
 }
