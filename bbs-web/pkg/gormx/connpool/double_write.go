@@ -28,13 +28,14 @@ type DoubleWritePool struct {
 //
 //	@Description: 支持事务的实现
 func (d *DoubleWritePool) BeginTx(ctx context.Context, opts *sql.TxOptions) (gorm.ConnPool, error) {
-	switch d.pattern.Load() {
+	pattern := d.pattern.Load()
+	switch pattern {
 	case patternSrcOnly:
 		// 断言是否是txBeginner
 		tx, err := d.src.(gorm.TxBeginner).BeginTx(ctx, opts)
-		return &DoubleWritePool{
+		return &DoubleWritePoolTx{
 			src:     tx,
-			pattern: d.pattern,
+			pattern: pattern,
 		}, err
 	case patternSrcFirst:
 		txSrc, err := d.src.(gorm.TxBeginner).BeginTx(ctx, opts)
@@ -45,10 +46,10 @@ func (d *DoubleWritePool) BeginTx(ctx context.Context, opts *sql.TxOptions) (gor
 		if err != nil {
 			return nil, nil
 		}
-		return &DoubleWritePool{
+		return &DoubleWritePoolTx{
 			src:     txSrc,
 			dst:     txDst,
-			pattern: d.pattern,
+			pattern: pattern,
 		}, nil
 	case patternDstFirst:
 		txDst, err := d.dst.(gorm.TxBeginner).BeginTx(ctx, opts)
@@ -59,16 +60,16 @@ func (d *DoubleWritePool) BeginTx(ctx context.Context, opts *sql.TxOptions) (gor
 		if err != nil {
 			return nil, nil
 		}
-		return &DoubleWritePool{
+		return &DoubleWritePoolTx{
 			src:     txSrc,
 			dst:     txDst,
-			pattern: d.pattern,
+			pattern: pattern,
 		}, nil
 	case patternDstOnly:
 		tx, err := d.dst.(gorm.TxBeginner).BeginTx(ctx, opts)
-		return &DoubleWritePool{
+		return &DoubleWritePoolTx{
 			dst:     tx,
-			pattern: d.pattern,
+			pattern: pattern,
 		}, err
 	}
 	return nil, errors.New("未知的双写模式")
