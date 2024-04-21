@@ -25,7 +25,10 @@ type Validator[T migrator.Entity] struct {
 
 	p events.Producer
 
-	batchSize int
+	batchSize  int
+	updateTime time.Time
+	// 用于标记是否持续增量校验 <=0 直接退出校验循环  >0 执行指定时间的休眠
+	sleepInterval time.Duration
 }
 
 // Validate
@@ -44,11 +47,19 @@ func (v *Validator[T]) Validate(ctx context.Context) {
 		offset++ // 秒啊，进来就更新offset，比较好控制。因为后面有很多的continue和return
 		var src T
 		//err := v.base.Offset(offset).Model(t).First(&t).Error
-		err := v.base.Offset(offset).Order("id").First(&src).Error
+		err := v.base.Offset(offset).
+			Where("updated_at > ?", v.updateTime). // 增量校验 最好不要取等号
+			Order("id").First(&src).Error
 		switch err {
 		case gorm.ErrRecordNotFound:
 			// 比对完毕，没有数据了,全量校验结束，
-			return
+			// 如果要同时支持全量校验和增量校验，这里就不能直接返回了  你要考虑有些情况下用户希望退出，有时候用户希望继续
+			// 用户希望退出 => sleep
+			if v.sleepInterval <= 0 {
+				return
+			}
+			time.Sleep(v.sleepInterval)
+			continue
 		case nil:
 			// 没有问题，查询到了数据 需从target查询数据，并且校验
 			var dst T
