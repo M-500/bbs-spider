@@ -37,6 +37,11 @@ func (s *ServerX) Serve() error {
 	if err != nil {
 		return err
 	}
+	// ETCD注册
+	err = s.register()
+	if err != nil {
+		return err
+	}
 	return s.Server.Serve(lis)
 }
 
@@ -93,12 +98,20 @@ func (s *ServerX) Close() error {
 		s.kaCancel()
 	}
 	// 注销注册信息
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	err := s.em.DeleteEndpoint(ctx, s.key)
-	if err != nil {
-		return err
+	if s.em != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		err := s.em.DeleteEndpoint(ctx, s.key)
+		if err != nil {
+			return err
+		}
 	}
-	s.GracefulStop() // 优雅退出gRPC服务
+	if s.client != nil {
+		err := s.client.Close()
+		if err != nil {
+			return err
+		}
+	}
+	s.Server.GracefulStop() // 优雅退出gRPC服务
 	return nil
 }

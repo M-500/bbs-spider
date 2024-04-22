@@ -1,5 +1,5 @@
 
-service_name: "bbs_spider_1"
+service_name: "bbs_spider_interactive"
 service_env: "dev"
 service_id: 1
 service_port: ":8002"
@@ -26,4 +26,6 @@ otel:
   url: "http://192.168.1.52:14268/api/traces"
 
 grpc:
-  addr: "127.0.0.1:8090"
+  port: 8090
+  etcd_addr:
+    - "192.168.1.52:12379"

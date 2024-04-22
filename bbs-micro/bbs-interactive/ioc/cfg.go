@@ -50,7 +50,8 @@ type OtelConfig struct {
 	Url string `mapstructure:"url"`
 }
 type GRPCConfig struct {
-	Addr string `mapstructure:"addr"`
+	Port     int      `mapstructure:"port"`
+	EtcdAddr []string `mapstructure:"etcd_addr"`
 }
 
 func InitConfig(path string) *Config {

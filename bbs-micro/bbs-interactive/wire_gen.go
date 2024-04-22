@@ -29,7 +29,7 @@ func InitApp(path string) *App {
 	interactiveRepo := repository.NewInteractiveRepo(logger, interactiveDao, redisInteractiveCache)
 	interactiveService := service.NewInteractiveService(interactiveRepo, logger)
 	interactiveServiceServer := grpc.NewInteractiveServiceServer(interactiveService)
-	serverX := ioc.InitGRPCXServer(config, interactiveServiceServer)
+	serverX := ioc.InitGRPCXServer(config, interactiveServiceServer, logger)
 	client := ioc.InitSaramaClient(config)
 	consumer := events.NewInteractiveReadEventBatchConsumer(client, logger, interactiveRepo)
 	v := ioc.InitConsumer(consumer)
