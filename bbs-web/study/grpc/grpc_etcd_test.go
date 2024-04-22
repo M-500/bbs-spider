@@ -53,7 +53,8 @@ func (s *EtcdTestSuide) TestClient() {
 	if err != nil {
 		panic(err)
 	}
-	dial, err := grpc.Dial("etcd///service/user",
+	// URL的规范 scheme:///xxx
+	dial, err := grpc.Dial("etcd:///service/user",
 		grpc.WithResolvers(etcdResolver),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -86,6 +87,29 @@ func (s *EtcdTestSuide) TestServer() {
 	if err != nil {
 		panic(err)
 	}
+	// 万一注册信息有变动的话 怎么办  比如注册端口改了？  开线程监听啦
+	go func() {
+		ticker := time.NewTicker(time.Second)
+		for now := range ticker.C {
+			ctx1, cancel1 := context.WithTimeout(context.Background(), time.Second)
+			defer cancel1()
+			// 覆盖的语义
+			em.AddEndpoint(ctx1, key, endpoints.Endpoint{
+				Addr:     addr,
+				Metadata: now.String(), // 元数据信息 分组信息，权重信息，机房信息，负载信息等等
+			})
+			//em.Update(ctx, []*endpoints.UpdateWithOpts{
+			//	{
+			//		Update: endpoints.Update{
+			//			Op:       endpoints.Delete,
+			//			Key:      key,
+			//			Endpoint: endpoints.Endpoint{Addr: addr},
+			//		},
+			//	},
+			//})
+			cancel1()
+		}
+	}()
 
 	l, err := net.Listen("tcp", "192.168.1.51:8090")
 	require.NoError(s.T(), err)
@@ -96,7 +120,10 @@ func (s *EtcdTestSuide) TestServer() {
 	if err != nil {
 		panic(err)
 	}
-
+	// 退出的时候 记得Delete
+	ctx, cancel = context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	err = em.DeleteEndpoint(ctx, key)
 }
 
 func TestEtcd(t *testing.T) {
