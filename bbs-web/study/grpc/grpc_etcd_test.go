@@ -78,7 +78,7 @@ func (s *EtcdTestSuide) TestServer() {
 	ctx2, cancel2 := context.WithTimeout(context.Background(), time.Second)
 	defer cancel2()
 	// 创建租约
-	// ttl 租期 秒为单位
+	// ttl 租期 秒为单位  会在1/3的时候就会触发续约
 	var ttl int64 = 30
 	leaseResp, err := s.client.Grant(ctx2, ttl)
 	if err != nil {
@@ -108,7 +108,8 @@ func (s *EtcdTestSuide) TestServer() {
 	// 开启goroutine 自动续约
 	kaCtx, kaCancel := context.WithCancel(context.Background())
 	go func() {
-		ch, err2 := s.client.KeepAlive(kaCtx, leaseResp.ID)
+		ch, err2 := s.client.KeepAlive(kaCtx, leaseResp.ID) // 自动续约，他会以ttl的1/3为标准去续约
+		//s.client.KeepAliveOnce()  // 如果你想要控制续约的间隔，需要自己去调用 KeepAliveOnce 这个方法
 		if err2 != nil {
 			panic(err2)
 		}
