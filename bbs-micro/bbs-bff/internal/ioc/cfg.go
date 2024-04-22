@@ -21,6 +21,7 @@ type Config struct {
 	KafkaCfg       KafkaConfig    `mapstructure:"kakfa"`
 	OTELCfg        OtelConfig     `mapstructure:"otel"`
 	GRPCCfg        GRPCConfig     `mapstructure:"grpc"`
+	EtcdCfg        EtcdCfg        `mapstructure:"grpc"`
 }
 
 type ServerConfig struct {
@@ -56,6 +57,9 @@ type GRPCConfig struct {
 type GrpcClient struct {
 	Addr   string `mapstructure:"addr"`
 	Secure bool   `mapstructure:"secure"`
+}
+type EtcdCfg struct {
+	Addr []string `mapstructure:"addr"`
 }
 
 func InitConfig(path string) *Config {
