@@ -13,7 +13,9 @@ import (
 	"github.com/stretchr/testify/suite"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"go.etcd.io/etcd/client/v3/naming/endpoints"
+	"go.etcd.io/etcd/client/v3/naming/resolver"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"net"
 	"testing"
 	"time"
@@ -21,7 +23,7 @@ import (
 
 type EtcdTestSuide struct {
 	suite.Suite
-	client *clientv3.Client
+	client *clientv3.Client // 使用etcd来做服务注册和发现
 }
 
 func (s *EtcdTestSuide) SetupSuite() {
@@ -36,13 +38,33 @@ type Svc struct {
 }
 
 func (s *Svc) SayHello(ctx context.Context, request *hello.HelloRequest) (*hello.HelloResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	return &hello.HelloResponse{
+		Res: "你好哇，" + request.Name,
+	}, nil
 }
 
 func (s Svc) mustEmbedUnimplementedHelloServiceServer() {
 	//TODO implement me
 	panic("implement me")
+}
+
+func (s *EtcdTestSuide) TestClient() {
+	etcdResolver, err := resolver.NewBuilder(s.client)
+	if err != nil {
+		panic(err)
+	}
+	dial, err := grpc.Dial("etcd///service/user",
+		grpc.WithResolvers(etcdResolver),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	client := hello.NewHelloServiceClient(dial)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	sayHello, err := client.SayHello(ctx, &hello.HelloRequest{Name: "李银河"})
+	if err != nil {
+		panic(err)
+	}
+	s.T().Log("响应", sayHello)
 }
 
 func (s *EtcdTestSuide) TestServer() {
