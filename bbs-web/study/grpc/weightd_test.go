@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"sync"
+	"sync/atomic"
 	"testing"
 )
 
@@ -58,6 +59,7 @@ func TestSmoothWRR(t *testing.T) {
 type Balancer struct {
 	nodes []*Node
 	lock  sync.Mutex
+	idx   *atomic.Int32
 }
 
 func (b *Balancer) pick() *Node {
@@ -111,4 +113,24 @@ func (b *Balancer) randomWeightPicker() *Node {
 		}
 	}
 	panic("")
+}
+
+// randomPicker
+//
+//	@Description: 随机算法
+//	@receiver b
+//	@return *Node
+func (b *Balancer) randomPicker() *Node {
+	r := int(rand.Int31())
+	return b.nodes[r%len(b.nodes)]
+}
+
+// roundRobin
+//
+//	@Description: 轮询
+//	@receiver b
+//	@return *Node
+func (b *Balancer) roundRobin() *Node {
+	idx := int(b.idx.Add(1))
+	return b.nodes[idx%len(b.nodes)]
 }
