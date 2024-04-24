@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"bbs-web/pkg/utils/zifo/slice"
 	"fmt"
 	"sync"
 	"testing"
@@ -17,7 +18,7 @@ type Node struct {
 
 func (n *Node) Invoke() {
 	// 发起了RPC调用
-	fmt.Println("选中了", n.Name, n.currentWeight, n.weight)
+	//fmt.Println("选中了", n.Name, n.currentWeight)
 }
 
 func TestSmoothWRR(t *testing.T) {
@@ -42,7 +43,13 @@ func TestSmoothWRR(t *testing.T) {
 		nodes: nodes,
 	}
 	for i := 0; i < 10; i++ {
+		fmt.Printf("挑选前 nodes: %v\n", slice.Map(nodes, func(idx int, src *Node) Node {
+			return *src
+		}))
 		pick := b.pick()
+		fmt.Printf("挑选后 nodes: %v\n", slice.Map(nodes, func(idx int, src *Node) Node {
+			return *src
+		}))
 		pick.Invoke()
 	}
 }
@@ -56,8 +63,8 @@ func (b *Balancer) pick() *Node {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 	total := 0
-	for i := 0; i < len(b.nodes); i++ {
-		total = total + b.nodes[i].weight
+	for _, node := range b.nodes {
+		total += node.weight
 	}
 	// 更新当前权重
 	for _, node := range b.nodes {
@@ -68,14 +75,15 @@ func (b *Balancer) pick() *Node {
 	for _, node := range b.nodes {
 		if target == nil {
 			target = node
-			continue
-		}
-		if target.currentWeight < node.currentWeight {
-			target = node
-			continue
+		} else {
+			if target.currentWeight <= node.currentWeight {
+				target = node
+			}
 		}
 	}
 	// 选中后要将当前权重减少
+	fmt.Println("选中了", target.Name, "当前权重", target.currentWeight, target.weight)
 	target.currentWeight = target.currentWeight - total
+	fmt.Println("选完后", target.Name, "当前权重减去总权重", target.currentWeight, target.weight)
 	return target
 }
