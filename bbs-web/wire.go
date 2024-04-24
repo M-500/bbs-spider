@@ -24,7 +24,7 @@ import (
 
 var rankingServiceSet = wire.NewSet(
 	repository.NewRankingRepository,
-	cache.NewRankingCache,
+	cache.NewRankinCache,
 	service.NewBatchRankingService,
 )
 

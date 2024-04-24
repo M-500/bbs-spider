@@ -3,6 +3,7 @@ package grpc
 import (
 	"bbs-web/pkg/utils/zifo/slice"
 	"fmt"
+	"math/rand"
 	"sync"
 	"testing"
 )
@@ -86,4 +87,28 @@ func (b *Balancer) pick() *Node {
 	target.currentWeight = target.currentWeight - total
 	fmt.Println("选完后", target.Name, "当前权重减去总权重", target.currentWeight, target.weight)
 	return target
+}
+
+// randomWeightPicker
+//
+//	@Description: 加权随机
+//	@receiver b*Balancer
+func (b *Balancer) randomWeightPicker() *Node {
+	b.lock.Lock()
+	defer b.lock.Unlock()
+	// 计算总权重
+	total := 0
+	for _, node := range b.nodes {
+		total += node.weight
+	}
+	r := rand.Int31n(int32(total))
+	//// 求模运算
+	//remainder := randomNumber % divisor
+	for _, node := range b.nodes {
+		r = r - int32(total)
+		if r < 0 {
+			return node
+		}
+	}
+	panic("")
 }
