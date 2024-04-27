@@ -36,9 +36,11 @@ func (s *EtcdTestSuide) SetupSuite() {
 
 type Svc struct {
 	hello.UnimplementedHelloServiceServer
+	Name string
 }
 
 func (s *Svc) SayHello(ctx context.Context, request *hello.HelloRequest) (*hello.HelloResponse, error) {
+	fmt.Println("哈哈哈", s.Name)
 	return &hello.HelloResponse{
 		Res: "你好哇，" + request.Name,
 	}, nil
@@ -60,18 +62,26 @@ func (s *EtcdTestSuide) TestClient() {
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	client := hello.NewHelloServiceClient(dial)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	sayHello, err := client.SayHello(ctx, &hello.HelloRequest{Name: "李银河"})
-	if err != nil {
-		panic(err)
+	for i := 0; i < 10; i++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		sayHello, err := client.SayHello(ctx, &hello.HelloRequest{Name: "李银河"})
+		cancel()
+		if err != nil {
+			panic(err)
+		}
+		s.T().Log("响应", sayHello)
 	}
-	s.T().Log("响应", sayHello)
+
 }
-
 func (s *EtcdTestSuide) TestServer() {
+	go func() {
+		s.startServer("192.168.1.51:8090")
+	}()
+	s.startServer("192.168.1.51:8091")
+}
+func (s *EtcdTestSuide) startServer(addr string) {
 
-	l, err := net.Listen("tcp", "192.168.1.51:8090")
+	l, err := net.Listen("tcp", addr)
 	require.NoError(s.T(), err)
 
 	// 这个Context是控制创建租约的超时时间
@@ -92,7 +102,7 @@ func (s *EtcdTestSuide) TestServer() {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	addr := "192.168.1.51:8090"
+	//addrs := "192.168.1.51:8090"
 
 	// key 就是指的实例 key ：1. 如果有instance id 就用instance id 2.用本地IP+Port
 	//key := fmt.Sprintf("")

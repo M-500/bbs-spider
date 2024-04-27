@@ -57,7 +57,7 @@ func InitWebServer(path string) *App {
 	engine := ioc.InitGin(router, v)
 	consumer := article2.NewInteractiveReadEventBatchConsumer(client, logger, interactiveRepo)
 	v2 := ioc.InitConsumer(consumer)
-	rankinCache := cache.NewRankingCache(cmdable)
+	rankinCache := cache.NewRankinCache(cmdable)
 	rankingRepository := repository.NewRankingRepository(rankinCache)
 	rankingService := service.NewBatchRankingService(iArticleService, interactiveService, rankingRepository)
 	rankingJob := ioc.InitRankingJob(rankingService)
@@ -72,4 +72,4 @@ func InitWebServer(path string) *App {
 
 // wire.go:
 
-var rankingServiceSet = wire.NewSet(repository.NewRankingRepository, cache.NewRankingCache, service.NewBatchRankingService)
+var rankingServiceSet = wire.NewSet(repository.NewRankingRepository, cache.NewRankinCache, service.NewBatchRankingService)
