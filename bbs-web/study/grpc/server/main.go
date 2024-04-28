@@ -41,7 +41,7 @@ func main() {
 	go func() {
 		startServer(etcdClient, "192.168.1.51:8091", 50)
 	}()
-	startServer(etcdClient, "192.168.1.51:8092", 10)
+	startServer(etcdClient, "192.168.1.51:8092", 40)
 }
 
 func startServer(client *clientv3.Client, addr string, weight int) {

@@ -3,6 +3,7 @@ package wrr
 import (
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/balancer/base"
+	"sync"
 )
 
 // @Description
@@ -48,6 +49,7 @@ func (p *PickerBuilder) Build(info base.PickerBuildInfo) balancer.Picker {
 
 type WrrPicker struct {
 	conns []*node
+	lock  sync.Mutex
 }
 
 // Pick
@@ -68,7 +70,8 @@ func (w *WrrPicker) Pick(info balancer.PickInfo) (balancer.PickResult, error) {
 		total += conn.weight
 		conn.currentWeight = conn.currentWeight + conn.weight
 	}
-
+	w.lock.Lock()
+	defer w.lock.Unlock()
 	maxNode := w.conns[0]
 	for _, conn := range w.conns {
 		if conn.currentWeight > maxNode.currentWeight {
