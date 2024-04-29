@@ -7,7 +7,9 @@ import (
 	"github.com/stretchr/testify/suite"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"go.etcd.io/etcd/client/v3/naming/endpoints"
+	"go.etcd.io/etcd/client/v3/naming/resolver"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"net"
 	"testing"
 	"time"
@@ -28,6 +30,52 @@ func (s *BalancerTestSuite) SetupSuite() {
 
 }
 func (s *BalancerTestSuite) TestPickFirst() {
+
+}
+
+func (s *BalancerTestSuite) TestRobinClient() {
+	etcdResolver, err := resolver.NewBuilder(s.client)
+	if err != nil {
+		panic(err)
+	}
+	// URL的规范 scheme:///xxx
+	dial, err := grpc.Dial("etcd:///service/user",
+		grpc.WithResolvers(etcdResolver),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	client := hello.NewHelloServiceClient(dial)
+	for i := 0; i < 10; i++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		sayHello, err := client.SayHello(ctx, &hello.HelloRequest{Name: "李银河"})
+		cancel()
+		if err != nil {
+			panic(err)
+		}
+		s.T().Log("响应", sayHello)
+	}
+
+}
+
+func (s *BalancerTestSuite) TestClient() {
+	etcdResolver, err := resolver.NewBuilder(s.client)
+	if err != nil {
+		panic(err)
+	}
+	// URL的规范 scheme:///xxx
+	dial, err := grpc.Dial("etcd:///service/user",
+		grpc.WithResolvers(etcdResolver),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	client := hello.NewHelloServiceClient(dial)
+	for i := 0; i < 10; i++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		sayHello, err := client.SayHello(ctx, &hello.HelloRequest{Name: "李银河"})
+		cancel()
+		if err != nil {
+			panic(err)
+		}
+		s.T().Log("响应", sayHello)
+	}
 
 }
 
