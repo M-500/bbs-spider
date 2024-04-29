@@ -5,6 +5,7 @@ import (
 	"bbs-web/study/grpc/hello"
 	"context"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"go.etcd.io/etcd/client/v3/naming/resolver"
 	"google.golang.org/grpc"
