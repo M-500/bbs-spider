@@ -4,6 +4,7 @@ import (
 	"bbs-web/internal/job"
 	"bbs-web/internal/service"
 	"bbs-web/pkg/logger"
+	rlock "github.com/gotomicro/redis-lock"
 	"github.com/robfig/cron/v3"
 	"time"
 )
@@ -12,8 +13,8 @@ import (
 // @Author 代码小学生王木木
 // @Date 2024-04-15 17:20
 
-func InitRankingJob(svc service.RankingService) *job.RankingJob {
-	return job.NewRankingJob(svc, time.Minute)
+func InitRankingJob(svc service.RankingService, client *rlock.Client) *job.RankingJob {
+	return job.NewRankingJob(svc, time.Minute, client)
 }
 
 func InitCronJobs(l logger.Logger, rankingJob *job.RankingJob) *cron.Cron {

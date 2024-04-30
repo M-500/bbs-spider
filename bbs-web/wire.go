@@ -16,6 +16,7 @@ import (
 	"bbs-web/internal/web/handler"
 	"bbs-web/internal/web/jwtx"
 	"github.com/google/wire"
+	rlock "github.com/gotomicro/redis-lock" // 分布式锁的实现
 )
 
 // @Description
@@ -23,6 +24,7 @@ import (
 // @Date 2024-03-26 15:57
 
 var rankingServiceSet = wire.NewSet(
+	rlock.NewClient,
 	repository.NewRankingRepository,
 	cache.NewRankinCache,
 	service.NewBatchRankingService,

@@ -44,6 +44,6 @@ func initPrometheus() {
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())
 		// 监听端口，可以做成可配置的
-		http.ListenAndServe(":8899", nil)
+		http.ListenAndServe(":8891", nil)
 	}()
 }

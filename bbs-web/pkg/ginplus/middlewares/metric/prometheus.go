@@ -40,6 +40,7 @@ func (m *MiddlewareBuilder) Build() gin.HandlerFunc {
 		},
 	}, labels)
 	prometheus.MustRegister(summary)
+	// 用gauge来记录瞬态值，主要是当前活跃的请求数
 	gauge := prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: m.Namespace,
 		Subsystem: m.Subsystem,
@@ -50,6 +51,17 @@ func (m *MiddlewareBuilder) Build() gin.HandlerFunc {
 		},
 	})
 	prometheus.MustRegister(gauge)
+
+	total_counter := prometheus.NewCounter(prometheus.CounterOpts{
+		Namespace: m.Namespace,
+		Subsystem: m.Subsystem,
+		Name:      m.Name + "_total_req",
+		Help:      m.Help,
+		ConstLabels: map[string]string{
+			"instance_id": m.InstanceID,
+		},
+	})
+	prometheus.MustRegister(total_counter)
 	return func(ctx *gin.Context) {
 		start := time.Now()
 		gauge.Inc()

@@ -20,6 +20,7 @@ import (
 	"bbs-web/internal/web/handler"
 	"bbs-web/internal/web/jwtx"
 	"github.com/google/wire"
+	"github.com/gotomicro/redis-lock"
 )
 
 // Injectors from wire.go:
@@ -60,7 +61,8 @@ func InitWebServer(path string) *App {
 	rankinCache := cache.NewRankinCache(cmdable)
 	rankingRepository := repository.NewRankingRepository(rankinCache)
 	rankingService := service.NewBatchRankingService(iArticleService, interactiveService, rankingRepository)
-	rankingJob := ioc.InitRankingJob(rankingService)
+	rlockClient := rlock.NewClient(cmdable)
+	rankingJob := ioc.InitRankingJob(rankingService, rlockClient)
 	cron := ioc.InitCronJobs(logger, rankingJob)
 	app := &App{
 		server:    engine,
@@ -72,4 +74,4 @@ func InitWebServer(path string) *App {
 
 // wire.go:
 
-var rankingServiceSet = wire.NewSet(repository.NewRankingRepository, cache.NewRankinCache, service.NewBatchRankingService)
+var rankingServiceSet = wire.NewSet(rlock.NewClient, repository.NewRankingRepository, cache.NewRankinCache, service.NewBatchRankingService)

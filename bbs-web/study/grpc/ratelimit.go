@@ -147,26 +147,26 @@ func (t *TokenBucketLimiter) NewServerInterceptor() grpc.UnaryServerInterceptor 
 	}
 }
 
-// LeakyBucket
-// @Description: 漏桶
-type LeakyBucket struct {
-	interval time.Duration
-
-	closeCh chan struct{}
-}
-
-func (t *LeakyBucket) NewServerInterceptor() grpc.UnaryServerInterceptor {
-	ticker := time.NewTicker(t.interval)
-	go func() {
-		for {
-			select {
-			case <-t.closeCh:
-				return
-			case <-ticker.C:
-				select {}
-
-			}
-
-		}
-	}()
-}
+//// LeakyBucket
+//// @Description: 漏桶
+//type LeakyBucket struct {
+//	interval time.Duration
+//
+//	closeCh chan struct{}
+//}
+//
+//func (t *LeakyBucket) NewServerInterceptor() grpc.UnaryServerInterceptor {
+//	ticker := time.NewTicker(t.interval)
+//	go func() {
+//		for {
+//			select {
+//			case <-t.closeCh:
+//				return
+//			case <-ticker.C:
+//				select {}
+//
+//			}
+//
+//		}
+//	}()
+//}
