@@ -39,7 +39,7 @@ func (m *MiddlewareBuilder) Build() gin.HandlerFunc {
 			0.999: 0.0001,
 		},
 	}, labels)
-	prometheus.MustRegister(summary)
+	prometheus.MustRegister(summary) // 这一行不要漏了
 	gauge := prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace: m.Namespace,
 		Subsystem: m.Subsystem,
@@ -49,7 +49,7 @@ func (m *MiddlewareBuilder) Build() gin.HandlerFunc {
 			"instance_id": m.InstanceID,
 		},
 	})
-	prometheus.MustRegister(gauge)
+	prometheus.MustRegister(gauge) // 这一行不要漏了
 	return func(ctx *gin.Context) {
 		start := time.Now()
 		gauge.Inc()
