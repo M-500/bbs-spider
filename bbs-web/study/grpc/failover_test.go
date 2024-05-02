@@ -1,9 +1,3 @@
-//@Author: wulinlin
-//@Description:
-//@File:  grpc_etcd_testr
-//@Version: 1.0.0
-//@Date: 2024/04/21 16:14
-
 package grpc
 
 import (
@@ -22,42 +16,67 @@ import (
 	"time"
 )
 
-type EtcdTestSuide struct {
+// @Description
+// @Author 代码小学生王木木
+
+type FailoverTestSuite struct {
 	suite.Suite
-	client *clientv3.Client // 使用etcd来做服务注册和发现
+	client *clientv3.Client
 }
 
-func (s *EtcdTestSuide) SetupSuite() {
+func (s *FailoverTestSuite) SetupSuite() {
 	client, err := clientv3.NewFromURL("192.168.1.52:12379")
 	require.NoError(s.T(), err)
 	s.client = client
 
 }
-
-type Svc struct {
-	hello.UnimplementedHelloServiceServer
-	Name string
+func TestFailover(t *testing.T) {
+	suite.Run(t, new(FailoverTestSuite))
 }
 
-func (s *Svc) SayHello(ctx context.Context, request *hello.HelloRequest) (*hello.HelloResponse, error) {
-	return &hello.HelloResponse{
-		Res: "你好哇，" + request.Name,
-	}, nil
+func (f *FailoverTestSuite) TestServer() {
+	go func() {
+		server := AlwaysFailServer{
+			Name: "有问题",
+		}
+		f.startServer("192.168.1.51:18090", &server)
+	}()
+	go func() {
+		server := Svc{
+			Name: "正常",
+		}
+		f.startServer("192.168.1.51:18091", &server)
+	}()
+	server1 := Svc{
+		Name: "正常",
+	}
+	f.startServer("192.168.1.51:18092", &server1)
 }
 
-func (s Svc) mustEmbedUnimplementedHelloServiceServer() {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (s *EtcdTestSuide) TestClient() {
-	etcdResolver, err := resolver.NewBuilder(s.client)
+// 初始化一个client客户端
+func (f *FailoverTestSuite) TestClient() {
+	etcdResolver, err := resolver.NewBuilder(f.client)
 	if err != nil {
 		panic(err)
 	}
-	// URL的规范 scheme:///xxx
+	svcCfg := `{
+		  "loadBalancingConfig": [ { "round_robin": {} } ],
+		  "methodConfig": [
+			{
+			  "name": [{ "service": "proto.HelloService"}],
+			  "retryPolicy": {
+				"maxAttempts":4,  				
+				"initialBackoff":"0.01s",  		
+				"maxBackoff":"0.1s",  			
+				"backoffMultiplier":2.0,  		
+				"retryableStatusCodes":["UNAVAILABLE","DEADLINE_EXCEEDED"]  
+			  }
+			}
+		  ]
+		}`
 	dial, err := grpc.Dial("etcd:///service/user",
 		grpc.WithResolvers(etcdResolver),
+		grpc.WithDefaultServiceConfig(svcCfg),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	client := hello.NewHelloServiceClient(dial)
@@ -68,26 +87,17 @@ func (s *EtcdTestSuide) TestClient() {
 		if err != nil {
 			panic(err)
 		}
-		s.T().Log("响应", sayHello)
+		f.T().Log("响应", sayHello)
 	}
+}
 
-}
-func (s *EtcdTestSuide) TestServer() {
-	go func() {
-		s.startServer("192.168.1.51:8090")
-	}()
-	s.startServer("192.168.1.51:8091")
-}
-func (s *EtcdTestSuide) startServer(addr string) {
+func (s *FailoverTestSuite) startServer(addr string, svc hello.HelloServiceServer) {
 
 	l, err := net.Listen("tcp", addr)
 	require.NoError(s.T(), err)
 
-	// 这个Context是控制创建租约的超时时间
 	ctx2, cancel2 := context.WithTimeout(context.Background(), time.Second)
 	defer cancel2()
-	// 创建租约
-	// ttl 租期 秒为单位  会在1/3的时候就会触发续约
 	var ttl int64 = 30
 	leaseResp, err := s.client.Grant(ctx2, ttl)
 	if err != nil {
@@ -101,10 +111,7 @@ func (s *EtcdTestSuide) startServer(addr string) {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	//addrs := "192.168.1.51:8090"
 
-	// key 就是指的实例 key ：1. 如果有instance id 就用instance id 2.用本地IP+Port
-	//key := fmt.Sprintf("")
 	key := "service/user/" + addr
 
 	// 在这一步之前 完成所有初始化工作 ==> 缓存预加载，配置预加载。。。。
@@ -126,33 +133,9 @@ func (s *EtcdTestSuide) startServer(addr string) {
 			fmt.Println("续约信息:", kaResp.String(), time.Now()) // 通常就是打印一下信息
 		}
 	}()
-	// 万一注册信息有变动的话 怎么办  比如注册端口改了？  开线程监听啦
-	//go func() {
-	//	ticker := time.NewTicker(time.Second)
-	//	for now := range ticker.C {
-	//		ctx1, cancel1 := context.WithTimeout(context.Background(), time.Second)
-	//		defer cancel1()
-	//		// 覆盖的语义
-	//		em.AddEndpoint(ctx1, key, endpoints.Endpoint{
-	//			Addr:     addr,
-	//			Metadata: now.String(), // 元数据信息 分组信息，权重信息，机房信息，负载信息等等
-	//		}, clientv3.WithLease(leaseResp.ID)) // 更新的时候 也要带上租约信息
-	//		// 注意 不能在一个UpdateWithOpts中，对一个key只能进行一次操作，不然会报错  存疑
-	//		//em.Update(ctx, []*endpoints.UpdateWithOpts{
-	//		//	{
-	//		//		Update: endpoints.Update{
-	//		//			Op:       endpoints.Delete,
-	//		//			Key:      key,
-	//		//			Endpoint: endpoints.Endpoint{Addr: addr},
-	//		//		},
-	//		//	},
-	//		//})
-	//		cancel1()
-	//	}
-	//}()
 
 	server := grpc.NewServer()
-	hello.RegisterHelloServiceServer(server, &Svc{})
+	hello.RegisterHelloServiceServer(server, svc)
 
 	err = server.Serve(l)
 	if err != nil {
@@ -161,15 +144,7 @@ func (s *EtcdTestSuide) startServer(addr string) {
 	// 退出的时候 记得Delete
 	ctx, cancel = context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-
-	/**
-	删除的步骤  1.取消续约  2. 将自己从注册中心删除 2.停止服务
-	*/
 	kaCancel()                        // 取消续约
 	err = em.DeleteEndpoint(ctx, key) // 取消注册
 	server.GracefulStop()             // 优雅退出
-}
-
-func TestEtcd(t *testing.T) {
-	suite.Run(t, new(EtcdTestSuide))
 }

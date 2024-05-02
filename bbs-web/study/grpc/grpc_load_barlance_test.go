@@ -3,6 +3,7 @@ package grpc
 import (
 	"bbs-web/study/grpc/hello"
 	"context"
+	"fmt"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	clientv3 "go.etcd.io/etcd/client/v3"
@@ -30,6 +31,41 @@ func (s *BalancerTestSuite) SetupSuite() {
 
 }
 func (s *BalancerTestSuite) TestPickFirst() {
+	var a uint32 = 4294967295 // uint32 的最大值为 4294967295
+	fmt.Println(a)            // 输出 4294967295
+
+	a++            // 对 uint32 类型的变量进行增量操作
+	fmt.Println(a) // 输出 0，因为溢出后继续从 0 开始增量
+}
+
+func (s *BalancerTestSuite) TestOverFlowUint32() {
+	var a uint32 = 4294967295 // uint32 的最大值为 4294967295
+	fmt.Println(a)            // 输出 4294967295
+
+	a++            // 对 uint32 类型的变量进行增量操作
+	fmt.Println(a) // 输出 0，因为溢出后继续从 0 开始增量
+}
+
+func (s *BalancerTestSuite) TestClient() {
+	etcdResolver, err := resolver.NewBuilder(s.client)
+	if err != nil {
+		panic(err)
+	}
+	// URL的规范 scheme:///xxx
+	dial, err := grpc.Dial("etcd:///service/user/t1",
+		grpc.WithResolvers(etcdResolver),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	client := hello.NewHelloServiceClient(dial)
+	for i := 0; i < 10; i++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		sayHello, err := client.SayHello(ctx, &hello.HelloRequest{Name: "李银河"})
+		cancel()
+		if err != nil {
+			panic(err)
+		}
+		s.T().Log("响应", sayHello)
+	}
 
 }
 
