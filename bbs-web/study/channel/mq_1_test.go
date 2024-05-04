@@ -28,7 +28,7 @@ func TestMQV1_Send(t *testing.T) {
 	// 模拟三个消费者，订阅了这个消息队列
 	for i := 0; i < 3; i++ {
 		go func() {
-			chs, err := b.Subscribe()
+			chs, err := b.Subscribe(123)
 			if err != nil {
 				return
 			}
