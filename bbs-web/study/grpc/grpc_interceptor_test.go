@@ -62,7 +62,7 @@ func TestClient(t *testing.T) {
 	)
 	require.NoError(t, err)
 	client := hello.NewHelloServiceClient(dial)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 	defer cancel()
 	sayHello, err := client.SayHello(ctx, &hello.HelloRequest{Name: "测试"})
 	require.NoError(t, err)
