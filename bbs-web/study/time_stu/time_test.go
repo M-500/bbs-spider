@@ -2,6 +2,7 @@ package time_stu
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 )
@@ -21,6 +22,26 @@ func TestTimer(t *testing.T) {
 	for now := range tm.C {
 		// 每隔一秒打印一次
 		t.Log(now)
+	}
+}
+
+func TestTicker(t *testing.T) {
+	ch := make(chan struct{})
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+	go func() {
+		// 5秒钟之后开始往通道中写入数据，停止定时任务的运行
+		time.Sleep(time.Second * 5)
+		ch <- struct{}{}
+	}()
+	for {
+		select {
+		case <-ticker.C:
+			fmt.Println("执行任务")
+		case <-ch:
+			// break // 注意这里写break没用，这里的break只是跳出了select，但没有跳出for
+			return
+		}
 	}
 }
 
