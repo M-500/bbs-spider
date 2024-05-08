@@ -6,71 +6,83 @@
 
 package LRU
 
-// 双端链表的节点
-type node struct {
-	prev, next *node
-	data       int
+type LRUCache struct {
+	size       int
+	capacity   int
+	cache      map[int]*DLinkedNode
+	head, tail *DLinkedNode
 }
 
-type LRUCache struct {
-	maxSize int // 最大容量
-	head    *node
-	tail    *node
-	hashMap map[int]*node // 哈希表
+type DLinkedNode struct {
+	key, value int
+	prev, next *DLinkedNode
+}
+
+func initDLinkedNode(key, value int) *DLinkedNode {
+	return &DLinkedNode{
+		key:   key,
+		value: value,
+	}
 }
 
 func Constructor(capacity int) LRUCache {
-	return LRUCache{
-		maxSize: capacity,
-		head: &node{
-			prev: nil,
-			next: nil,
-			data: 0,
-		},
-		tail:    nil,
-		hashMap: make(map[int]*node, 0),
+	l := LRUCache{
+		cache:    map[int]*DLinkedNode{},
+		head:     initDLinkedNode(0, 0),
+		tail:     initDLinkedNode(0, 0),
+		capacity: capacity,
 	}
+	l.head.next = l.tail
+	l.tail.prev = l.head
+	return l
 }
 
 func (this *LRUCache) Get(key int) int {
-	// 从map中获取元素
-	val, ok := this.hashMap[key]
-	if !ok {
+	if _, ok := this.cache[key]; !ok {
 		return -1
 	}
-	// 说明有值，要将这个节点移动到栈顶
-	this.moveToNo1(val)
-	return val.data
+	node := this.cache[key]
+	this.moveToHead(node)
+	return node.value
 }
 
 func (this *LRUCache) Put(key int, value int) {
-	if len(this.hashMap) >= this.maxSize {
-		this.removeLast()
+	if _, ok := this.cache[key]; !ok {
+		node := initDLinkedNode(key, value)
+		this.cache[key] = node
+		this.addToHead(node)
+		this.size++
+		if this.size > this.capacity {
+			removed := this.removeTail()
+			delete(this.cache, removed.key)
+			this.size--
+		}
+	} else {
+		node := this.cache[key]
+		node.value = value
+		this.moveToHead(node)
 	}
-	n := &node{
-		data: value,
-		next: this.head.next,
-		prev: this.head,
-	}
-	this.hashMap[key] = n
-	this.head.next.prev = n
-	this.head.next = n
 }
-func (this *LRUCache) removeLast() {
-	// 1. 移除链表的最后一个元素
-	// 2. 删除最后一个元素在map中的记录
+
+func (this *LRUCache) addToHead(node *DLinkedNode) {
+	node.prev = this.head
+	node.next = this.head.next
+	this.head.next.prev = node
+	this.head.next = node
 }
-func (this *LRUCache) moveToNo1(cur *node) {
-	if cur == nil {
-		return
-	}
-	if cur.prev == this.head {
-		// 说明已经是第一个了，不用管了
-		return
-	}
-	cur.prev.next = cur.next
-	cur.next.prev = cur.prev
-	cur.next = this.head.next
-	cur.prev = this.head
-	this.head.next = cur
+
+func (this *LRUCache) removeNode(node *DLinkedNode) {
+	node.prev.next = node.next
+	node.next.prev = node.prev
+}
+
+func (this *LRUCache) moveToHead(node *DLinkedNode) {
+	this.removeNode(node)
+	this.addToHead(node)
+}
+
+func (this *LRUCache) removeTail() *DLinkedNode {
+	node := this.tail.prev
+	this.removeNode(node)
+	return node
 }

@@ -57,7 +57,7 @@ func (g GreyScaleInteractiveServiceClient) UpdateThreshold(newThreshold int32) {
 }
 func (g GreyScaleInteractiveServiceClient) client() intrv1.InteractiveServiceClient {
 	threshold := g.threshold.Load()
-	num := rand.Int31n(100) // 生成一个 0-100的随机数
+	num := rand.Int31n(100) // 生成一个 0-100 的随机数
 	if num < threshold {
 		return g.remote
 	}
