@@ -21,7 +21,7 @@ import (
 
 type InterceptorBuilder struct {
 	tracer    trace.Tracer
-	progrator propagation.TextMapPropagator
+	progrator propagation.TextMapPropagator // 传播器
 }
 
 func inject(ctx context.Context, p propagation.TextMapPropagator) context.Context {
@@ -37,7 +37,7 @@ func inject(ctx context.Context, p propagation.TextMapPropagator) context.Contex
 func (i *InterceptorBuilder) BuildClient() grpc.UnaryClientInterceptor {
 	propagator := i.progrator
 	if propagator == nil {
-		// 这个是全局的
+		// 如果没有 就拿全局的传播器
 		propagator = otel.GetTextMapPropagator()
 	}
 	tracer := i.tracer

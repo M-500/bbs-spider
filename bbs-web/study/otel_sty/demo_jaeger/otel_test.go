@@ -50,3 +50,58 @@ func TestJaeger(t *testing.T) {
 
 	time.Sleep(time.Minute) // 为了防止结束过快 系统链路信息没来及上报
 }
+
+var tracer = otel.Tracer("stu-otel")
+
+// TestJaegerSpan
+//
+//	@Description: 演示span在函数之间的传递
+//	@param t
+func TestJaegerSpan(t *testing.T) {
+	serviceName := "test-jaeger"
+	jaegerEndpoint := "http://192.168.1.52:14268/api/traces"
+	exporterJaeger, err := jaeger.New(jaeger.WithCollectorEndpoint(
+		jaeger.WithEndpoint(jaegerEndpoint)))
+	if err != nil {
+		panic(err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	tp := trace.NewTracerProvider(
+		trace.WithBatcher(exporterJaeger, trace.WithBatchTimeout(time.Second)),
+		trace.WithResource(resource.NewWithAttributes(
+			semconv.SchemaURL,
+			semconv.ServiceNameKey.String(serviceName), // 显示设置服务名称
+			attribute.String("env", "prod"),            // 自定义一些参数配置
+		)),
+	)
+	otel.SetTracerProvider(tp)
+
+	spCtx, span := tracer.Start(ctx, "main")
+	// 调用service层方法
+	ServiceFun(spCtx, 123)
+	span.End()
+	time.Sleep(time.Second * 5) // 为了防止结束过快 系统链路信息没来及上报
+}
+
+// 假设是server层的方法
+func ServiceFun(ctx context.Context, data any) {
+	// 1. 获取tracer
+	//tr := otel.Tracer("stu-otel") // 这个name要和上面的name一致
+	// 2. 基于父span创建span，并指定当前的方法名
+	spCtx, span := tracer.Start(ctx, "ServiceFun")
+	defer span.End()
+	time.Sleep(time.Millisecond * 500) // 模拟Server层代码执行了500毫秒
+	DaoFunc(spCtx, data)               // 继续调用dao层的代码
+}
+
+// 假设是DAO层的方法
+func DaoFunc(ctx context.Context, data any) {
+	// 同样的方式来写span
+	// 2. 基于父span创建span，并指定当前的方法名
+	_, span := tracer.Start(ctx, "DaoFunc")
+	defer span.End()
+	time.Sleep(time.Second) // 模拟dao层执行了1秒
+}
