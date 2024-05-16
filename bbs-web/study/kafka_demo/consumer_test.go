@@ -2,6 +2,7 @@ package kafka_demo
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/IBM/sarama"
 	"github.com/stretchr/testify/assert"
@@ -58,7 +59,13 @@ func (c ConsumerHandler) ConsumeClaim(session sarama.ConsumerGroupSession,
 			if !ok {
 				fmt.Println("读取失败")
 			}
-			fmt.Println(string(msg.Value), msg.Topic, msg.Offset)
+			var t Student
+			err := json.Unmarshal(msg.Value, t)
+			if err != nil {
+				fmt.Println("反序列化失败")
+				continue
+			}
+			fmt.Println(string(msg.Value), t.Name, t.Age)
 		}
 	}
 	//const batchSize = 10
