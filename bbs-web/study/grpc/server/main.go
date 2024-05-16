@@ -10,9 +10,6 @@ import (
 	"time"
 )
 
-// @Description
-// @Author 代码小学生王木木
-
 type Svc struct {
 	hello.UnimplementedHelloServiceServer
 	Name string

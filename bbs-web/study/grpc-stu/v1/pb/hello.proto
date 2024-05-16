@@ -1,0 +1,19 @@
+syntax = "proto3"; // 固定语法前缀
+option go_package="./hello";
+package proto;
+
+// 定义服务
+service HelloService {
+  // SayHello 方法
+  rpc SayHello (HelloReq) returns (HelloResp) {}
+}
+
+// 请求消息
+message HelloReq {
+  string name = 1;
+}
+
+// 响应消息
+message HelloResp {
+  string reply = 1;
+}
