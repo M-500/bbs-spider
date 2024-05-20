@@ -45,6 +45,7 @@ require (
 	gorm.io/gorm v1.25.8
 	gorm.io/plugin/opentelemetry v0.1.4
 	gorm.io/plugin/prometheus v0.1.0
+	gorm.io/sharding v0.6.1
 )
 
 require (
@@ -88,6 +89,7 @@ require (
 	github.com/klauspost/compress v1.17.7 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
+	github.com/longbridgeapp/sqlparser v0.3.1 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
