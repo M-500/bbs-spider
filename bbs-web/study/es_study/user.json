@@ -1,0 +1,15 @@
+{
+  "mappings": {
+    "properties": {
+      "username":{
+        "type": "keyword"
+      },
+      "desc":{
+        "type": "text"
+      },
+      "addr":{
+        "type": "text"
+      }
+    }
+  }
+}
