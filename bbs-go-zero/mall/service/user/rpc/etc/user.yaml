@@ -14,3 +14,9 @@ CacheRedis:
     Pass:
 
 Salt: HWVOFkGgPTryzICwd7qnJaZR9KQ2i8xe
+
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9081
+  Path: /metrics
