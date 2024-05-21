@@ -1,0 +1,18 @@
+syntax="proto3";
+
+package search;
+
+option go_package="./search";
+
+message SearchRequest{
+  string Key = 1;
+}
+
+message SearchResponse{
+
+}
+
+
+service SearchSvr{
+  rpc Search(SearchRequest) returns (SearchResponse);
+}

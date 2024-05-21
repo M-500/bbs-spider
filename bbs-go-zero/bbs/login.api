@@ -1,9 +1,0 @@
-syntax = "v1"
-type CaptchaReponse{
-
-}
-service login-api{
-
-    @handler logHandler
-    get /code returns ()
-}
