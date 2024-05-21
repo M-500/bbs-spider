@@ -18,3 +18,21 @@ services:
       - LOG_LEVEL=debug
     networks:
       - looklook_net
+
+  #搜集kafka业务日志、存储prometheus监控数据 - Kafka for collecting business logs and storing Prometheus monitoring data
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.4
+    container_name: elasticsearch
+    user: root
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./data/elasticsearch/data:/usr/share/elasticsearch/data
+    restart: always
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - looklook_net
