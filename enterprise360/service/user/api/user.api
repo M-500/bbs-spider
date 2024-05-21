@@ -1,0 +1,11 @@
+syntax ="v1"
+
+info (
+    title :"用户服务"
+    desc :"用户相关功能"
+    author:"linlin"
+    email:"1978992154@qq.com"
+    version:"v1"
+)
+
+
