@@ -25,6 +25,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.RegisterRequest) (resp *types.RegisterResponse, err error) {
+	// 调用RPC服务的注册接口
 	res, err := l.svcCtx.UserRpc.Register(l.ctx, &user.RegisterRequest{
 		Name:     req.Name,
 		Gender:   req.Gender,

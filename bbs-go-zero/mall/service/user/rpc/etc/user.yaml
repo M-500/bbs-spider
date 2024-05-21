@@ -6,7 +6,7 @@ Etcd:
   Key: user.rpc
 
 Mysql:
-  DataSource: root:root@tcp(127.0.0.1:13306)/mall?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+  DataSource: root:root@tcp(127.0.0.1:13316)/mall?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
 
 CacheRedis:
   - Host: 127.0.0.1:6379
