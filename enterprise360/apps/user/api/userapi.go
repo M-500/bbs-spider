@@ -1,12 +1,13 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-
 	"enterprise360/apps/user/api/internal/config"
 	"enterprise360/apps/user/api/internal/handler"
 	"enterprise360/apps/user/api/internal/svc"
+	"enterprise360/pkg/xcode"
+	"flag"
+	"fmt"
+	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
@@ -25,7 +26,8 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
-
+	// 自定义错误方法
+	httpx.SetErrorHandler(xcode.ErrHandler)
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

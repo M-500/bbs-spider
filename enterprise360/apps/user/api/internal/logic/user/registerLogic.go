@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"enterprise360/apps/user/rpc/types/user"
+	"errors"
 
 	"enterprise360/apps/user/api/internal/svc"
 	"enterprise360/apps/user/api/internal/types"
@@ -33,7 +34,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 	}
 	res, err := l.svcCtx.UserRpc.Register(l.ctx, &u)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("系统错误")
 	}
 	return &types.RegisterResp{
 		Id: res.Id,
