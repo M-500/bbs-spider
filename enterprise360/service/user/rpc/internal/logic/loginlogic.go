@@ -38,6 +38,6 @@ func (l *LoginLogic) Login(in *user.LoginRequest) (*user.LoginResponse, error) {
 	return &user.LoginResponse{
 		Id:       res.Id,
 		Username: res.Username,
-		Gender:   "",
+		Password: res.Password,
 	}, nil
 }

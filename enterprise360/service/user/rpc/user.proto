@@ -6,6 +6,7 @@ option go_package="./user";
 
 service UserCenterService {
   rpc Login(LoginRequest)returns(LoginResponse);
+  rpc Register(RegUserRequest)returns(RegUserResponse);
 }
 
 // 登录参数
@@ -17,7 +18,16 @@ message LoginRequest {
 message LoginResponse{
   int64 Id = 1;
   string Username  = 2;
-  string Gender = 3;
+  string Password = 3;
+}
 
+// 用户注册
+message RegUserRequest{
+  string Username  = 1;
+  string Password = 2;
+  string Mobile = 3;
+}
+message RegUserResponse{
+  int64 Id = 1;
 }
 

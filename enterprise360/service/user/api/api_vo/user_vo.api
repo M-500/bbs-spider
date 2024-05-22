@@ -21,9 +21,7 @@ type (
         Password string `json:"password"`
     }
     LoginResp {
-        AccessToken  string `json:"accessToken"`
-        AccessExpire int64  `json:"accessExpire"`
-        RefreshAfter int64  `json:"refreshAfter"`
+        Id string `json:"id"`
     }
 )
 

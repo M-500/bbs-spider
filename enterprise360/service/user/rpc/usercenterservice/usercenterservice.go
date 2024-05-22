@@ -13,11 +13,14 @@ import (
 )
 
 type (
-	LoginRequest  = user.LoginRequest
-	LoginResponse = user.LoginResponse
+	LoginRequest    = user.LoginRequest
+	LoginResponse   = user.LoginResponse
+	RegUserRequest  = user.RegUserRequest
+	RegUserResponse = user.RegUserResponse
 
 	UserCenterService interface {
 		Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+		Register(ctx context.Context, in *RegUserRequest, opts ...grpc.CallOption) (*RegUserResponse, error)
 	}
 
 	defaultUserCenterService struct {
@@ -34,4 +37,9 @@ func NewUserCenterService(cli zrpc.Client) UserCenterService {
 func (m *defaultUserCenterService) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
 	client := user.NewUserCenterServiceClient(m.cli.Conn())
 	return client.Login(ctx, in, opts...)
+}
+
+func (m *defaultUserCenterService) Register(ctx context.Context, in *RegUserRequest, opts ...grpc.CallOption) (*RegUserResponse, error) {
+	client := user.NewUserCenterServiceClient(m.cli.Conn())
+	return client.Register(ctx, in, opts...)
 }

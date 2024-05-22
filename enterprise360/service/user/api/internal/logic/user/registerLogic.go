@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"enterprise360/service/user/rpc/types/user"
 
 	"enterprise360/service/user/api/internal/svc"
 	"enterprise360/service/user/api/internal/types"
@@ -25,7 +26,19 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterResp, err error) {
-	// todo: add your logic here and delete this line
+	u := user.RegUserRequest{
+		Username: req.UserName,
+		Password: req.Password,
+		Mobile:   req.Phone,
+	}
+	register, err := l.svcCtx.UserRpc.Register(l.ctx, &u)
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.RegisterResp{
+		AccessToken:  "",
+		AccessExpire: 0,
+		RefreshAfter: 0,
+	}, nil
 }
