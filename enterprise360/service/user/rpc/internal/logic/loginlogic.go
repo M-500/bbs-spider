@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"enterprise360/service/user/model"
+	"google.golang.org/grpc/status"
 
 	"enterprise360/service/user/rpc/internal/svc"
 	"enterprise360/service/user/rpc/types/user"
@@ -24,7 +26,18 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(in *user.LoginRequest) (*user.LoginResponse, error) {
-	// todo: add your logic here and delete this line
+	res, err := l.svcCtx.DB.FindOneByUsername(l.ctx, in.Username)
+	if err == model.ErrNotFound {
+		return nil, status.Error(500, "用户名不存在")
+	}
+	if err != nil {
+		logx.WithContext(l.ctx).Error("登录模块根据用户名查询DB错误，存疑")
+		return nil, status.Error(500, "系统错误")
+	}
 
-	return &user.LoginResponse{}, nil
+	return &user.LoginResponse{
+		Id:       res.Id,
+		Username: res.Username,
+		Gender:   "",
+	}, nil
 }
