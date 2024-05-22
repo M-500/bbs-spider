@@ -36,3 +36,15 @@ func TestNormalProducer(t *testing.T) {
 	}
 	t.Log(pt, offset)
 }
+
+func TestAsyncProducer(t *testing.T) {
+	config := sarama.NewConfig()
+	config.Producer.RequiredAcks = sarama.WaitForAll
+	config.Producer.Partitioner = sarama.NewRandomPartitioner
+	config.Producer.Return.Successes = true
+	producer, err := sarama.NewAsyncProducer(Addr, config)
+	if err != nil {
+		panic(err)
+	}
+	producer.AsyncClose()
+}
