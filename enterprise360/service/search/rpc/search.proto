@@ -9,10 +9,54 @@ message SearchRequest{
 }
 
 message SearchResponse{
-
+    Company company = 1;
 }
 
+message SearchPeopleResponse{
+  People people = 1;
+}
+
+message SyncCompanyRequest{
+  Company company = 1;
+}
+message SyncCompanyResponse{}
 
 service SearchSvr{
   rpc Search(SearchRequest) returns (SearchResponse);
+  rpc SearchCompany(SearchRequest)returns (SearchResponse);
+  rpc SearchPeople(SearchRequest)returns (SearchPeopleResponse);
+  // 同步企业信息的接口
+  rpc SyncCompany(SyncCompanyRequest) returns(SyncCompanyResponse);
+}
+
+
+message Company {
+  string Uid = 1;  // 全局唯一ID，但不是主键ID
+  string TaxCode = 2; // 税号
+  string Logo = 3;  // LOGO
+  string CompanyName = 4; // 企业名字
+  string CompanyType = 5; // 企业类型  民营？国有？外资？工商个体户？
+  string CompanyStatus = 6; // 状态，存续？在业？
+  string OrgCode  = 7;
+  string RegAddr = 8;
+  string ActAddr = 9;
+  string WebSite = 10;
+  string RegDate = 11;
+  string Tags = 12; // 标签
+  string RegCapAmount = 13; // 注册资本
+  string Brand = 14; // 商标/品牌
+  string Province = 15;
+  string City = 16;
+  string Town = 17;
+  string IndustryL1 = 18;
+  string IndustryL2 = 19;
+  string IndustryL3 = 20;
+
+}
+
+message People {
+  string UserName = 1;
+  string UId = 2;
+  string Phone = 3;
+  string Desc = 4;
 }

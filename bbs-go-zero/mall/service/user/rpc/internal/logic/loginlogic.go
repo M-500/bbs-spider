@@ -4,7 +4,6 @@ import (
 	"context"
 	"google.golang.org/grpc/status"
 	"mall/common/cryptx"
-
 	"mall/service/user/rpc/internal/svc"
 	"mall/service/user/rpc/types/user"
 
@@ -30,7 +29,7 @@ func (l *LoginLogic) Login(in *user.LoginRequest) (*user.LoginResponse, error) {
 	exist, err := l.svcCtx.UserModel.FindOneByMobile(l.ctx, in.Mobile)
 	if err != nil {
 		// 这里可以对错误进行进一步细分
-		return nil, status.Error(500, "用户不存在")
+		return nil, status.Error(500, "系统错误")
 	}
 	// 2. 校验密码是否正确
 	encryptPwd := cryptx.PasswordEncrypt(l.svcCtx.Config.Salt, in.Password)

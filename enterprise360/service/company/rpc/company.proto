@@ -1,0 +1,9 @@
+syntax="proto3";
+
+package company;
+
+option go_package="./company";
+
+service CompanyService{
+
+}
