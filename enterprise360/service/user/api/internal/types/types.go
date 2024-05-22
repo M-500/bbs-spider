@@ -19,9 +19,7 @@ type RegisterReq struct {
 }
 
 type RegisterResp struct {
-	AccessToken  string `json:"accessToken"`
-	AccessExpire int64  `json:"accessExpire"`
-	RefreshAfter int64  `json:"refreshAfter"`
+	Id int64 `json:"id"`
 }
 
 type User struct {

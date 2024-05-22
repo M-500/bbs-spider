@@ -9,9 +9,7 @@ type (
         Password string `json:"password"`
     }
     RegisterResp {
-        AccessToken  string `json:"accessToken"`
-        AccessExpire int64  `json:"accessExpire"`
-        RefreshAfter int64  `json:"refreshAfter"`
+        Id int64  `json:"id"`
     }
 )
 
@@ -21,7 +19,9 @@ type (
         Password string `json:"password"`
     }
     LoginResp {
-        Id string `json:"id"`
+        AccessToken  string `json:"accessToken"`
+        AccessExpire int64  `json:"accessExpire"`
+        RefreshAfter int64  `json:"refreshAfter"`
     }
 )
 

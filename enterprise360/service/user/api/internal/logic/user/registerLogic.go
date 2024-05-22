@@ -31,14 +31,11 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		Password: req.Password,
 		Mobile:   req.Phone,
 	}
-	register, err := l.svcCtx.UserRpc.Register(l.ctx, &u)
+	res, err := l.svcCtx.UserRpc.Register(l.ctx, &u)
 	if err != nil {
 		return nil, err
 	}
-
 	return &types.RegisterResp{
-		AccessToken:  "",
-		AccessExpire: 0,
-		RefreshAfter: 0,
+		Id: res.Id,
 	}, nil
 }

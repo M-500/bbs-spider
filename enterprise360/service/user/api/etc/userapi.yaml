@@ -1,6 +1,10 @@
 Name: userapi
 Host: 0.0.0.0
-Port: 8888
+Port: 18001
+
+JwtAuth:
+  AccessSecret: uOvKLmVfztaXGpNYd4Z0I1SiT7MweJhl
+  AccessExpire: 86400
 
 UserRpc:
   Etcd:
